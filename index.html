@@ -27,19 +27,11 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
 .progress-bar{height:8px;border-radius:4px;background:#eee;overflow:hidden}.progress-fill{height:100%;border-radius:4px;transition:width .5s ease}
 .sidebar-overlay{display:none;position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.3)}.sidebar-overlay.open{display:block}
 @media(max-width:768px){.portal-sidebar{position:fixed;left:0;top:0;z-index:80;transform:translateX(-100%);transition:transform .3s}.portal-sidebar.open{transform:translateX(0)}}
-
-/* Certificate Styles */
-.certificate-frame{position:relative;background:white;padding:40px;border:3px solid #F26B3A;box-shadow:inset 0 0 0 1px #F26B3A, inset 0 0 0 6px white, inset 0 0 0 7px #f0d0b8, 0 8px 40px rgba(0,0,0,.15);}
+.certificate-frame{position:relative;background:white;padding:40px;border:3px solid #F26B3A;box-shadow:inset 0 0 0 1px #F26B3A,inset 0 0 0 6px white,inset 0 0 0 7px #f0d0b8,0 8px 40px rgba(0,0,0,.15)}
 .certificate-frame::before{content:'';position:absolute;inset:8px;border:1px solid #f0d0b8;pointer-events:none}
 .certificate-inner{border:2px solid #f0d0b8;padding:30px;text-align:center;position:relative}
 .certificate-seal{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#F26B3A,#ff9a6c);display:flex;align-items:center;justify-content:center;margin:15px auto;color:white;font-size:10px;font-weight:700;text-align:center;line-height:1.2;border:3px solid #e8a87c}
-.star-rating{display:inline-flex;gap:2px}.star-rating .star{width:20px;height:20px;display:inline-block}
-.star-filled{color:#F26B3A}.star-empty{color:#ddd}
-
-/* Report skill bar */
 .skill-row{display:flex;align-items:center;gap:12px;padding:8px 0}.skill-label{width:120px;font-size:13px;font-weight:500;color:#1a1a2e;flex-shrink:0}.skill-bar-wrap{flex:1;height:10px;border-radius:5px;background:#eee;overflow:hidden}.skill-bar-fill{height:100%;border-radius:5px;transition:width .6s ease}.skill-value{width:30px;text-align:right;font-size:13px;font-weight:600;flex-shrink:0}
-
-/* Print */
 @media print{
   body *{visibility:hidden}
   #printArea,#printArea *{visibility:visible}
@@ -108,7 +100,7 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
 </div>
 </div>
 
-<!-- PRINT AREA (hidden, used for certificate PDF) -->
+<!-- PRINT AREA -->
 <div id="printArea" style="display:none"></div>
 
 <!-- ============================== -->
@@ -311,8 +303,8 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
 <section id="enroll" class="w-full py-20 relative overflow-hidden" style="background:#1a1a2e">
   <div class="blob w-96 h-96" style="background:#F26B3A;top:-150px;right:-100px"></div>
   <div class="max-w-3xl mx-auto px-6 text-center relative z-10">
-    <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-6">Give Your Child the<br><span style="color:#F26B3A">Smart Advantage</span></h2>
-    <p class="text-lg text-gray-300 mb-10 max-w-xl mx-auto">Join Smart Minds today and unlock a world of learning, creativity, and growth.</p>
+    <h2 id="ctaHeading" class="text-3xl md:text-5xl font-extrabold text-white mb-6">Give Your Child the<br><span style="color:#F26B3A">Smart Advantage</span></h2>
+    <p id="ctaSubtext" class="text-lg text-gray-300 mb-10 max-w-xl mx-auto">Join Smart Minds today and unlock a world of learning, creativity, and growth.</p>
     <form id="enrollForm" class="max-w-md mx-auto" onsubmit="handleEnroll(event)">
       <div class="space-y-4 mb-6">
         <input type="text" name="name" placeholder="Parent's Name" required class="w-full px-5 py-3.5 rounded-xl text-sm outline-none" style="background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.15)">
@@ -341,8 +333,7 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
     <div class="border-t pt-6 text-center" style="border-color:rgba(255,255,255,.1)"><p class="text-xs text-gray-500">&copy; 2025 Smart Minds Home Tuition &amp; Skills Hub Ltd. All rights reserved.</p></div>
   </div>
 </footer>
-</div><!-- end #mainWebsite -->
-
+</div>
 
 <!-- ============================== -->
 <!-- STUDENT PORTAL -->
@@ -358,7 +349,6 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
     <button onclick="handleLogout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition text-left"><i data-lucide="log-out" style="width:18px;height:18px"></i> Log Out</button>
   </div>
 </aside>
-
 <main class="flex-1 min-h-screen" style="background:#FFFBF5">
   <div class="md:hidden flex items-center gap-3 px-4 py-3 sticky top-0 z-30" style="background:#FFFBF5;border-bottom:1px solid #eee">
     <button onclick="openSidebar()" class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:white;border:1px solid #ddd"><i data-lucide="menu" style="width:18px;height:18px;color:#1a1a2e"></i></button>
@@ -370,8 +360,8 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
 </div>
 
 <script>
-const API_URL='https://script.google.com/macros/s/AKfycbyyMLWer8JorKX3OijTOv6jDraHB1KePNIJRO_P_l3f2nns4oCPvH8ZGc6j1UnnYkFLEQ/exec';
-let currentUser=null,chatPolling=null,activeChatId=null,activeChatType=null,allContacts=[],reportStudents=[];
+var API_URL='https://script.google.com/macros/s/AKfycbyyMLWer8JorKX3OijTOv6jDraHB1KePNIJRO_P_l3f2nns4oCPvH8ZGc6j1UnnYkFLEQ/exec';
+var currentUser=null,chatPolling=null,activeChatId=null,activeChatType=null,allContacts=[],reportStudents=[];
 
 function showToast(t,m,e){document.getElementById('toastTitle').textContent=t;document.getElementById('toastMsg').textContent=m;var w=document.getElementById('toastIconWrap');w.style.background=e?'rgba(239,68,68,.2)':'rgba(34,197,94,.2)';document.getElementById('toastIconEl').style.color=e?'#ef4444':'#22c55e';document.getElementById('toastNotif').classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(hideToast,5000)}
 function hideToast(){document.getElementById('toastNotif').classList.remove('show')}
@@ -380,148 +370,370 @@ async function api(d){try{var r=await fetch(API_URL,{method:'POST',headers:{'Con
 function getToken(){return localStorage.getItem('sm_token')}
 function getUser(){try{return JSON.parse(localStorage.getItem('sm_user'))}catch(e){return null}}
 function setSession(t,u){localStorage.setItem('sm_token',t);localStorage.setItem('sm_user',JSON.stringify(u))}
-function clearSession(){localStorage.removeItem('sm_token');localStorage.removeItem('sm_user');if(chatPolling)clearInterval(chatPolling)}
+function clearSession(){localStorage.removeItem('sm_token');localStorage.removeItem('sm_user');if(chatPolling){clearInterval(chatPolling);chatPolling=null}}
 
 function openAuth(){document.getElementById('authModal').classList.add('open');switchAuthTab('login')}
 function closeAuth(){document.getElementById('authModal').classList.remove('open')}
 function switchAuthTab(tab){var isL=tab==='login';document.getElementById('loginForm').classList.toggle('hidden',!isL);document.getElementById('registerForm').classList.toggle('hidden',isL);document.getElementById('tabLogin').style.cssText=isL?'background:#F26B3A;color:white':'background:transparent;color:#666';document.getElementById('tabRegister').style.cssText=!isL?'background:#F26B3A;color:white':'background:transparent;color:#666'}
 
-// Toggle student/teacher fields on register
 document.querySelector('[name="regType"]').addEventListener('change',function(){
   document.getElementById('studentFields').classList.toggle('hidden',this.value==='teacher');
   document.getElementById('teacherFields').classList.toggle('hidden',this.value==='student');
 });
 
-async function handleLogin(e){e.preventDefault();var inp=e.target.querySelectorAll('input');document.getElementById('loginBtnText').classList.add('hidden');document.getElementById('loginBtnLoad').classList.remove('hidden');var r=await api({action:'login',email:inp[0].value,password:inp[1].value});document.getElementById('loginBtnText').classList.remove('hidden');document.getElementById('loginBtnLoad').classList.add('hidden');if(r.success){setSession(r.token,r.user);closeAuth();enterPortal(r.user);showToast('Welcome! 🎉','Logged in as '+r.user.name)}else showToast('Login Failed',r.error||'Check credentials.',true)}
+async function handleLogin(e){
+  e.preventDefault();
+  var inp=e.target.querySelectorAll('input');
+  document.getElementById('loginBtnText').classList.add('hidden');
+  document.getElementById('loginBtnLoad').classList.remove('hidden');
+  var r=await api({action:'login',email:inp[0].value,password:inp[1].value});
+  document.getElementById('loginBtnText').classList.remove('hidden');
+  document.getElementById('loginBtnLoad').classList.add('hidden');
+  if(r.success){
+    console.log('[LOGIN] Success, user type:', r.user.type);
+    setSession(r.token,r.user);
+    closeAuth();
+    enterPortal(r.user);
+    showToast('Welcome! 🎉','Logged in as '+r.user.name);
+  }else{
+    showToast('Login Failed',r.error||'Check credentials.',true);
+  }
+}
 
-async function handleRegister(e){e.preventDefault();var f=e.target,pwd=f.regPwd.value;if(pwd!==f.regPwd2.value){showToast('Error','Passwords don\'t match.',true);return}var type=f.regType.value;document.getElementById('regBtnText').classList.add('hidden');document.getElementById('regBtnLoad').classList.remove('hidden');var d={action:'register',name:f.regName.value,phone:f.regPhone.value,email:f.regEmail.value,password:pwd,type:type};
-if(type==='student'){d.curriculum=f.regCurriculum.value;d.grade=f.regGrade.value||'';d.parent_name=f.regParent.value||'';d.parent_phone=f.regParentPhone.value||'';d.interest=f.regInterest.value||'Home Tuition'}
-else{d.subjects=f.regSubjects.value||'';d.certification=f.regCert.value||''}
-var r=await api(d);document.getElementById('regBtnText').classList.remove('hidden');document.getElementById('regBtnLoad').classList.add('hidden');if(r.success){setSession(r.token,r.user);closeAuth();enterPortal(r.user);showToast('Account Created! 🎉','Welcome, '+r.user.name)}else showToast('Registration Failed',r.error||'Try again.',true)}
+async function handleRegister(e){
+  e.preventDefault();
+  var f=e.target,pwd=f.regPwd.value;
+  if(pwd!==f.regPwd2.value){showToast('Error','Passwords don\'t match.',true);return}
+  // FORCE normalize: trim + lowercase — eliminates whitespace/encoding edge cases
+  var type=String(f.regType.value||'student').trim().toLowerCase();
+  console.log('[REGISTER] Sending type:',type,'| raw select value:',JSON.stringify(f.regType.value));
 
-async function handleLogout(){await api({action:'logout',token:getToken()});clearSession();document.getElementById('studentPortal').classList.add('hidden');document.getElementById('mainWebsite').classList.remove('hidden');showToast('Logged Out','See you soon!')}
+  document.getElementById('regBtnText').classList.add('hidden');
+  document.getElementById('regBtnLoad').classList.remove('hidden');
 
-function enterPortal(user){currentUser=user;document.getElementById('mainWebsite').classList.add('hidden');document.getElementById('studentPortal').classList.remove('hidden');document.getElementById('portalUserName').textContent=user.name;document.getElementById('portalUserType').textContent=user.type==='teacher'?'👨‍🏫 Teacher':'Student · '+(user.curriculum||'');buildSidebar();showPortalTab('dashboard')}
+  var d={action:'register',name:f.regName.value,phone:f.regPhone.value,email:f.regEmail.value,password:pwd,type:type};
+  if(type==='student'){
+    d.curriculum=f.regCurriculum.value||'CBC';
+    d.grade=f.regGrade.value||'';
+    d.parent_name=f.regParent.value||'';
+    d.parent_phone=f.regParentPhone.value||'';
+    d.interest=f.regInterest.value||'Home Tuition';
+  }else{
+    d.subjects=f.regSubjects.value||'';
+    d.certification=f.regCert.value||'';
+  }
 
-function buildSidebar(){var isT=currentUser.type==='teacher';var tabs=isT?[{id:'dashboard',icon:'layout-dashboard',label:'Dashboard'},{id:'chat',icon:'message-circle',label:'Chat'},{id:'createReport',icon:'file-plus',label:'Create Report'},{id:'myReports',icon:'file-text',label:'My Reports'},{id:'profile',icon:'user',label:'Profile'}]:[{id:'dashboard',icon:'layout-dashboard',label:'Dashboard'},{id:'chat',icon:'message-circle',label:'Chat'},{id:'myReports',icon:'file-text',label:'My Reports'},{id:'payments',icon:'credit-card',label:'Payments'},{id:'profile',icon:'user',label:'Profile'}];
-document.getElementById('sidebarNav').innerHTML=tabs.map(function(t){return'<button onclick="showPortalTab(\''+t.id+'\')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left" data-tab="'+t.id+'"><i data-lucide="'+t.icon+'" style="width:18px;height:18px"></i> '+t.label+(t.id==='chat'?'<span id="unreadBadge" class="hidden ml-auto w-5 h-5 rounded-full text-[10px] font-bold text-white flex items-center justify-center" style="background:#ef4444">0</span>':'')+'</button>'}).join('');lucide.createIcons()}
+  var r=await api(d);
+  document.getElementById('regBtnText').classList.remove('hidden');
+  document.getElementById('regBtnLoad').classList.add('hidden');
 
-function showPortalTab(tab){document.querySelectorAll('.portal-nav-item').forEach(function(n){n.classList.toggle('active',n.dataset.tab===tab)});var c=document.getElementById('portalContent');closeSidebar();if(tab==='dashboard')loadDashboard(c);else if(tab==='chat')loadChat(c);else if(tab==='createReport')loadCreateReport(c);else if(tab==='myReports')loadMyReports(c);else if(tab==='payments')loadPayments(c);else if(tab==='profile')loadProfile(c)}
+  if(r.success){
+    console.log('[REGISTER] Response user:',JSON.stringify(r.user));
+    if(r.user&&r.user.type!==type){
+      console.error('[REGISTER] TYPE MISMATCH! Requested:',type,'Got:',r.user.type);
+      showToast('Warning','Account created but type may be incorrect. Contact admin.',true);
+    }else{
+      setSession(r.token,r.user);
+      closeAuth();
+      enterPortal(r.user);
+      showToast('Account Created! 🎉','Welcome, '+r.user.name+(r.user.type==='teacher'?' (Teacher)':''));
+    }
+  }else{
+    showToast('Registration Failed',r.error||'Try again.',true);
+  }
+}
+
+async function handleLogout(){
+  await api({action:'logout',token:getToken()});
+  clearSession();
+  document.getElementById('studentPortal').classList.add('hidden');
+  document.getElementById('mainWebsite').classList.remove('hidden');
+  showToast('Logged Out','See you soon!');
+}
+
+function enterPortal(user){
+  currentUser=user;
+  document.getElementById('mainWebsite').classList.add('hidden');
+  document.getElementById('studentPortal').classList.remove('hidden');
+  document.getElementById('portalUserName').textContent=user.name;
+  document.getElementById('portalUserType').textContent=user.type==='teacher'?'👨‍🏫 Teacher':'Student · '+(user.curriculum||'');
+  buildSidebar();
+  showPortalTab('dashboard');
+}
+
+function buildSidebar(){
+  var isT=currentUser.type==='teacher';
+  var tabs=isT?[
+    {id:'dashboard',icon:'layout-dashboard',label:'Dashboard'},
+    {id:'chat',icon:'message-circle',label:'Chat'},
+    {id:'createReport',icon:'file-plus',label:'Create Report'},
+    {id:'myReports',icon:'file-text',label:'My Reports'},
+    {id:'profile',icon:'user',label:'Profile'}
+  ]:[
+    {id:'dashboard',icon:'layout-dashboard',label:'Dashboard'},
+    {id:'chat',icon:'message-circle',label:'Chat'},
+    {id:'myReports',icon:'file-text',label:'My Reports'},
+    {id:'payments',icon:'credit-card',label:'Payments'},
+    {id:'profile',icon:'user',label:'Profile'}
+  ];
+  document.getElementById('sidebarNav').innerHTML=tabs.map(function(t){
+    return'<button onclick="showPortalTab(\''+t.id+'\')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left" data-tab="'+t.id+'"><i data-lucide="'+t.icon+'" style="width:18px;height:18px"></i> '+t.label+(t.id==='chat'?'<span id="unreadBadge" class="hidden ml-auto w-5 h-5 rounded-full text-[10px] font-bold text-white flex items-center justify-center" style="background:#ef4444">0</span>':'')+'</button>';
+  }).join('');
+  lucide.createIcons();
+}
+
+function showPortalTab(tab){
+  document.querySelectorAll('.portal-nav-item').forEach(function(n){n.classList.toggle('active',n.dataset.tab===tab)});
+  var c=document.getElementById('portalContent');
+  closeSidebar();
+  if(tab==='dashboard')loadDashboard(c);
+  else if(tab==='chat')loadChat(c);
+  else if(tab==='createReport')loadCreateReport(c);
+  else if(tab==='myReports')loadMyReports(c);
+  else if(tab==='payments')loadPayments(c);
+  else if(tab==='profile')loadProfile(c);
+}
 
 function openSidebar(){document.getElementById('portalSidebar').classList.add('open');document.getElementById('sidebarOverlay').classList.add('open')}
 function closeSidebar(){document.getElementById('portalSidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open')}
 
 // ===== DASHBOARD =====
-async function loadDashboard(c){var isT=currentUser.type==='teacher';var html='<h2 class="text-2xl font-bold mb-2" style="color:#1a1a2e">Welcome back! 👋</h2><p class="text-sm mb-8" style="color:#999">'+(isT?'Teacher':'Student')+' overview.</p><div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">';
-if(isT){var rep=await api({action:'getReports',token:getToken()});var repCount=rep.success?rep.reports.length:0;html+='<div class="rounded-2xl p-5" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#999">Reports Created</p><p class="text-2xl font-bold" style="color:#F26B3A">'+repCount+'</p></div>';var stu=await api({action:'getStudents',token:getToken()});var stuCount=stu.success?stu.students.length:0;html+='<div class="rounded-2xl p-5" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#999">Total Students</p><p class="text-2xl font-bold" style="color:#1a1a2e">'+stuCount+'</p></div><div class="rounded-2xl p-5" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#999">Role</p><p class="text-lg font-bold" style="color:#1a1a2e">👨‍🏫 Teacher</p></div><div class="rounded-2xl p-5" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#999">Subjects</p><p class="text-sm font-bold" style="color:#1a1a2e">'+(currentUser.subjects||'—')+'</p></div>';
-}else{var[py,pg]=await Promise.all([api({action:'getPayments',token:getToken()}),api({action:'getProgress',token:getToken()})]);if(py.success){html+='<div class="rounded-2xl p-5" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#999">Total Paid</p><p class="text-2xl font-bold" style="color:#22c55e">KES '+(py.totalPaid||0).toLocaleString()+'</p></div><div class="rounded-2xl p-5" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#999">Outstanding</p><p class="text-2xl font-bold" style="color:#ef4444">KES '+(py.totalDue||0).toLocaleString()+'</p></div>'}html+='<div class="rounded-2xl p-5" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#999">Reports</p><p class="text-2xl font-bold" style="color:#F26B3A">'+(pg.success?pg.progress.length:0)+'</p></div><div class="rounded-2xl p-5" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#999">Curriculum</p><p class="text-lg font-bold" style="color:#1a1a2e">'+(currentUser.curriculum||'—')+'</p></div>'}
-html+='</div><div class="rounded-2xl p-6" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><h3 class="font-bold text-sm mb-4" style="color:#1a1a2e">📬 Recent Messages</h3><div id="recentMsgs"><p class="text-sm" style="color:#999">Loading...</p></div></div>';c.innerHTML=html;
-var cl=await api({action:'getChatList',token:getToken()});if(cl.success){var el=document.getElementById('recentMsgs');if(!cl.chats.length){el.innerHTML='<p class="text-sm" style="color:#999">No messages yet.</p>';return}el.innerHTML=cl.chats.slice(0,5).map(function(ch){return'<div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer" onclick="showPortalTab(\'chat\')"><div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0" style="background:'+(ch.type==='teacher'?'#F26B3A':'#1a1a2e')+'">'+ch.name.charAt(0)+'</div><div class="flex-1 min-w-0"><p class="font-semibold text-sm truncate" style="color:#1a1a2e">'+ch.name+'</p><p class="text-xs truncate" style="color:#999">'+(ch.lastMessage||'')+'</p></div>'+(ch.unread>0?'<span class="w-5 h-5 rounded-full text-[10px] font-bold text-white flex items-center justify-center shrink-0" style="background:#ef4444">'+ch.unread+'</span>':'')+'</div>'}).join('')}
+async function loadDashboard(c){
+  var isT=currentUser.type==='teacher';
+  var html='<h2 class="text-2xl font-bold mb-2" style="color:#1a1a2e">Welcome back! 👋</h2><p class="text-sm mb-8" style="color:#999">'+(isT?'Teacher':'Student')+' overview.</p><div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">';
+  if(isT){
+    var rep=await api({action:'getReports',token:getToken()});
+    var repCount=rep.success?rep.reports.length:0;
+    html+='<div class="rounded-2xl p-5" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#999">Reports Created</p><p class="text-2xl font-bold" style="color:#F26B3A">'+repCount+'</p></div>';
+    var stu=await api({action:'getStudents',token:getToken()});
+    var stuCount=stu.success?stu.students.length:0;
+    html+='<div class="rounded-2xl p-5" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#999">Total Students</p><p class="text-2xl font-bold" style="color:#1a1a2e">'+stuCount+'</p></div>';
+    html+='<div class="rounded-2xl p-5" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#999">Role</p><p class="text-lg font-bold" style="color:#1a1a2e">👨‍🏫 Teacher</p></div>';
+    html+='<div class="rounded-2xl p-5" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#999">Subjects</p><p class="text-sm font-bold" style="color:#1a1a2e">'+(currentUser.subjects||'—')+'</p></div>';
+  }else{
+    var py=await api({action:'getPayments',token:getToken()});
+    var pg=await api({action:'getProgress',token:getToken()});
+    if(py.success){
+      html+='<div class="rounded-2xl p-5" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#999">Total Paid</p><p class="text-2xl font-bold" style="color:#22c55e">KES '+(py.totalPaid||0).toLocaleString()+'</p></div>';
+      html+='<div class="rounded-2xl p-5" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#999">Outstanding</p><p class="text-2xl font-bold" style="color:#ef4444">KES '+(py.totalDue||0).toLocaleString()+'</p></div>';
+    }
+    html+='<div class="rounded-2xl p-5" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#999">Reports</p><p class="text-2xl font-bold" style="color:#F26B3A">'+(pg.success?pg.progress.length:0)+'</p></div>';
+    html+='<div class="rounded-2xl p-5" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#999">Curriculum</p><p class="text-lg font-bold" style="color:#1a1a2e">'+(currentUser.curriculum||'—')+'</p></div>';
+  }
+  html+='</div><div class="rounded-2xl p-6" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><h3 class="font-bold text-sm mb-4" style="color:#1a1a2e">📬 Recent Messages</h3><div id="recentMsgs"><p class="text-sm" style="color:#999">Loading...</p></div></div>';
+  c.innerHTML=html;
+  var cl=await api({action:'getChatList',token:getToken()});
+  if(cl.success){
+    var el=document.getElementById('recentMsgs');
+    if(!cl.chats.length){el.innerHTML='<p class="text-sm" style="color:#999">No messages yet.</p>';return}
+    el.innerHTML=cl.chats.slice(0,5).map(function(ch){
+      return'<div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer" onclick="showPortalTab(\'chat\')"><div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0" style="background:'+(ch.type==='teacher'?'#F26B3A':'#1a1a2e')+'">'+ch.name.charAt(0)+'</div><div class="flex-1 min-w-0"><p class="font-semibold text-sm truncate" style="color:#1a1a2e">'+ch.name+'</p><p class="text-xs truncate" style="color:#999">'+(ch.lastMessage||'')+'</p></div>'+(ch.unread>0?'<span class="w-5 h-5 rounded-full text-[10px] font-bold text-white flex items-center justify-center shrink-0" style="background:#ef4444">'+ch.unread+'</span>':'')+'</div>';
+    }).join('');
+  }
 }
 
 // ===== CHAT =====
-async function loadChat(c){var cl=await api({action:'getChatList',token:getToken()});if(!cl.success)return;allContacts=cl.chats;var total=allContacts.reduce(function(s,ch){return s+(ch.unread||0)},0);var b=document.getElementById('unreadBadge');if(b){if(total>0){b.classList.remove('hidden');b.textContent=total}else b.classList.add('hidden')}
-c.innerHTML='<div class="flex h-[calc(100vh-140px)] md:h-[calc(100vh-100px)] rounded-2xl overflow-hidden" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><div id="chatContacts" class="w-full md:w-80 border-r flex flex-col" style="border-color:#eee"><div class="p-4 border-b" style="border-color:#eee"><input type="text" placeholder="Search..." class="w-full px-3 py-2 rounded-lg text-sm outline-none" style="background:#f5f5f5;border:none" oninput="filterContacts(this.value)"></div><div id="contactList" class="flex-1 overflow-auto">'+renderContactList(allContacts)+'</div></div><div id="chatArea" class="hidden md:flex flex-col flex-1"><div id="chatHeader" class="p-4 border-b flex items-center gap-3" style="border-color:#eee"><button onclick="backToContacts()" class="md:hidden w-8 h-8 rounded-lg flex items-center justify-center" style="background:#f5f5f5"><i data-lucide="arrow-left" style="width:16px;height:16px"></i></button><div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white" style="background:#F26B3A" id="chatAvatar">?</div><div><p id="chatName" class="font-semibold text-sm" style="color:#1a1a2e">Select contact</p><p id="chatSub" class="text-xs" style="color:#999">—</p></div></div><div id="chatMessages" class="flex-1 overflow-auto p-4 space-y-3"></div><div class="p-4 border-t" style="border-color:#eee"><form onsubmit="sendMessage(event)" class="flex gap-2"><input id="chatInput" type="text" placeholder="Type a message..." class="flex-1 px-4 py-2.5 rounded-xl text-sm outline-none" style="background:#f5f5f5;border:none" autocomplete="off"><button type="submit" class="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0" style="background:#F26B3A"><i data-lucide="send" style="width:16px;height:16px"></i></button></form></div></div></div>';lucide.createIcons()}
+async function loadChat(c){
+  var cl=await api({action:'getChatList',token:getToken()});
+  if(!cl.success)return;
+  allContacts=cl.chats;
+  var total=allContacts.reduce(function(s,ch){return s+(ch.unread||0)},0);
+  var b=document.getElementById('unreadBadge');
+  if(b){if(total>0){b.classList.remove('hidden');b.textContent=total}else b.classList.add('hidden')}
+  c.innerHTML='<div class="flex h-[calc(100vh-140px)] md:h-[calc(100vh-100px)] rounded-2xl overflow-hidden" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><div id="chatContacts" class="w-full md:w-80 border-r flex flex-col" style="border-color:#eee"><div class="p-4 border-b" style="border-color:#eee"><input type="text" placeholder="Search..." class="w-full px-3 py-2 rounded-lg text-sm outline-none" style="background:#f5f5f5;border:none" oninput="filterContacts(this.value)"></div><div id="contactList" class="flex-1 overflow-auto">'+renderContactList(allContacts)+'</div></div><div id="chatArea" class="hidden md:flex flex-col flex-1"><div id="chatHeader" class="p-4 border-b flex items-center gap-3" style="border-color:#eee"><button onclick="backToContacts()" class="md:hidden w-8 h-8 rounded-lg flex items-center justify-center" style="background:#f5f5f5"><i data-lucide="arrow-left" style="width:16px;height:16px"></i></button><div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white" style="background:#F26B3A" id="chatAvatar">?</div><div><p id="chatName" class="font-semibold text-sm" style="color:#1a1a2e">Select contact</p><p id="chatSub" class="text-xs" style="color:#999">—</p></div></div><div id="chatMessages" class="flex-1 overflow-auto p-4 space-y-3"></div><div class="p-4 border-t" style="border-color:#eee"><form onsubmit="sendMessage(event)" class="flex gap-2"><input id="chatInput" type="text" placeholder="Type a message..." class="flex-1 px-4 py-2.5 rounded-xl text-sm outline-none" style="background:#f5f5f5;border:none" autocomplete="off"><button type="submit" class="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0" style="background:#F26B3A"><i data-lucide="send" style="width:16px;height:16px"></i></button></form></div></div></div>';
+  lucide.createIcons();
+}
 
-function renderContactList(list){if(!list.length)return'<p class="text-sm text-center py-8" style="color:#999">No contacts</p>';return list.map(function(ch){return'<button onclick="openChat(\''+ch.id+'\',\''+ch.type+'\',\''+ch.name.replace(/'/g,"\\'")+'\')" class="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition text-left border-b" style="border-color:#f5f5f5"><div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0" style="background:'+(ch.type==='teacher'?'#F26B3A':'#1a1a2e')+'">'+ch.name.charAt(0)+'</div><div class="flex-1 min-w-0"><div class="flex items-center justify-between"><p class="font-semibold text-sm truncate" style="color:#1a1a2e">'+ch.name+'</p>'+(ch.unread>0?'<span class="w-5 h-5 rounded-full text-[10px] font-bold text-white flex items-center justify-center shrink-0" style="background:#ef4444">'+ch.unread+'</span>':'')+'</div><p class="text-xs truncate" style="color:#999">'+(ch.lastMessage||'')+'</p></div></button>'}).join('')}
+function renderContactList(list){
+  if(!list.length)return'<p class="text-sm text-center py-8" style="color:#999">No contacts</p>';
+  return list.map(function(ch){
+    return'<button onclick="openChat(\''+ch.id+'\',\''+ch.type+'\',\''+ch.name.replace(/'/g,"\\'")+'\')" class="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition text-left border-b" style="border-color:#f5f5f5"><div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0" style="background:'+(ch.type==='teacher'?'#F26B3A':'#1a1a2e')+'">'+ch.name.charAt(0)+'</div><div class="flex-1 min-w-0"><div class="flex items-center justify-between"><p class="font-semibold text-sm truncate" style="color:#1a1a2e">'+ch.name+'</p>'+(ch.unread>0?'<span class="w-5 h-5 rounded-full text-[10px] font-bold text-white flex items-center justify-center shrink-0" style="background:#ef4444">'+ch.unread+'</span>':'')+'</div><p class="text-xs truncate" style="color:#999">'+(ch.lastMessage||'')+'</p></div></button>';
+  }).join('');
+}
 function filterContacts(q){q=q.toLowerCase();document.getElementById('contactList').innerHTML=renderContactList(allContacts.filter(function(ch){return ch.name.toLowerCase().includes(q)}))}
 
-async function openChat(id,type,name){activeChatId=id;activeChatType=type;document.getElementById('chatAvatar').textContent=name.charAt(0);document.getElementById('chatAvatar').style.background=type==='teacher'?'#F26B3A':'#1a1a2e';document.getElementById('chatName').textContent=name;document.getElementById('chatSub').textContent=(type==='teacher'?'👨‍🏫 Teacher':'👨‍🎓 Student');document.getElementById('chatArea').classList.remove('hidden');document.getElementById('chatArea').classList.add('flex');document.getElementById('chatContacts').classList.add('hidden');document.getElementById('chatContacts').classList.remove('flex');document.getElementById('chatInput').focus();await loadMessages();if(chatPolling)clearInterval(chatPolling);chatPolling=setInterval(loadMessages,5000)}
-function backToContacts(){if(chatPolling)clearInterval(chatPolling);document.getElementById('chatArea').classList.add('hidden');document.getElementById('chatArea').classList.remove('flex');document.getElementById('chatContacts').classList.remove('hidden');document.getElementById('chatContacts').classList.add('flex');loadChat(document.getElementById('portalContent'))}
+async function openChat(id,type,name){
+  activeChatId=id;activeChatType=type;
+  document.getElementById('chatAvatar').textContent=name.charAt(0);
+  document.getElementById('chatAvatar').style.background=type==='teacher'?'#F26B3A':'#1a1a2e';
+  document.getElementById('chatName').textContent=name;
+  document.getElementById('chatSub').textContent=(type==='teacher'?'👨‍🏫 Teacher':'👨‍🎓 Student');
+  document.getElementById('chatArea').classList.remove('hidden');
+  document.getElementById('chatArea').classList.add('flex');
+  document.getElementById('chatContacts').classList.add('hidden');
+  document.getElementById('chatContacts').classList.remove('flex');
+  document.getElementById('chatInput').focus();
+  await loadMessages();
+  if(chatPolling)clearInterval(chatPolling);
+  chatPolling=setInterval(loadMessages,5000);
+}
+function backToContacts(){
+  if(chatPolling)clearInterval(chatPolling);
+  document.getElementById('chatArea').classList.add('hidden');
+  document.getElementById('chatArea').classList.remove('flex');
+  document.getElementById('chatContacts').classList.remove('hidden');
+  document.getElementById('chatContacts').classList.add('flex');
+  loadChat(document.getElementById('portalContent'));
+}
 
-async function loadMessages(){if(!activeChatId)return;var r=await api({action:'getMessages',token:getToken(),other_id:activeChatId});if(!r.success)return;var el=document.getElementById('chatMessages');if(!r.messages.length){el.innerHTML='<p class="text-center text-sm py-10" style="color:#999">No messages yet. Say hello! 👋</p>';return}var myId=currentUser.id;el.innerHTML=r.messages.map(function(m){var isSent=String(m.sender_id)===String(myId);var time=m.created_at?new Date(m.created_at).toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'}):'';return'<div class="flex '+(isSent?'justify-end':'justify-start')+'"><div class="chat-bubble '+(isSent?'sent':'received')+' px-4 py-2.5"><p class="text-sm leading-relaxed">'+(m.message||'').replace(/</g,'&lt;')+'</p><p class="text-[10px] mt-1 opacity-60">'+time+'</p></div></div>'}).join('');el.scrollTop=el.scrollHeight}
+async function loadMessages(){
+  if(!activeChatId)return;
+  var r=await api({action:'getMessages',token:getToken(),other_id:activeChatId});
+  if(!r.success)return;
+  var el=document.getElementById('chatMessages');
+  if(!r.messages.length){el.innerHTML='<p class="text-center text-sm py-10" style="color:#999">No messages yet. Say hello! 👋</p>';return}
+  var myId=currentUser.id;
+  el.innerHTML=r.messages.map(function(m){
+    var isSent=String(m.sender_id)===String(myId);
+    var time=m.created_at?new Date(m.created_at).toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'}):'';
+    return'<div class="flex '+(isSent?'justify-end':'justify-start')+'"><div class="chat-bubble '+(isSent?'sent':'received')+' px-4 py-2.5"><p class="text-sm leading-relaxed">'+(m.message||'').replace(/</g,'&lt;')+'</p><p class="text-[10px] mt-1 opacity-60">'+time+'</p></div></div>';
+  }).join('');
+  el.scrollTop=el.scrollHeight;
+}
 
-async function sendMessage(e){e.preventDefault();var inp=document.getElementById('chatInput');var msg=inp.value.trim();if(!msg||!activeChatId)return;inp.value='';var r=await api({action:'sendMessage',token:getToken(),receiver_id:activeChatId,receiver_type:activeChatType,message:msg});if(r.success)loadMessages();else showToast('Error',r.error||'Could not send.',true)}
+async function sendMessage(e){
+  e.preventDefault();var inp=document.getElementById('chatInput');var msg=inp.value.trim();
+  if(!msg||!activeChatId)return;inp.value='';
+  var r=await api({action:'sendMessage',token:getToken(),receiver_id:activeChatId,receiver_type:activeChatType,message:msg});
+  if(r.success)loadMessages();else showToast('Error',r.error||'Could not send.',true);
+}
 
 // ===== CREATE REPORT (TEACHER ONLY) =====
 async function loadCreateReport(c){
-var stuRes=await api({action:'getStudents',token:getToken()});reportStudents=stuRes.success?stuRes.students.filter(function(s){return s.status!=='inactive'}):[];
-var stuOpts=reportStudents.map(function(s){return'<option value="'+s.id+'">'+s.name+' ('+s.curriculum+' - '+s.grade+')</option>'}).join('');
+  var stuRes=await api({action:'getStudents',token:getToken()});
+  reportStudents=stuRes.success?stuRes.students.filter(function(s){return s.status!=='inactive'}):[];
+  var stuOpts=reportStudents.map(function(s){return'<option value="'+s.id+'">'+s.name+' ('+s.curriculum+' - '+(s.grade||'?')+')</option>'}).join('');
+  c.innerHTML='<h2 class="text-2xl font-bold mb-2" style="color:#1a1a2e">📊 Create Report</h2><p class="text-sm mb-8" style="color:#999">Fill in the report and optionally generate a certificate.</p>'+
+  '<form id="reportForm" onsubmit="submitReport(event)">'+
+  '<div class="rounded-2xl p-6 mb-6" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">📋 Student Information</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Student *</label><select id="rpStudent" required onchange="onStudentSelect()" class="w-full px-4 py-3 rounded-xl text-sm outline-none" style="background:#f9f9f9;border:1px solid #ddd"><option value="">Select student...</option>'+stuOpts+'</select></div><div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Program *</label><select id="rpProgram" required onchange="updatePerfFields()" class="w-full px-4 py-3 rounded-xl text-sm outline-none" style="background:#f9f9f9;border:1px solid #ddd"><option value="camp">DreamQuest Camp</option><option value="tuition">Home Tuition</option><option value="skills">Skill Program</option></select></div><div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Term</label><select id="rpTerm" class="w-full px-4 py-3 rounded-xl text-sm outline-none" style="background:#f9f9f9;border:1px solid #ddd"><option>Term 1</option><option>Term 2</option><option>Term 3</option><option>Holiday Camp</option></select></div><div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Host School / Center</label><input id="rpSchool" type="text" placeholder="e.g. Brighton International" class="w-full px-4 py-3 rounded-xl text-sm outline-none" style="background:#f9f9f9;border:1px solid #ddd" value="Brighton International School, Katani"></div></div></div>'+
+  '<div class="rounded-2xl p-6 mb-6" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">⭐ Performance Ratings</h3><div id="perfFields"></div><button type="button" onclick="addPerfField()" class="mt-3 text-sm font-medium flex items-center gap-1" style="color:#F26B3A"><i data-lucide="plus-circle" style="width:16px;height:16px"></i> Add Field</button></div>'+
+  '<div class="rounded-2xl p-6 mb-6" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">💡 Core Skills (1-5 each)</h3><div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div><label class="block text-xs mb-1" style="color:#999">Communication</label><input id="sk_comm" type="number" min="1" max="5" value="3" class="w-full px-4 py-3 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd"></div><div><label class="block text-xs mb-1" style="color:#999">Teamwork</label><input id="sk_team" type="number" min="1" max="5" value="3" class="w-full px-4 py-3 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd"></div><div><label class="block text-xs mb-1" style="color:#999">Creativity</label><input id="sk_creat" type="number" min="1" max="5" value="3" class="w-full px-4 py-3 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd"></div><div><label class="block text-xs mb-1" style="color:#999">Confidence</label><input id="sk_conf" type="number" min="1" max="5" value="3" class="w-full px-4 py-3 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd"></div></div></div>'+
+  '<div class="rounded-2xl p-6 mb-6" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">💬 Comments</h3><textarea id="rpComments" rows="4" placeholder="Trainer comments about the student..." class="w-full px-4 py-3 rounded-xl text-sm outline-none" style="background:#f9f9f9;border:1px solid #ddd"></textarea></div>'+
+  '<div class="rounded-2xl p-6 mb-6" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">🏆 Certificate</h3><select id="rpCert" onchange="updateCertPreview()" class="w-full px-4 py-3 rounded-xl text-sm outline-none mb-4" style="background:#f9f9f9;border:1px solid #ddd"><option value="">No Certificate</option><option value="best">Best Performing Student</option><option value="improved">Most Improved Student</option><option value="participation">Participation Award</option><option value="excellence">Certificate of Excellence</option></select><div id="certPreview"></div></div>'+
+  '<div class="flex flex-wrap gap-3"><button type="submit" id="saveReportBtn" class="px-8 py-3.5 rounded-xl font-semibold text-white transition hover:opacity-90 flex items-center gap-2" style="background:#F26B3A"><i data-lucide="save" style="width:18px;height:18px"></i> Save Report</button><button type="button" onclick="printCertificate()" id="printCertBtn" class="hidden px-8 py-3.5 rounded-xl font-semibold border-2 transition hover:opacity-80 flex items-center gap-2" style="border-color:#F26B3A;color:#F26B3A"><i data-lucide="printer" style="width:18px;height:18px"></i> Print Certificate</button></div>'+
+  '</form>';
+  lucide.createIcons();updatePerfFields();
+}
 
-c.innerHTML='<h2 class="text-2xl font-bold mb-2" style="color:#1a1a2e">📊 Create Report</h2><p class="text-sm mb-8" style="color:#999">Fill in the report and optionally generate a certificate.</p>'+
-'<form id="reportForm" onsubmit="submitReport(event)">'+
-'<div class="rounded-2xl p-6 mb-6" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">📋 Student Information</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Student *</label><select id="rpStudent" required onchange="onStudentSelect()" class="w-full px-4 py-3 rounded-xl text-sm outline-none" style="background:#f9f9f9;border:1px solid #ddd"><option value="">Select student...</option>'+stuOpts+'</select></div><div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Program *</label><select id="rpProgram" required onchange="updatePerfFields()" class="w-full px-4 py-3 rounded-xl text-sm outline-none" style="background:#f9f9f9;border:1px solid #ddd"><option value="camp">DreamQuest Camp</option><option value="tuition">Home Tuition</option><option value="skills">Skill Program</option></select></div><div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Term</label><select id="rpTerm" class="w-full px-4 py-3 rounded-xl text-sm outline-none" style="background:#f9f9f9;border:1px solid #ddd"><option>Term 1</option><option>Term 2</option><option>Term 3</option><option>Holiday Camp</option></select></div><div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Host School / Center</label><input id="rpSchool" type="text" placeholder="e.g. Brighton International" class="w-full px-4 py-3 rounded-xl text-sm outline-none" style="background:#f9f9f9;border:1px solid #ddd" value="Brighton International School, Katani"></div></div></div>'+
+function onStudentSelect(){var sel=document.getElementById('rpStudent');var stu=reportStudents.find(function(s){return s.id===sel.value});if(stu)document.getElementById('rpSchool').value='Brighton International School, Katani'}
 
-'<div class="rounded-2xl p-6 mb-6" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">⭐ Performance Ratings</h3><div id="perfFields"></div><button type="button" onclick="addPerfField()" class="mt-3 text-sm font-medium flex items-center gap-1" style="color:#F26B3A"><i data-lucide="plus-circle" style="width:16px;height:16px"></i> Add Field</button></div>'+
-
-'<div class="rounded-2xl p-6 mb-6" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">💡 Core Skills (1-5 each)</h3><div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div><label class="block text-xs mb-1" style="color:#999">Communication</label><input id="sk_comm" type="number" min="1" max="5" value="3" class="w-full px-4 py-3 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd"></div><div><label class="block text-xs mb-1" style="color:#999">Teamwork</label><input id="sk_team" type="number" min="1" max="5" value="3" class="w-full px-4 py-3 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd"></div><div><label class="block text-xs mb-1" style="color:#999">Creativity</label><input id="sk_creat" type="number" min="1" max="5" value="3" class="w-full px-4 py-3 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd"></div><div><label class="block text-xs mb-1" style="color:#999">Confidence</label><input id="sk_conf" type="number" min="1" max="5" value="3" class="w-full px-4 py-3 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd"></div></div></div>'+
-
-'<div class="rounded-2xl p-6 mb-6" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">💬 Comments</h3><textarea id="rpComments" rows="4" placeholder="Trainer comments about the student..." class="w-full px-4 py-3 rounded-xl text-sm outline-none" style="background:#f9f9f9;border:1px solid #ddd"></textarea></div>'+
-
-'<div class="rounded-2xl p-6 mb-6" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">🏆 Certificate</h3><select id="rpCert" onchange="updateCertPreview()" class="w-full px-4 py-3 rounded-xl text-sm outline-none mb-4" style="background:#f9f9f9;border:1px solid #ddd"><option value="">No Certificate</option><option value="best">Best Performing Student</option><option value="improved">Most Improved Student</option><option value="participation">Participation Award</option><option value="excellence">Certificate of Excellence</option></select><div id="certPreview"></div></div>'+
-
-'<div class="flex flex-wrap gap-3"><button type="submit" id="saveReportBtn" class="px-8 py-3.5 rounded-xl font-semibold text-white transition hover:opacity-90 flex items-center gap-2" style="background:#F26B3A"><i data-lucide="save" style="width:18px;height:18px"></i> Save Report</button><button type="button" onclick="printCertificate()" id="printCertBtn" class="hidden px-8 py-3.5 rounded-xl font-semibold border-2 transition hover:opacity-80 flex items-center gap-2" style="border-color:#F26B3A;color:#F26B3A"><i data-lucide="printer" style="width:18px;height:18px"></i> Print Certificate</button></div>'+
-'</form>';lucide.createIcons();updatePerfFields()}
-
-function onStudentSelect(){var sel=document.getElementById('rpStudent');var stu=reportStudents.find(function(s){return s.id===sel.value});if(stu){document.getElementById('rpSchool').value='Brighton International School, Katani'}}
-
-function updatePerfFields(){var prog=document.getElementById('rpProgram').value;var el=document.getElementById('perfFields');
-if(prog==='camp'){el.innerHTML=['Coding','Swimming','Art &amp; Creativity','Music','Cooking','Outdoor Activities'].map(function(s){return'<div class="flex items-center gap-3"><span class="text-sm w-36 shrink-0" style="color:#1a1a2e">'+s+'</span><input type="number" min="1" max="5" value="3" class="perf-field flex-1 px-4 py-2.5 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd" data-label="'+s+'"><span class="text-xs" style="color:#999">/5</span></div>'}).join('')}
-else if(prog==='tuition'){el.innerHTML='<div id="tuitionFields"><div class="flex items-center gap-3 mb-2"><span class="text-sm w-36 shrink-0" style="color:#1a1a2e">Mathematics</span><input type="number" min="0" max="100" value="" placeholder="%" class="perf-field flex-1 px-4 py-2.5 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd" data-label="Mathematics"><span class="text-xs" style="color:#999">%</span></div><div class="flex items-center gap-3 mb-2"><span class="text-sm w-36 shrink-0" style="color:#1a1a2e">English</span><input type="number" min="0" max="100" value="" placeholder="%" class="perf-field flex-1 px-4 py-2.5 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd" data-label="English"><span class="text-xs" style="color:#999">%</span></div><div class="flex items-center gap-3 mb-2"><span class="text-sm w-36 shrink-0" style="color:#1a1a2e">Sciences</span><input type="number" min="0" max="100" value="" placeholder="%" class="perf-field flex-1 px-4 py-2.5 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd" data-label="Sciences"><span class="text-xs" style="color:#999">%</span></div></div><button type="button" onclick="addTuitionField()" class="mt-2 text-sm font-medium flex items-center gap-1" style="color:#F26B3A"><i data-lucide="plus-circle" style="width:16px;height:16px"></i> Add Subject</button>'}
-else{el.innerHTML='<div id="skillFields"><div class="flex items-center gap-3 mb-2"><span class="text-sm w-36 shrink-0" style="color:#1a1a2e">Skill Area</span><input type="text" placeholder="e.g. Web Design" class="perf-field-name flex-1 px-4 py-2.5 rounded-xl text-sm outline-none" style="background:#f9f9f9;border:1px solid #ddd"><input type="number" min="1" max="5" value="3" class="perf-field w-20 px-3 py-2.5 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd" data-label=""></div></div><button type="button" onclick="addSkillField()" class="mt-2 text-sm font-medium flex items-center gap-1" style="color:#F26B3A"><i data-lucide="plus-circle" style="width:16px;height:16px"></i> Add Skill</button>'}
-lucide.createIcons()}
+function updatePerfFields(){
+  var prog=document.getElementById('rpProgram').value;var el=document.getElementById('perfFields');
+  if(prog==='camp'){
+    el.innerHTML=['Coding','Swimming','Art &amp; Creativity','Music','Cooking','Outdoor Activities'].map(function(s){
+      return'<div class="flex items-center gap-3 mb-2"><span class="text-sm w-36 shrink-0" style="color:#1a1a2e">'+s+'</span><input type="number" min="1" max="5" value="3" class="perf-field flex-1 px-4 py-2.5 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd" data-label="'+s+'"><span class="text-xs" style="color:#999">/5</span></div>';
+    }).join('');
+  }else if(prog==='tuition'){
+    el.innerHTML='<div id="tuitionFields"><div class="flex items-center gap-3 mb-2"><span class="text-sm w-36 shrink-0" style="color:#1a1a2e">Mathematics</span><input type="number" min="0" max="100" value="" placeholder="%" class="perf-field flex-1 px-4 py-2.5 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd" data-label="Mathematics"><span class="text-xs" style="color:#999">%</span></div><div class="flex items-center gap-3 mb-2"><span class="text-sm w-36 shrink-0" style="color:#1a1a2e">English</span><input type="number" min="0" max="100" value="" placeholder="%" class="perf-field flex-1 px-4 py-2.5 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd" data-label="English"><span class="text-xs" style="color:#999">%</span></div><div class="flex items-center gap-3 mb-2"><span class="text-sm w-36 shrink-0" style="color:#1a1a2e">Sciences</span><input type="number" min="0" max="100" value="" placeholder="%" class="perf-field flex-1 px-4 py-2.5 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd" data-label="Sciences"><span class="text-xs" style="color:#999">%</span></div></div><button type="button" onclick="addTuitionField()" class="mt-2 text-sm font-medium flex items-center gap-1" style="color:#F26B3A"><i data-lucide="plus-circle" style="width:16px;height:16px"></i> Add Subject</button>';
+  }else{
+    el.innerHTML='<div id="skillFields"><div class="flex items-center gap-3 mb-2"><span class="text-sm w-36 shrink-0" style="color:#1a1a2e"><input type="text" placeholder="e.g. Web Design" class="perf-field-name w-full px-2 py-1 text-sm outline-none" style="background:#f9f9f9;border:1px solid #ddd"></span><input type="number" min="1" max="5" value="3" class="perf-field w-20 px-3 py-2.5 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd" data-label=""><span class="text-xs" style="color:#999">/5</span></div></div><button type="button" onclick="addSkillField()" class="mt-2 text-sm font-medium flex items-center gap-1" style="color:#F26B3A"><i data-lucide="plus-circle" style="width:16px;height:16px"></i> Add Skill</button>';
+  }
+  lucide.createIcons();
+}
 
 function addTuitionField(){var c=document.getElementById('tuitionFields');var d=document.createElement('div');d.className='flex items-center gap-3 mb-2';d.innerHTML='<span class="text-sm w-36 shrink-0" style="color:#1a1a2e"><input type="text" placeholder="Subject name" class="perf-field-name w-full px-2 py-1 text-sm outline-none" style="background:#f9f9f9;border:1px solid #ddd"></span><input type="number" min="0" max="100" placeholder="%" class="perf-field flex-1 px-4 py-2.5 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd" data-label=""><span class="text-xs" style="color:#999">%</span>';c.appendChild(d)}
 function addSkillField(){var c=document.getElementById('skillFields');var d=document.createElement('div');d.className='flex items-center gap-3 mb-2';d.innerHTML='<span class="text-sm w-36 shrink-0" style="color:#1a1a2e"><input type="text" placeholder="Skill area" class="perf-field-name w-full px-2 py-1 text-sm outline-none" style="background:#f9f9f9;border:1px solid #ddd"></span><input type="number" min="1" max="5" value="3" class="perf-field w-20 px-3 py-2.5 rounded-xl text-sm outline-none text-center" style="background:#f9f9f9;border:1px solid #ddd" data-label=""><span class="text-xs" style="color:#999">/5</span>';c.appendChild(d)}
 function addPerfField(){updatePerfFields()}
 
-function gatherPerfData(){var prog=document.getElementById('rpProgram').value;var data={};
-if(prog==='camp'||prog==='tuition'){document.querySelectorAll('.perf-field').forEach(function(inp){var label=inp.dataset.label;if(!label){var nameEl=inp.parentElement.querySelector('.perf-field-name');if(nameEl)label=nameEl.value}if(label)data[label]=inp.value||'0'})}
-else{document.querySelectorAll('.perf-field').forEach(function(inp){var nameEl=inp.closest('.flex').querySelector('.perf-field-name');if(nameEl&&nameEl.value)inp.dataset.label=nameEl.value;if(inp.dataset.label)data[inp.dataset.label]=inp.value||'0'})}
-return data}
+function gatherPerfData(){
+  var data={};
+  document.querySelectorAll('.perf-field').forEach(function(inp){
+    var label=inp.dataset.label;
+    if(!label){var nameEl=inp.parentElement.querySelector('.perf-field-name');if(nameEl)label=nameEl.value}
+    if(label)data[label]=inp.value||'0';
+  });
+  return data;
+}
 
 function gatherCoreSkills(){return{Communication:document.getElementById('sk_comm').value||'3',Teamwork:document.getElementById('sk_team').value||'3',Creativity:document.getElementById('sk_creat').value||'3',Confidence:document.getElementById('sk_conf').value||'3'}}
 
-function updateCertPreview(){var type=document.getElementById('rpCert').value;var el=document.getElementById('certPreview');var btn=document.getElementById('printCertBtn');if(!type){el.innerHTML='';btn.classList.add('hidden');return}btn.classList.remove('hidden');
-var labels={best:'Best Performing Student',improved:'Most Improved Student',participation:'Participation Award',excellence:'Certificate of Excellence'};
-var sel=document.getElementById('rpStudent');var stuName='[Student Name]';var stu=reportStudents.find(function(s){return s.id===sel.value});if(stu)stuName=stu.name;
-var prog=document.getElementById('rpProgram').value;var progLabels={camp:'DreamQuest Holiday Camp',tuition:'Home Tuition Program',skills:'Skill Development Program'};
-el.innerHTML='<div class="certificate-frame mt-4"><div class="certificate-inner"><div style="margin-bottom:15px"><div class="w-12 h-12 rounded-xl mx-auto flex items-center justify-center" style="background:#F26B3A"><svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><p style="color:#F26B3A;font-size:11px;font-weight:700;letter-spacing:3px;margin-top:8px">SMART MINDS</p><p style="color:#999;font-size:10px">TUITION &amp; SKILLS HUB</p></div><h2 style="font-size:22px;font-weight:800;color:#1a1a2e;letter-spacing:2px;margin:20px 0 10px">CERTIFICATE OF ACHIEVEMENT</h2><div style="width:60px;height:2px;background:#F26B3A;margin:0 auto 20px"></div><p style="color:#666;font-size:13px">This is to certify that</p><p style="font-size:24px;font-weight:700;color:#1a1a2e;margin:10px 0;border-bottom:2px solid #f0d0b8;display:inline-block;padding-bottom:5px">'+stuName+'</p><p style="color:#666;font-size:13px;margin-top:10px">has been awarded</p><p style="font-size:16px;font-weight:700;color:#F26B3A;margin:8px 0">'+(labels[type]||type)+'</p><p style="color:#666;font-size:13px">during the</p><p style="font-size:15px;font-weight:600;color:#1a1a2e;margin:5px 0">'+(progLabels[prog]||prog)+'</p><p style="color:#666;font-size:13px">at</p><p style="font-size:15px;font-weight:600;color:#1a1a2e;margin:5px 0">'+(document.getElementById('rpSchool').value||'Smart Minds')+'</p><div class="certificate-seal"><svg width="30" height="30" viewbox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 4 3 6 3s6-1 6-3v-5"/></svg>SMART MINDS</div><div style="margin-top:25px;display:flex;justify-content:space-between;padding:0 30px"><div style="text-align:center"><div style="width:120px;border-top:1px solid #ccc;margin-bottom:5px"></div><p style="font-size:11px;color:#666">'+(currentUser?currentUser.name:'Director')+'</p><p style="font-size:10px;color:#999">Director</p></div><div style="text-align:center"><div style="width:120px;border-top:1px solid #ccc;margin-bottom:5px"></div><p style="font-size:11px;color:#666">Date: '+new Date().toLocaleDateString('en-KE',{day:'numeric',month:'long',year:'numeric'})+'</p></div></div></div></div>'}
+function updateCertPreview(){
+  var type=document.getElementById('rpCert').value;var el=document.getElementById('certPreview');var btn=document.getElementById('printCertBtn');
+  if(!type){el.innerHTML='';btn.classList.add('hidden');return}
+  btn.classList.remove('hidden');
+  var labels={best:'Best Performing Student',improved:'Most Improved Student',participation:'Participation Award',excellence:'Certificate of Excellence'};
+  var sel=document.getElementById('rpStudent');var stuName='[Student Name]';
+  var stu=reportStudents.find(function(s){return s.id===sel.value});if(stu)stuName=stu.name;
+  var prog=document.getElementById('rpProgram').value;var progLabels={camp:'DreamQuest Holiday Camp',tuition:'Home Tuition Program',skills:'Skill Development Program'};
+  el.innerHTML='<div class="certificate-frame mt-4"><div class="certificate-inner"><div style="margin-bottom:15px"><div class="w-12 h-12 rounded-xl mx-auto flex items-center justify-center" style="background:#F26B3A"><svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><p style="color:#F26B3A;font-size:11px;font-weight:700;letter-spacing:3px;margin-top:8px">SMART MINDS</p><p style="color:#999;font-size:10px">TUITION &amp; SKILLS HUB</p></div><h2 style="font-size:22px;font-weight:800;color:#1a1a2e;letter-spacing:2px;margin:20px 0 10px">CERTIFICATE OF ACHIEVEMENT</h2><div style="width:60px;height:2px;background:#F26B3A;margin:0 auto 20px"></div><p style="color:#666;font-size:13px">This is to certify that</p><p style="font-size:24px;font-weight:700;color:#1a1a2e;margin:10px 0;border-bottom:2px solid #f0d0b8;display:inline-block;padding-bottom:5px">'+stuName+'</p><p style="color:#666;font-size:13px;margin-top:10px">has been awarded</p><p style="font-size:16px;font-weight:700;color:#F26B3A;margin:8px 0">'+(labels[type]||type)+'</p><p style="color:#666;font-size:13px">during the</p><p style="font-size:15px;font-weight:600;color:#1a1a2e;margin:5px 0">'+(progLabels[prog]||prog)+'</p><p style="color:#666;font-size:13px">at</p><p style="font-size:15px;font-weight:600;color:#1a1a2e;margin:5px 0">'+(document.getElementById('rpSchool').value||'Smart Minds')+'</p><div class="certificate-seal"><svg width="30" height="30" viewbox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 4 3 6 3s6-1 6-3v-5"/></svg>SMART MINDS</div><div style="margin-top:25px;display:flex;justify-content:space-between;padding:0 30px"><div style="text-align:center"><div style="width:120px;border-top:1px solid #ccc;margin-bottom:5px"></div><p style="font-size:11px;color:#666">'+(currentUser?currentUser.name:'Director')+'</p><p style="font-size:10px;color:#999">Director</p></div><div style="text-align:center"><div style="width:120px;border-top:1px solid #ccc;margin-bottom:5px"></div><p style="font-size:11px;color:#666">Date: '+new Date().toLocaleDateString('en-KE',{day:'numeric',month:'long',year:'numeric'})+'</p></div></div></div></div>';
+}
 
-async function submitReport(e){e.preventDefault();var btn=document.getElementById('saveReportBtn');btn.innerHTML='<span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> Saving...';btn.disabled=true;
-var sel=document.getElementById('rpStudent');var stu=reportStudents.find(function(s){return s.id===sel.value});
-var d={action:'addReport',token:getToken(),student_id:sel.value,student_name:stu?stu.name:'',program:document.getElementById('rpProgram').value,grade:stu?stu.grade:'',host_school:document.getElementById('rpSchool').value,term:document.getElementById('rpTerm').value,performance_data:gatherPerfData(),core_skills:gatherCoreSkills(),comments:document.getElementById('rpComments').value,certificate_type:document.getElementById('rpCert').value};
-var r=await api(d);btn.innerHTML='<i data-lucide="save" style="width:18px;height:18px"></i> Save Report';btn.disabled=false;lucide.createIcons();
-if(r.success){showToast('Report Saved! 🎉','Report and certificate created for '+(stu?stu.name:'student'));document.getElementById('reportForm').reset();document.getElementById('certPreview').innerHTML='';document.getElementById('printCertBtn').classList.add('hidden');updatePerfFields()}
-else showToast('Error',r.error||'Could not save.',true)}
+async function submitReport(e){
+  e.preventDefault();var btn=document.getElementById('saveReportBtn');
+  btn.innerHTML='<span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> Saving...';btn.disabled=true;
+  var sel=document.getElementById('rpStudent');var stu=reportStudents.find(function(s){return s.id===sel.value});
+  var d={action:'addReport',token:getToken(),student_id:sel.value,student_name:stu?stu.name:'',program:document.getElementById('rpProgram').value,grade:stu?stu.grade:'',host_school:document.getElementById('rpSchool').value,term:document.getElementById('rpTerm').value,performance_data:gatherPerfData(),core_skills:gatherCoreSkills(),comments:document.getElementById('rpComments').value,certificate_type:document.getElementById('rpCert').value};
+  var r=await api(d);
+  btn.innerHTML='<i data-lucide="save" style="width:18px;height:18px"></i> Save Report';btn.disabled=false;lucide.createIcons();
+  if(r.success){showToast('Report Saved! 🎉','Report and certificate created for '+(stu?stu.name:'student'));document.getElementById('reportForm').reset();document.getElementById('certPreview').innerHTML='';document.getElementById('printCertBtn').classList.add('hidden');updatePerfFields()}
+  else showToast('Error',r.error||'Could not save.',true);
+}
 
 function printCertificate(){var certHTML=document.getElementById('certPreview').innerHTML;if(!certHTML){showToast('Error','Select a certificate type first.',true);return}var pa=document.getElementById('printArea');pa.style.display='block';pa.innerHTML=certHTML;setTimeout(function(){window.print();setTimeout(function(){pa.style.display='none'},500)},300)}
 
 // ===== MY REPORTS (BOTH) =====
-async function loadMyReports(c){var isT=currentUser.type==='teacher';var r=await api({action:'getReports',token:getToken()});
-c.innerHTML='<h2 class="text-2xl font-bold mb-2" style="color:#1a1a2e">'+(isT?'📝 My Reports':'📊 My Reports &amp; Certificates')+'</h2><p class="text-sm mb-8" style="color:#999">'+(isT?'Reports you\'ve created.':'Your progress reports and certificates.')+'</p><div id="reportsList"><p class="text-sm" style="color:#999">Loading...</p></div>';
-if(!r.success){document.getElementById('reportsList').innerHTML='<p class="text-sm" style="color:#999">Could not load reports.</p>';return}
-if(!r.reports.length){document.getElementById('reportsList').innerHTML='<div class="rounded-2xl p-8 text-center" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-4xl mb-3">📋</p><p class="font-semibold" style="color:#1a1a2e">No Reports Yet</p><p class="text-sm mt-1" style="color:#999">'+(isT?'Create your first report above.':'Your teacher will publish reports here.')+'</p></div>';return}
-var html='';r.reports.forEach(function(rep){var progLabels={camp:'🏕️ DreamQuest Camp',tuition:'📖 Home Tuition',skills:'💡 Skill Program'};var perf=rep.performance_data||{};var skills=rep.core_skills||{};var avgPerf=0,perfCount=0;Object.keys(perf).forEach(function(k){var v=parseFloat(perf[k])||0;var max=rep.program==='tuition'?100:5;avgPerf+=v/max*100;perfCount++});avgPerf=perfCount?Math.round(avgPerf/perfCount):0;
-html+='<div class="rounded-2xl p-6 mb-6" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">';html+='<div class="flex flex-wrap items-start justify-between gap-4 mb-4"><div><p class="font-bold text-sm" style="color:#1a1a2e">'+(isT?rep.student_name:'Report')+'</p><p class="text-xs" style="color:#999">'+(progLabels[rep.program]||rep.program)+' · '+(rep.term||'')+' · '+new Date(rep.created_at).toLocaleDateString('en-KE')+'</p>'+(rep.instructor&&!isT?'<p class="text-xs" style="color:#999">By: '+rep.instructor+'</p>':'')+'</div>';if(rep.certificate_type){html+='<span class="px-3 py-1 rounded-full text-xs font-bold" style="background:rgba(242,107,58,.1);color:#F26B3A">🏆 '+rep.certificate_type+'</span>'}html+='</div>';
-html+='<div class="mb-4"><p class="text-xs font-semibold uppercase tracking-wider mb-3" style="color:#999">Performance</p>';Object.keys(perf).forEach(function(k){var v=parseFloat(perf[k])||0;var max=rep.program==='tuition'?100:5;var pct=Math.round(v/max*100);var color=pct>=80?'#22c55e':pct>=60?'#F26B3A':pct>=40?'#eab308':'#ef4444';html+='<div class="skill-row"><span class="skill-label">'+k+'</span><div class="skill-bar-wrap"><div class="skill-bar-fill" style="width:'+pct+'%;background:'+color+'"></div></div><span class="skill-value" style="color:'+color+'">'+v+'/'+max+'</span></div>'});html+='</div>';
-html+='<div class="mb-4"><p class="text-xs font-semibold uppercase tracking-wider mb-3" style="color:#999">Core Skills</p><div class="grid grid-cols-2 md:grid-cols-4 gap-3">';Object.keys(skills).forEach(function(k){var v=parseInt(skills[k])||0;var pct=Math.round(v/5*100);var color=pct>=80?'#22c55e':pct>=60?'#F26B3A':pct>=40?'#eab308':'#ef4444';html+='<div class="text-center p-3 rounded-xl" style="background:#f9f9f9"><p class="text-xs mb-1" style="color:#999">'+k+'</p><p class="text-xl font-bold" style="color:'+color+'">'+v+'</p><p class="text-[10px]" style="color:#ccc">/5</p></div>'});html+='</div></div>';
-if(rep.comments){html+='<div class="mb-4 p-3 rounded-xl" style="background:#f9f9f9"><p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#999">Comments</p><p class="text-sm" style="color:#555">'+rep.comments+'</p></div>'}
-if(rep.certificate_type){html+='<button onclick="viewCertificate(\''+rep.id+'\')" class="text-sm font-medium flex items-center gap-1" style="color:#F26B3A"><i data-lucide="award" style="width:16px;height:16px"></i> View Certificate</button>'}
-html+='</div>'});
-document.getElementById('reportsList').innerHTML=html;lucide.createIcons()}
+async function loadMyReports(c){
+  var isT=currentUser.type==='teacher';var r=await api({action:'getReports',token:getToken()});
+  c.innerHTML='<h2 class="text-2xl font-bold mb-2" style="color:#1a1a2e">'+(isT?'📝 My Reports':'📊 My Reports &amp; Certificates')+'</h2><p class="text-sm mb-8" style="color:#999">'+(isT?'Reports you\'ve created.':'Your progress reports and certificates.')+'</p><div id="reportsList"><p class="text-sm" style="color:#999">Loading...</p></div>';
+  if(!r.success){document.getElementById('reportsList').innerHTML='<p class="text-sm" style="color:#999">Could not load reports.</p>';return}
+  if(!r.reports.length){document.getElementById('reportsList').innerHTML='<div class="rounded-2xl p-8 text-center" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-4xl mb-3">📋</p><p class="font-semibold" style="color:#1a1a2e">No Reports Yet</p><p class="text-sm mt-1" style="color:#999">'+(isT?'Create your first report above.':'Your teacher will publish reports here.')+'</p></div>';return}
+  var html='';r.reports.forEach(function(rep){
+    var progLabels={camp:'🏕️ DreamQuest Camp',tuition:'📖 Home Tuition',skills:'💡 Skill Program'};var perf=rep.performance_data||{};var skills=rep.core_skills||{};
+    html+='<div class="rounded-2xl p-6 mb-6" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">';
+    html+='<div class="flex flex-wrap items-start justify-between gap-4 mb-4"><div><p class="font-bold text-sm" style="color:#1a1a2e">'+(isT?rep.student_name:'Report')+'</p><p class="text-xs" style="color:#999">'+(progLabels[rep.program]||rep.program)+' · '+(rep.term||'')+' · '+new Date(rep.created_at).toLocaleDateString('en-KE')+'</p>'+(rep.instructor&&!isT?'<p class="text-xs" style="color:#999">By: '+rep.instructor+'</p>':'')+'</div>';
+    if(rep.certificate_type)html+='<span class="px-3 py-1 rounded-full text-xs font-bold" style="background:rgba(242,107,58,.1);color:#F26B3A">🏆 '+rep.certificate_type+'</span>';
+    html+='</div>';
+    html+='<div class="mb-4"><p class="text-xs font-semibold uppercase tracking-wider mb-3" style="color:#999">Performance</p>';
+    Object.keys(perf).forEach(function(k){var v=parseFloat(perf[k])||0;var max=rep.program==='tuition'?100:5;var pct=Math.round(v/max*100);var color=pct>=80?'#22c55e':pct>=60?'#F26B3A':pct>=40?'#eab308':'#ef4444';html+='<div class="skill-row"><span class="skill-label">'+k+'</span><div class="skill-bar-wrap"><div class="skill-bar-fill" style="width:'+pct+'%;background:'+color+'"></div></div><span class="skill-value" style="color:'+color+'">'+v+'/'+max+'</span></div>'});
+    html+='</div>';
+    html+='<div class="mb-4"><p class="text-xs font-semibold uppercase tracking-wider mb-3" style="color:#999">Core Skills</p><div class="grid grid-cols-2 md:grid-cols-4 gap-3">';
+    Object.keys(skills).forEach(function(k){var v=parseInt(skills[k])||0;var pct=Math.round(v/5*100);var color=pct>=80?'#22c55e':pct>=60?'#F26B3A':pct>=40?'#eab308':'#ef4444';html+='<div class="text-center p-3 rounded-xl" style="background:#f9f9f9"><p class="text-xs mb-1" style="color:#999">'+k+'</p><p class="text-xl font-bold" style="color:'+color+'">'+v+'</p><p class="text-[10px]" style="color:#ccc">/5</p></div>'});
+    html+='</div></div>';
+    if(rep.comments)html+='<div class="mb-4 p-3 rounded-xl" style="background:#f9f9f9"><p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color:#999">Comments</p><p class="text-sm" style="color:#555">'+rep.comments+'</p></div>';
+    if(rep.certificate_type)html+='<button onclick="viewCertificate(\''+rep.id+'\')" class="text-sm font-medium flex items-center gap-1" style="color:#F26B3A"><i data-lucide="award" style="width:16px;height:16px"></i> View Certificate</button>';
+    html+='</div>';
+  });
+  document.getElementById('reportsList').innerHTML=html;lucide.createIcons();
+}
 
-function viewCertificate(reportId){var repEl=document.querySelector('[data-report-id]');showToast('Info','Certificate preview - use browser Print to save as PDF.');window.print()}
+function viewCertificate(reportId){showToast('Info','Certificate preview — use browser Print to save as PDF.');window.print()}
 
 // ===== PAYMENTS (STUDENT) =====
-async function loadPayments(c){var r=await api({action:'getPayments',token:getToken()});
-c.innerHTML='<h2 class="text-2xl font-bold mb-6" style="color:#1a1a2e">💳 Payments</h2><div class="grid grid-cols-2 gap-4 mb-8"><div class="rounded-2xl p-6" style="background:#22c55e;color:white"><p class="text-xs uppercase tracking-wider opacity-80 mb-1">Total Paid</p><p class="text-3xl font-bold">KES '+(r.success?(r.totalPaid||0).toLocaleString():'0')+'</p></div><div class="rounded-2xl p-6" style="background:#ef4444;color:white"><p class="text-xs uppercase tracking-wider opacity-80 mb-1">Outstanding</p><p class="text-3xl font-bold">KES '+(r.success?(r.totalDue||0).toLocaleString():'0')+'</p></div></div><div class="rounded-2xl overflow-hidden" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><div class="p-4 border-b" style="border-color:#eee"><h3 class="font-bold text-sm" style="color:#1a1a2e">Payment History</h3></div><div id="payList"></div></div>';
-if(!r.success||!r.payments.length){document.getElementById('payList').innerHTML='<p class="text-sm text-center py-8" style="color:#999">No payment records yet.</p>';return}
-document.getElementById('payList').innerHTML=r.payments.map(function(p){var isPaid=String(p.status)==='Paid';return'<div class="flex items-center gap-4 p-4"><div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:'+(isPaid?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)')+'"><span class="text-lg">'+(isPaid?'✅':'⏳')+'</span></div><div class="flex-1 min-w-0"><p class="font-semibold text-sm" style="color:#1a1a2e">'+(p.description||'Payment')+'</p><p class="text-xs" style="color:#999">'+(p.method||'')+(p.reference?' · Ref: '+p.reference:'')+'</p></div><div class="text-right shrink-0"><p class="font-bold text-sm" style="color:'+(isPaid?'#22c55e':'#ef4444')+'">KES '+(parseFloat(p.amount)||0).toLocaleString()+'</p><span class="text-[10px] px-2 py-0.5 rounded-full font-medium" style="background:'+(isPaid?'rgba(34,197,94,.1);color:#22c55e':'rgba(239,68,68,.1);color:#ef4444')+'">'+p.status+'</span></div></div>'}).join('')}
+async function loadPayments(c){
+  var r=await api({action:'getPayments',token:getToken()});
+  c.innerHTML='<h2 class="text-2xl font-bold mb-6" style="color:#1a1a2e">💳 Payments</h2><div class="grid grid-cols-2 gap-4 mb-8"><div class="rounded-2xl p-6" style="background:#22c55e;color:white"><p class="text-xs uppercase tracking-wider opacity-80 mb-1">Total Paid</p><p class="text-3xl font-bold">KES '+(r.success?(r.totalPaid||0).toLocaleString():'0')+'</p></div><div class="rounded-2xl p-6" style="background:#ef4444;color:white"><p class="text-xs uppercase tracking-wider opacity-80 mb-1">Outstanding</p><p class="text-3xl font-bold">KES '+(r.success?(r.totalDue||0).toLocaleString():'0')+'</p></div></div><div class="rounded-2xl overflow-hidden" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><div class="p-4 border-b" style="border-color:#eee"><h3 class="font-bold text-sm" style="color:#1a1a2e">Payment History</h3></div><div id="payList"></div></div>';
+  if(!r.success||!r.payments.length){document.getElementById('payList').innerHTML='<p class="text-sm text-center py-8" style="color:#999">No payment records yet.</p>';return}
+  document.getElementById('payList').innerHTML=r.payments.map(function(p){
+    var isPaid=String(p.status)==='Paid';
+    return'<div class="flex items-center gap-4 p-4"><div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style="background:'+(isPaid?'rgba(34,197,94,.1)':'rgba(239,68,68,.1)')+'"><span class="text-lg">'+(isPaid?'✅':'⏳')+'</span></div><div class="flex-1 min-w-0"><p class="font-semibold text-sm" style="color:#1a1a2e">'+(p.description||'Payment')+'</p><p class="text-xs" style="color:#999">'+(p.method||'')+(p.reference?' · Ref: '+p.reference:'')+'</p></div><div class="text-right shrink-0"><p class="font-bold text-sm" style="color:'+(isPaid?'#22c55e':'#ef4444')+'">KES '+(parseFloat(p.amount)||0).toLocaleString()+'</p><span class="text-[10px] px-2 py-0.5 rounded-full font-medium" style="background:'+(isPaid?'rgba(34,197,94,.1);color:#22c55e':'rgba(239,68,68,.1);color:#ef4444')+'">'+p.status+'</span></div></div>';
+  }).join('');
+}
 
 // ===== PROFILE =====
-async function loadProfile(c){var r=await api({action:'getProfile',token:getToken()});if(!r.success){c.innerHTML='<p style="color:#999">Could not load.</p>';return}var p=r.profile;var isT=currentUser.type==='teacher';var fields=isT?[['Name',p.name],['Email',p.email],['Phone',p.phone],['Subjects',p.subjects],['Certification',p.certification],['Status',p.status]]:[['Name',p.name],['Email',p.email],['Phone',p.phone],['Curriculum',p.curriculum],['Grade',p.grade],['Parent',p.parent_name],['Parent Phone',p.parent_phone],['Interest',p.interest],['Status',p.status]];
-c.innerHTML='<h2 class="text-2xl font-bold mb-6" style="color:#1a1a2e">👤 My Profile</h2><div class="rounded-2xl p-6 md:p-8 max-w-lg" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">'+fields.map(function(f){return'<div class="flex justify-between items-start py-3 border-b" style="border-color:#f0f0f0"><p class="text-xs font-semibold uppercase tracking-wider" style="color:#999">'+f[0]+'</p><p class="text-sm font-medium text-right" style="color:#1a1a2e;max-width:60%">'+(f[1]||'—')+'</p></div>'}).join('')+'</div>'}
+async function loadProfile(c){
+  var r=await api({action:'getProfile',token:getToken()});
+  if(!r.success){c.innerHTML='<p style="color:#999">Could not load.</p>';return}
+  var p=r.profile;var isT=currentUser.type==='teacher';
+  var fields=isT?[['Name',p.name],['Email',p.email],['Phone',p.phone],['Subjects',p.subjects],['Certification',p.certification],['Status',p.status]]:[['Name',p.name],['Email',p.email],['Phone',p.phone],['Curriculum',p.curriculum],['Grade',p.grade],['Parent',p.parent_name],['Parent Phone',p.parent_phone],['Interest',p.interest],['Status',p.status]];
+  c.innerHTML='<h2 class="text-2xl font-bold mb-6" style="color:#1a1a2e">👤 My Profile</h2><div class="rounded-2xl p-6 md:p-8 max-w-lg" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">'+fields.map(function(f){return'<div class="flex justify-between items-start py-3 border-b" style="border-color:#f0f0f0"><p class="text-xs font-semibold uppercase tracking-wider" style="color:#999">'+f[0]+'</p><p class="text-sm font-medium text-right" style="color:#1a1a2e;max-width:60%">'+(f[1]||'—')+'</p></div>'}).join('')+'</div>';
+}
 
 // ===== ENROLL (PUBLIC) =====
-async function handleEnroll(e){e.preventDefault();var btn=document.getElementById('enrollBtn');btn.textContent='Sending...';btn.disabled=true;var fd=new FormData(e.target);var r=await api({action:'inquiry',name:fd.get('name'),phone:fd.get('phone'),email:fd.get('email')||'',interest:fd.get('interest'),message:'',source:'website'});btn.textContent='Enroll Now →';btn.disabled=false;if(r.success){e.target.reset();showToast('✅ Inquiry Sent!',r.message||'We\'ll contact you shortly.')}else showToast('Error',r.error||'Try again.',true)}
+async function handleEnroll(e){
+  e.preventDefault();var btn=document.getElementById('enrollBtn');btn.textContent='Sending...';btn.disabled=true;
+  var fd=new FormData(e.target);
+  var r=await api({action:'inquiry',name:fd.get('name'),phone:fd.get('phone'),email:fd.get('email')||'',interest:fd.get('interest'),message:'',source:'website'});
+  btn.textContent='Enroll Now →';btn.disabled=false;
+  if(r.success){e.target.reset();showToast('✅ Inquiry Sent!',r.message||'We\'ll contact you shortly.')}
+  else showToast('Error',r.error||'Try again.',true);
+}
 
 // AUTO-LOGIN
 (function(){var u=getUser(),t=getToken();if(u&&t){api({action:'getProfile',token:t}).then(function(r){if(r.success)enterPortal(u);else clearSession()})}})();
 
 // ELEMENT SDK
-var defaultConfig={background_color:'#FFFBF5',surface_color:'#FFFFFF',text_color:'#1a1a2e',primary_action_color:'#F26B3A',secondary_action_color:'#555555',font_family:'Outfit',font_size:16,hero_heading:"Unlock Your Child's Full Potential",hero_subtext:'At Smart Minds Home Tuition & Skills Hub, we provide personalized learning, skill development, and engaging holiday programs designed to help every child thrive.',mission_text:'To empower learners through personalized education, creativity, and practical skills that prepare them for the future.',vision_text:'To become a leading hub for innovative learning and skill development across schools and communities.',cta_heading:'Give Your Child the Smart Advantage',cta_subtext:'Join Smart Minds today and unlock a world of learning, creativity, and growth.'};
-function applyConfig(cf){var c=Object.assign({},defaultConfig,cf);document.body.style.fontFamily=(c.font_family||'Outfit')+", 'Outfit', sans-serif";document.body.style.backgroundColor=c.background_color;document.body.style.color=c.text_color;var hH=document.getElementById('heroHeading');if(hH){hH.style.color=c.text_color;hH.querySelector('span').style.color=c.primary_action_color;var parts=(c.hero_heading||'').split('\n');hH.innerHTML=parts.length>1?parts[0]+'<br><span style="color:'+c.primary_action_color+'">'+parts[1]+'</span>':c.hero_heading}var hS=document.getElementById('heroSubtext');if(hS){hS.textContent=c.hero_subtext||'';hS.style.color=c.secondary_action_color}var mt=document.getElementById('missionText');if(mt){mt.textContent=c.mission_text||'';mt.style.color=c.secondary_action_color}var vt=document.getElementById('visionText');if(vt){vt.textContent=c.vision_text||'';vt.style.color=c.secondary_action_color}var cH=document.getElementById('ctaHeading');if(cH)cH.innerHTML=(c.cta_heading||'').replace('Smart Advantage','<span style="color:'+c.primary_action_color+'">Smart Advantage</span>');var cS=document.getElementById('ctaSubtext');if(cS)cS.textContent=c.cta_subtext||'';document.querySelectorAll('[style*="background:#F26B3A"],[style*="background: #F26B3A"]').forEach(function(el){el.style.background=c.primary_action_color})}
+var defaultConfig={background_color:'#FFFBF5',surface_color:'#FFFFFF',text_color:'#1a1a2e',primary_action_color:'#F26B3A',secondary_action_color:'#555555',font_family:'Outfit',font_size:16,hero_heading:"Unlock Your Child's\nFull Potential",hero_subtext:'At Smart Minds Home Tuition & Skills Hub, we provide personalized learning, skill development, and engaging holiday programs designed to help every child thrive.',mission_text:'To empower learners through personalized education, creativity, and practical skills that prepare them for the future.',vision_text:'To become a leading hub for innovative learning and skill development across schools and communities.',cta_heading:'Give Your Child the Smart Advantage',cta_subtext:'Join Smart Minds today and unlock a world of learning, creativity, and growth.'};
+function applyConfig(cf){var c=Object.assign({},defaultConfig,cf);document.body.style.fontFamily=(c.font_family||'Outfit')+", 'Outfit', sans-serif";document.body.style.backgroundColor=c.background_color;document.body.style.color=c.text_color;var hH=document.getElementById('heroHeading');if(hH){hH.style.color=c.text_color;var parts=(c.hero_heading||'').split('\n');hH.innerHTML=parts.length>1?parts[0]+'<br><span style="color:'+c.primary_action_color+'">'+parts[1]+'</span>':c.hero_heading}var hS=document.getElementById('heroSubtext');if(hS){hS.textContent=c.hero_subtext||'';hS.style.color=c.secondary_action_color}var mt=document.getElementById('missionText');if(mt){mt.textContent=c.mission_text||'';mt.style.color=c.secondary_action_color}var vt=document.getElementById('visionText');if(vt){vt.textContent=c.vision_text||'';vt.style.color=c.secondary_action_color}var cH=document.getElementById('ctaHeading');if(cH)cH.innerHTML=(c.cta_heading||'').replace('Smart Advantage','<span style="color:'+c.primary_action_color+'">Smart Advantage</span>');var cS=document.getElementById('ctaSubtext');if(cS)cS.textContent=c.cta_subtext||'';document.querySelectorAll('[style*="background:#F26B3A"],[style*="background: #F26B3A"]').forEach(function(el){el.style.background=c.primary_action_color})}
 if(window.elementSdk){window.elementSdk.init({defaultConfig:defaultConfig,onConfigChange:function(c){applyConfig(c)},mapToCapabilities:function(c){return{recolorables:[{get:function(){return c.background_color||defaultConfig.background_color},set:function(v){c.background_color=v;window.elementSdk.setConfig({background_color:v})}},{get:function(){return c.text_color||defaultConfig.text_color},set:function(v){c.text_color=v;window.elementSdk.setConfig({text_color:v})}},{get:function(){return c.primary_action_color||defaultConfig.primary_action_color},set:function(v){c.primary_action_color=v;window.elementSdk.setConfig({primary_action_color:v})}},{get:function(){return c.secondary_action_color||defaultConfig.secondary_action_color},set:function(v){c.secondary_action_color=v;window.elementSdk.setConfig({secondary_action_color:v})}}],borderables:[],fontEditable:{get:function(){return c.font_family||defaultConfig.font_family},set:function(v){c.font_family=v;window.elementSdk.setConfig({font_family:v})}},fontSizeable:{get:function(){return c.font_size||defaultConfig.font_size},set:function(v){c.font_size=v;window.elementSdk.setConfig({font_size:v})}}}},mapToEditPanelValues:function(c){return new Map([['hero_heading',c.hero_heading||''],['hero_subtext',c.hero_subtext||''],['mission_text',c.mission_text||''],['vision_text',c.vision_text||''],['cta_heading',c.cta_heading||''],['cta_subtext',c.cta_subtext||'']])}})}
 
 lucide.createIcons();

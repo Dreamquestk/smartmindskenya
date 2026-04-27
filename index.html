@@ -73,7 +73,7 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
         <span id="loginBtnLoad" class="hidden"><span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span></span>
       </button>
     </div>
-    <p class="text-center text-xs mt-4" style="color:#999">Students, teachers &amp; partner schools</p>
+    <p class="text-center text-xs mt-4" style="color:#999">Students, teachers, partner schools &amp; admins</p>
   </form>
 
   <!-- REGISTER FORM -->
@@ -900,7 +900,7 @@ async function admStudents(c) {
   if (!r.success || !r.students.length) { c.innerHTML += '<p class="text-sm" style="color:#999">No students yet.</p>'; return; }
   c.innerHTML += '<div class="rounded-2xl overflow-hidden" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><div class="overflow-x-auto"><table class="adm-table"><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Curriculum</th><th>Grade</th><th>Status</th><th>Action</th></tr></thead><tbody>' +
     r.students.map(function(s) {
-      return '<tr><td class="font-semibold">' + s.name + '</td><td class="text-sm">' + s.email + '</td><td class="text-sm">' + (s.phone || '—') + '</td><td class="text-sm">' + (s.curriculum || '—') + '</td><td class="text-sm">' + (s.grade || '—') + '</td><td><span class="badge ' + (s.status === 'active' ? 'badge-green' : 'badge-red') + '">' + s.status + '</span></td><td><button onclick="admToggle(\'' + s.id + '\',\'' + s.status + '\')" class="adm-btn" style="background:' + (s.status === 'active' ? '#ef4444' : '#22c55e') + ';color:white">' + (s.status === 'active' ? 'Deactivate' : 'Activate') + '</button></td></tr>';
+      return '<tr><td class="font-semibold">' + s.name + '</td><td class="text-sm">' + s.email + '</td><td class="text-sm">' + (s.phone || '—') + '</td><td class="text-sm">' + (s.curriculum || '—') + '</td><td class="text-sm">' + (s.grade || '—') + '</td><td><span class="badge ' + (s.status === 'active' ? 'badge-green' : 'badge-red') + '">' + s.status + '</span></td><td><button onclick="admToggle(\'' + s.id + '\',\'' + s.status + '\',\'students\')" class="adm-btn" style="background:' + (s.status === 'active' ? '#ef4444' : '#22c55e') + ';color:white">' + (s.status === 'active' ? 'Deactivate' : 'Activate') + '</button></td></tr>';
     }).join('') + '</tbody></table></div></div>';
 }
 
@@ -912,14 +912,14 @@ async function admTeachers(c) {
   if (!r.success || !r.teachers.length) { c.innerHTML += '<p class="text-sm" style="color:#999">No teachers yet.</p>'; return; }
   c.innerHTML += '<div class="rounded-2xl overflow-hidden" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><div class="overflow-x-auto"><table class="adm-table"><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Subjects</th><th>Status</th><th>Action</th></tr></thead><tbody>' +
     r.teachers.map(function(t) {
-      return '<tr><td class="font-semibold">' + t.name + '</td><td class="text-sm">' + t.email + '</td><td class="text-sm">' + (t.phone || '—') + '</td><td class="text-sm">' + (t.subjects || '—') + '</td><td><span class="badge ' + (t.status === 'active' ? 'badge-green' : 'badge-red') + '">' + t.status + '</span></td><td><button onclick="admToggle(\'' + t.id + '\',\'' + t.status + '\')" class="adm-btn" style="background:' + (t.status === 'active' ? '#ef4444' : '#22c55e') + ';color:white">' + (t.status === 'active' ? 'Deactivate' : 'Activate') + '</button></td></tr>';
+      return '<tr><td class="font-semibold">' + t.name + '</td><td class="text-sm">' + t.email + '</td><td class="text-sm">' + (t.phone || '—') + '</td><td class="text-sm">' + (t.subjects || '—') + '</td><td><span class="badge ' + (t.status === 'active' ? 'badge-green' : 'badge-red') + '">' + t.status + '</span></td><td><button onclick="admToggle(\'' + t.id + '\',\'' + t.status + '\',\'teachers\')" class="adm-btn" style="background:' + (t.status === 'active' ? '#ef4444' : '#22c55e') + ';color:white">' + (t.status === 'active' ? 'Deactivate' : 'Activate') + '</button></td></tr>';
     }).join('') + '</tbody></table></div></div>';
 }
 
-async function admToggle(id, status) {
+async function admToggle(id, status, tabName) {
   var ns = status === 'active' ? 'inactive' : 'active';
   var r = await api({ action: 'adminUpdateUserStatus', token: getToken(), user_id: id, status: ns });
-  if (r.success) { showToast('Updated ✅', ns === 'active' ? 'Activated.' : 'Deactivated.'); showAdminTab(status === 'active' ? 'students' : 'teachers'); }
+  if (r.success) { showToast('Updated ✅', ns === 'active' ? 'Activated.' : 'Deactivated.'); showAdminTab(tabName || 'students'); }
   else showToast('Error', r.error || 'Failed.', true);
 }
 

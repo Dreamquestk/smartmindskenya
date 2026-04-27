@@ -765,7 +765,8 @@ function enterPortal(user) {
       { id: 'students',  icon: 'graduation-cap',    label: 'Students',   onclick: "showAdminTab('students')" },
       { id: 'teachers',  icon: 'users',             label: 'Teachers',   onclick: "showAdminTab('teachers')" },
       { id: 'inquiries', icon: 'mail',              label: 'Inquiries',  onclick: "showAdminTab('inquiries')" },
-      { id: 'payments',  icon: 'credit-card',       label: 'Payments',   onclick: "showAdminTab('payments')" }
+      { id: 'payments',  icon: 'credit-card',       label: 'Payments',   onclick: "showAdminTab('payments')" },
+      { id: 'reports',   icon: 'file-text',         label: 'Reports',    onclick: "showAdminTab('reports')" }
     ], 'adminSidebarNav');
     showAdminTab('dashboard');
 
@@ -843,6 +844,7 @@ function showAdminTab(t) {
   else if (t === 'teachers')  admTeachers(c);
   else if (t === 'inquiries') admInquiries(c);
   else if (t === 'payments')  admPayments(c);
+  else if (t === 'reports')   admReports(c);
 }
 
 async function admDash(c) {
@@ -1063,31 +1065,9 @@ async function usrDash(c) {
 // ===== CHAT =====
 async function usrChat(c) {
   c.innerHTML = '<p class="text-sm" style="color:#999">Loading chats...</p>';
-  var results = await Promise.all([
-    api({ action: 'getContacts', token: getToken() }),
-    api({ action: 'getChatList', token: getToken() })
-  ]);
-  var contactsRes = results[0], chatListRes = results[1];
-  if (!contactsRes.success) { c.innerHTML = '<p style="color:#999">Failed to load contacts.</p>'; return; }
-
-  // Merge: start with all known contacts, overlay last-message info from chat history
-  var contactMap = {};
-  (contactsRes.contacts || []).forEach(function(u) {
-    contactMap[String(u.id)] = { id: u.id, name: u.name, type: u.type, lastMessage: '', unread: 0 };
-  });
-  if (chatListRes.success) {
-    (chatListRes.chats || []).forEach(function(ch) {
-      var key = String(ch.id);
-      if (contactMap[key]) {
-        contactMap[key].lastMessage = ch.lastMessage || '';
-        contactMap[key].unread = ch.unread || 0;
-      } else {
-        // partner exists in chat history but not in contacts list (e.g. deactivated) — still show
-        contactMap[key] = ch;
-      }
-    });
-  }
-  allContacts = Object.values(contactMap);
+  var cl = await api({ action: 'getChatList', token: getToken() });
+  if (!cl.success) { c.innerHTML = '<p style="color:#999">Failed to load chats.</p>'; return; }
+  allContacts = cl.chats;
   c.innerHTML =
     '<div class="flex rounded-2xl overflow-hidden" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04);height:calc(100vh - 140px);min-height:400px">' +
     '<div id="chatContacts" class="w-full md:w-80 border-r flex flex-col shrink-0" style="border-color:#eee">' +
@@ -1179,23 +1159,147 @@ async function sendMsg(e) {
   else showToast('Error', r.error || 'Could not send message.', true);
 }
 
-// ===== REPORTS =====
+// ===== REPORTS VIEWER =====
+
+// Builds a full visual report card HTML string for a single report object
+function buildReportCardHTML(rp) {
+  var perf = {}, skills = {};
+  try { perf = JSON.parse(rp.performance_data || '{}'); } catch(e) {}
+  try { skills = JSON.parse(rp.core_skills || '{}'); } catch(e) {}
+
+  var progLabels = { camp: 'DreamQuest Holiday Camp', tuition: 'Home Tuition Program', skills: 'Skill Development Program' };
+  var certLabels = { best: 'Best Performing Student', improved: 'Most Improved Student', participation: 'Participation Award', excellence: 'Certificate of Excellence' };
+  var progLabel = progLabels[rp.program] || rp.program || '—';
+  var dateStr = rp.created_at ? new Date(rp.created_at).toLocaleDateString('en-KE', { day: 'numeric', month: 'long', year: 'numeric' }) : '—';
+
+  // Skill bar colour helper
+  function skillBar(label, val) {
+    var pct = Math.min(100, Math.max(0, (parseFloat(val) || 0) / 5 * 100));
+    var colour = pct >= 80 ? '#22c55e' : pct >= 50 ? '#F26B3A' : '#ef4444';
+    return '<div class="skill-row"><span class="skill-label">' + label + '</span><div class="skill-bar-wrap"><div class="skill-bar-fill" style="width:' + pct + '%;background:' + colour + '"></div></div><span class="skill-value" style="color:' + colour + '">' + val + '/5</span></div>';
+  }
+
+  // Performance section
+  var perfHTML = '';
+  if (Object.keys(perf).length) {
+    var entries = Object.entries(perf);
+    perfHTML = '<div class="mb-5"><p class="text-xs font-bold uppercase tracking-wider mb-3" style="color:#999">⭐ Performance</p>';
+    // Detect if values are percentages (tuition) or /5 (camp/skills)
+    var isPercent = entries.some(function(e) { return parseFloat(e[1]) > 5; });
+    entries.forEach(function(e) {
+      var val = parseFloat(e[1]) || 0;
+      var pct = isPercent ? Math.min(100, val) : Math.min(100, val / 5 * 100);
+      var colour = pct >= 80 ? '#22c55e' : pct >= 50 ? '#F26B3A' : '#ef4444';
+      var display = isPercent ? val + '%' : val + '/5';
+      perfHTML += '<div class="skill-row"><span class="skill-label">' + e[0] + '</span><div class="skill-bar-wrap"><div class="skill-bar-fill" style="width:' + pct + '%;background:' + colour + '"></div></div><span class="skill-value" style="color:' + colour + '">' + display + '</span></div>';
+    });
+    perfHTML += '</div>';
+  }
+
+  // Core skills section
+  var skillsHTML = '';
+  if (Object.keys(skills).length) {
+    skillsHTML = '<div class="mb-5"><p class="text-xs font-bold uppercase tracking-wider mb-3" style="color:#999">💡 Core Skills</p>';
+    Object.entries(skills).forEach(function(e) { skillsHTML += skillBar(e[0], e[1]); });
+    skillsHTML += '</div>';
+  }
+
+  // Certificate section
+  var certHTML = '';
+  if (rp.certificate_type && rp.certificate_type !== '') {
+    var certLabel = certLabels[rp.certificate_type] || rp.certificate_type;
+    certHTML = '<div id="cert_' + rp.id + '" class="certificate-frame mt-4 mb-2">' +
+      '<div class="certificate-inner">' +
+      '<div style="margin-bottom:12px"><div class="w-12 h-12 rounded-xl mx-auto flex items-center justify-center" style="background:#F26B3A"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><p style="color:#F26B3A;font-size:11px;font-weight:700;letter-spacing:3px;margin-top:8px">SMART MINDS</p><p style="color:#999;font-size:10px">TUITION &amp; SKILLS HUB</p></div>' +
+      '<h2 style="font-size:20px;font-weight:800;color:#1a1a2e;letter-spacing:2px;margin:16px 0 8px">CERTIFICATE OF ACHIEVEMENT</h2>' +
+      '<div style="width:60px;height:2px;background:#F26B3A;margin:0 auto 16px"></div>' +
+      '<p style="color:#666;font-size:13px">This is to certify that</p>' +
+      '<p style="font-size:22px;font-weight:700;color:#1a1a2e;margin:8px 0;border-bottom:2px solid #f0d0b8;display:inline-block;padding-bottom:4px">' + (rp.student_name || '—') + '</p>' +
+      '<p style="color:#666;font-size:13px;margin-top:8px">has been awarded the</p>' +
+      '<p style="font-size:15px;font-weight:600;color:#F26B3A;margin:5px 0">' + certLabel + '</p>' +
+      '<p style="color:#666;font-size:13px">for</p>' +
+      '<p style="font-size:14px;font-weight:600;color:#1a1a2e;margin:5px 0">' + progLabel + '</p>' +
+      '<p style="color:#666;font-size:13px">at</p>' +
+      '<p style="font-size:14px;font-weight:600;color:#1a1a2e;margin:5px 0">' + (rp.host_school || 'Smart Minds') + '</p>' +
+      '<div class="certificate-seal"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M22 10v6M2 10l10 5 10 5z"/><path d="M6 12v5c0 2 4 3 6 3s6-1 6-3v-5"/></svg></div>' +
+      '<div style="margin-top:20px;display:flex;justify-content:space-around;padding:0 20px">' +
+      '<div style="text-align:center"><div style="width:120px;border-top:1px solid #ccc;margin-bottom:5px"></div><p style="font-size:11px;color:#666">Instructor</p><p style="font-size:10px;color:#999">Smart Minds</p></div>' +
+      '<div style="text-align:center"><div style="width:120px;border-top:1px solid #ccc;margin-bottom:5px"></div><p style="font-size:11px;color:#666">' + dateStr + '</p><p style="font-size:10px;color:#999">Date</p></div>' +
+      '</div></div></div>';
+  }
+
+  return '<div class="rounded-2xl mb-5 overflow-hidden" style="background:white;box-shadow:0 2px 16px rgba(0,0,0,.06)">' +
+    // Header bar
+    '<div class="flex items-center justify-between px-6 py-4" style="background:linear-gradient(135deg,#1a1a2e,#2d2d4e)">' +
+    '<div><p class="font-bold text-white text-sm">' + (rp.student_name || 'Unknown') + '</p>' +
+    '<p class="text-xs mt-0.5" style="color:#aaa">' + progLabel + ' · ' + (rp.term || '—') + ' · ' + (rp.host_school || '—') + '</p></div>' +
+    '<span class="badge badge-orange text-xs px-3 py-1">' + (rp.grade || '') + '</span>' +
+    '</div>' +
+    // Body
+    '<div class="px-6 py-5">' +
+    '<div class="flex flex-wrap gap-4 mb-5">' +
+    '<div class="text-xs" style="color:#999">📅 <span style="color:#1a1a2e;font-weight:600">' + dateStr + '</span></div>' +
+    (rp.certificate_type ? '<div class="text-xs" style="color:#999">🏆 <span style="color:#F26B3A;font-weight:600">' + (certLabels[rp.certificate_type] || rp.certificate_type) + '</span></div>' : '') +
+    '</div>' +
+    perfHTML +
+    skillsHTML +
+    (rp.comments ? '<div class="mb-5 p-4 rounded-xl" style="background:#fafafa;border-left:3px solid #F26B3A"><p class="text-xs font-bold uppercase tracking-wider mb-1" style="color:#999">💬 Comments</p><p class="text-sm italic" style="color:#555">"' + rp.comments + '"</p></div>' : '') +
+    certHTML +
+    // Action buttons
+    '<div class="flex flex-wrap gap-2 mt-4 pt-4" style="border-top:1px solid #f0f0f0">' +
+    '<button onclick="printReportCard(\'' + rp.id + '\')" class="adm-btn flex items-center gap-1.5" style="background:#1a1a2e;color:white;padding:8px 16px">🖨️ Print Report</button>' +
+    (rp.certificate_type ? '<button onclick="printCertOnly(\'' + rp.id + '\')" class="adm-btn flex items-center gap-1.5" style="background:#F26B3A;color:white;padding:8px 16px">🏆 Print Certificate</button>' : '') +
+    '</div></div></div>';
+}
+
+function printReportCard(id) {
+  var el = document.getElementById('rc_' + id);
+  if (!el) return;
+  var pa = document.getElementById('printArea');
+  pa.style.display = 'block';
+  pa.innerHTML = '<style>body{font-family:Outfit,sans-serif}.skill-row{display:flex;align-items:center;gap:12px;padding:6px 0}.skill-label{width:140px;font-size:13px}.skill-bar-wrap{flex:1;height:10px;border-radius:5px;background:#eee;overflow:hidden}.skill-bar-fill{height:100%;border-radius:5px}.skill-value{width:40px;text-align:right;font-size:13px;font-weight:600}.certificate-frame{border:3px solid #F26B3A;padding:30px;margin-top:20px}.certificate-inner{border:2px solid #f0d0b8;padding:20px;text-align:center}.certificate-seal{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#F26B3A,#ff9a6c);display:flex;align-items:center;justify-content:center;margin:10px auto;color:white;border:3px solid #e8a87c}</style>' + el.innerHTML;
+  setTimeout(function() { window.print(); setTimeout(function() { pa.style.display = 'none'; }, 500); }, 300);
+}
+
+function printCertOnly(id) {
+  var el = document.getElementById('cert_' + id);
+  if (!el) { showToast('No Certificate', 'This report has no certificate.', true); return; }
+  var pa = document.getElementById('printArea');
+  pa.style.display = 'block';
+  pa.innerHTML = '<style>body{font-family:Outfit,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#fff}.certificate-frame{border:3px solid #F26B3A;padding:40px;max-width:600px;margin:auto;box-shadow:inset 0 0 0 6px white,inset 0 0 0 7px #f0d0b8}.certificate-inner{border:2px solid #f0d0b8;padding:30px;text-align:center}.certificate-seal{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#F26B3A,#ff9a6c);display:flex;align-items:center;justify-content:center;margin:15px auto;color:white;border:3px solid #e8a87c}</style>' + el.outerHTML;
+  setTimeout(function() { window.print(); setTimeout(function() { pa.style.display = 'none'; }, 500); }, 300);
+}
+
+// Renders a list of reports — used by student, teacher, and admin views
+function renderReportsList(c, reports, title, emptyMsg) {
+  c.innerHTML = '<h2 class="text-2xl font-bold mb-2" style="color:#1a1a2e">' + title + '</h2>' +
+    '<p class="text-sm mb-6" style="color:#999">' + reports.length + ' report(s) found.</p>';
+  if (!reports.length) {
+    c.innerHTML += '<div class="rounded-2xl p-10 text-center" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-4xl mb-3">📋</p><p class="text-sm" style="color:#999">' + emptyMsg + '</p></div>';
+    return;
+  }
+  var html = '';
+  reports.forEach(function(rp, i) {
+    // Wrap each card in a div with id for print targeting
+    html += '<div id="rc_' + rp.id + '">' + buildReportCardHTML(rp) + '</div>';
+  });
+  c.innerHTML += html;
+}
+
 async function usrMyReports(c) {
   c.innerHTML = '<p class="text-sm" style="color:#999">Loading reports...</p>';
   var r = await api({ action: 'getReports', token: getToken() });
-  c.innerHTML = '<h2 class="text-2xl font-bold mb-6" style="color:#1a1a2e">📄 My Reports</h2>';
-  if (!r.success || !r.reports.length) { c.innerHTML += '<div class="rounded-2xl p-10 text-center" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-4xl mb-3">📋</p><p class="text-sm" style="color:#999">No reports yet.</p></div>'; return; }
-  c.innerHTML += r.reports.map(function(rp) {
-    var perf = {}, skills = {};
-    try { perf = JSON.parse(rp.performance_data || '{}'); } catch(e) {}
-    try { skills = JSON.parse(rp.core_skills || '{}'); } catch(e) {}
-    return '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">' +
-      '<div class="flex items-start justify-between mb-4"><div><p class="font-bold" style="color:#1a1a2e">' + (rp.student_name || 'Unknown') + '</p><p class="text-xs mt-0.5" style="color:#999">' + (rp.program || '') + ' · ' + (rp.term || '') + ' · ' + (rp.host_school || '') + '</p></div><span class="badge badge-orange">' + (rp.grade || '') + '</span></div>' +
-      (Object.keys(perf).length ? '<div class="mb-3"><p class="text-xs font-semibold uppercase tracking-wider mb-2" style="color:#999">Performance</p>' + Object.entries(perf).map(function(e) { return '<div class="flex items-center gap-2 text-sm mb-1"><span class="w-32 shrink-0" style="color:#666">' + e[0] + '</span><span class="font-semibold" style="color:#1a1a2e">' + e[1] + '</span></div>'; }).join('') + '</div>' : '') +
-      (rp.comments ? '<p class="text-xs italic mt-2" style="color:#666">"' + rp.comments + '"</p>' : '') +
-      '<p class="text-xs mt-3" style="color:#bbb">' + (rp.created_at ? new Date(rp.created_at).toLocaleDateString('en-KE', { day: 'numeric', month: 'long', year: 'numeric' }) : '') + '</p>' +
-      '</div>';
-  }).join('');
+  if (!r.success) { c.innerHTML = '<p style="color:#999">Could not load reports.</p>'; return; }
+  var title = currentUser.type === 'teacher' ? '📄 Reports I Created' : '📄 My Report Cards';
+  var empty = currentUser.type === 'teacher' ? 'No reports created yet.' : 'No report cards yet. Your teacher will add them soon.';
+  renderReportsList(c, r.reports || [], title, empty);
+}
+
+async function admReports(c) {
+  c.innerHTML = '<p class="text-sm" style="color:#999">Loading all reports...</p>';
+  var r = await api({ action: 'adminGetReports', token: getToken() });
+  if (!r.success) { c.innerHTML = '<p style="color:#999">Could not load reports.</p>'; return; }
+  renderReportsList(c, r.reports || [], '📄 All Report Cards', 'No reports have been created yet.');
 }
 
 // ===== CREATE REPORT =====
@@ -1204,66 +1308,58 @@ async function usrCreateReport(c) {
   reportStudents = sr.success ? sr.students.filter(function(s) { return s.status !== 'inactive'; }) : [];
   var opts = '<option value="">Select student...</option>' + reportStudents.map(function(s) { return '<option value="' + s.id + '">' + s.name + ' (' + (s.curriculum || '') + ' - ' + (s.grade || '?') + ')</option>'; }).join('');
 
-  // Build entire HTML in ONE assignment — multiple innerHTML+= re-parses the DOM
-  // and severs event handlers on dynamically injected elements (like the save button)
-  c.innerHTML =
-    '<h2 class="text-2xl font-bold mb-2" style="color:#1a1a2e">📊 Create Report</h2>' +
-    '<p class="text-sm mb-8" style="color:#999">Fill in the student report and optionally generate a certificate.</p>' +
-    '<form id="reportForm">' +
+  c.innerHTML = '<h2 class="text-2xl font-bold mb-2" style="color:#1a1a2e">📊 Create Report</h2><p class="text-sm mb-8" style="color:#999">Fill in the student report and optionally generate a certificate.</p>';
 
-    // Card 1: Student Info
-    '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">' +
+  // Card 1: Student Info
+  c.innerHTML += '<form id="reportForm" onsubmit="submitReport(event)">';
+  c.innerHTML += '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">' +
     '<h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">📋 Student Details</h3>' +
     '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">' +
     '<div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Student *</label><select id="rpStudent" required class="inp">' + opts + '</select></div>' +
-    '<div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Program *</label><select id="rpProgram" required class="inp"><option value="camp">DreamQuest Camp</option><option value="tuition">Home Tuition</option><option value="skills">Skill Program</option></select></div>' +
+    '<div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Program *</label><select id="rpProgram" required onchange="updatePerfFields()" class="inp"><option value="camp">DreamQuest Camp</option><option value="tuition">Home Tuition</option><option value="skills">Skill Program</option></select></div>' +
     '<div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Term</label><select id="rpTerm" class="inp"><option>Term 1</option><option>Term 2</option><option>Term 3</option><option>Holiday Camp</option></select></div>' +
     '<div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Host School</label><input id="rpSchool" type="text" value="Brighton International School, Katani" class="inp"></div>' +
-    '</div></div>' +
+    '</div></div>';
 
-    // Card 2: Performance
-    '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">' +
+  // Card 2: Performance
+  c.innerHTML += '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">' +
     '<h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">⭐ Performance</h3>' +
-    '<div id="perfFields"></div></div>' +
+    '<div id="perfFields"></div>' +
+    '</div>';
 
-    // Card 3: Core Skills
-    '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">' +
+  // Card 3: Core Skills
+  c.innerHTML += '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">' +
     '<h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">💡 Core Skills (1–5)</h3>' +
     '<div class="grid grid-cols-2 md:grid-cols-4 gap-4">' +
     '<div><label class="block text-xs mb-1" style="color:#999">Communication</label><input id="sk_comm" type="number" min="1" max="5" value="3" class="inp text-center"></div>' +
     '<div><label class="block text-xs mb-1" style="color:#999">Teamwork</label><input id="sk_team" type="number" min="1" max="5" value="3" class="inp text-center"></div>' +
     '<div><label class="block text-xs mb-1" style="color:#999">Creativity</label><input id="sk_creat" type="number" min="1" max="5" value="3" class="inp text-center"></div>' +
     '<div><label class="block text-xs mb-1" style="color:#999">Confidence</label><input id="sk_conf" type="number" min="1" max="5" value="3" class="inp text-center"></div>' +
-    '</div></div>' +
+    '</div></div>';
 
-    // Card 4: Comments
-    '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">' +
+  // Card 4: Comments
+  c.innerHTML += '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">' +
     '<h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">💬 Comments</h3>' +
-    '<textarea id="rpComments" rows="3" placeholder="Teacher comments and observations..." class="inp" style="resize:vertical"></textarea></div>' +
+    '<textarea id="rpComments" rows="3" placeholder="Teacher comments and observations..." class="inp" style="resize:vertical"></textarea>' +
+    '</div>';
 
-    // Card 5: Certificate
-    '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">' +
+  // Card 5: Certificate
+  c.innerHTML += '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">' +
     '<h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">🏆 Certificate (Optional)</h3>' +
-    '<select id="rpCert" class="inp mb-4"><option value="">No Certificate</option><option value="best">Best Performing Student</option><option value="improved">Most Improved Student</option><option value="participation">Participation Award</option><option value="excellence">Certificate of Excellence</option></select>' +
-    '<div id="certPreview"></div></div>' +
+    '<select id="rpCert" onchange="updateCertPreview()" class="inp mb-4"><option value="">No Certificate</option><option value="best">Best Performing Student</option><option value="improved">Most Improved Student</option><option value="participation">Participation Award</option><option value="excellence">Certificate of Excellence</option></select>' +
+    '<div id="certPreview"></div>' +
+    '</div>';
 
-    // Buttons — use type="button" + onclick to avoid form submit race
-    '<div class="flex flex-wrap gap-3 mb-8">' +
-    '<button type="button" id="saveReportBtn" class="px-8 py-3.5 rounded-xl font-semibold text-white flex items-center gap-2" style="background:#F26B3A">' +
-    '<i data-lucide="save" style="width:18px;height:18px"></i>' +
-    '<span id="saveReportBtnText">Save Report</span>' +
-    '<span id="saveReportLoad" class="hidden"><span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span></span>' +
+  // Buttons
+  c.innerHTML += '<div class="flex flex-wrap gap-3 mb-8">' +
+    '<button type="submit" id="saveReportBtn" class="px-8 py-3.5 rounded-xl font-semibold text-white flex items-center gap-2" style="background:#F26B3A">' +
+    '<i data-lucide="save" style="width:18px;height:18px"></i><span id="saveReportBtnText">Save Report</span><span id="saveReportLoad" class="hidden"><span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span></span>' +
     '</button>' +
     '<button type="button" onclick="printCertificate()" id="printCertBtn" class="hidden px-8 py-3.5 rounded-xl font-semibold border-2 flex items-center gap-2" style="border-color:#F26B3A;color:#F26B3A">' +
     '<i data-lucide="printer" style="width:18px;height:18px"></i> Print Certificate' +
     '</button></div></form>';
 
   lucide.createIcons();
-
-  // Wire up events AFTER DOM is ready (cannot use inline onchange inside innerHTML safely)
-  document.getElementById('rpProgram').addEventListener('change', updatePerfFields);
-  document.getElementById('rpCert').addEventListener('change', updateCertPreview);
-  document.getElementById('saveReportBtn').addEventListener('click', submitReport);
   updatePerfFields();
 }
 
@@ -1346,13 +1442,12 @@ function updateCertPreview() {
 }
 
 async function submitReport(e) {
-  if (e && e.preventDefault) e.preventDefault();
-  var sel = document.getElementById('rpStudent');
-  if (!sel || !sel.value) { showToast('Error', 'Please select a student.', true); return; }
+  e.preventDefault();
   var btn = document.getElementById('saveReportBtn');
   document.getElementById('saveReportBtnText').classList.add('hidden');
   document.getElementById('saveReportLoad').classList.remove('hidden');
   btn.disabled = true;
+  var sel = document.getElementById('rpStudent');
   var stu = reportStudents.find(function(s) { return s.id === sel.value; });
   var d = {
     action: 'addReport',
@@ -1374,12 +1469,10 @@ async function submitReport(e) {
   btn.disabled = false;
   if (r.success) {
     showToast('Report Saved! 🎉', 'For ' + (stu ? stu.name : 'Student'));
-    // Only clear the text fields — do NOT reset() the whole form as it destroys dynamic fields
-    var commEl = document.getElementById('rpComments');
-    if (commEl) commEl.value = '';
-    var certEl = document.getElementById('rpCert');
-    if (certEl) { certEl.value = ''; updateCertPreview(); }
+    document.getElementById('reportForm').reset();
+    document.getElementById('certPreview').innerHTML = '';
     document.getElementById('printCertBtn').classList.add('hidden');
+    updatePerfFields();
   } else {
     showToast('Error', r.error || 'Could not save report.', true);
   }

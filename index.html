@@ -35,16 +35,6 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
 .badge-green{background:rgba(34,197,94,.1);color:#22c55e}.badge-yellow{background:rgba(234,179,8,.1);color:#ca8a04}.badge-red{background:rgba(239,68,68,.1);color:#ef4444}.badge-blue{background:rgba(59,130,246,.1);color:#3b82f6}.badge-orange{background:rgba(242,107,58,.1);color:#F26B3A}
 .adm-table{width:100%;border-collapse:collapse;font-size:13px}.adm-table th{text-align:left;padding:10px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#999;border-bottom:2px solid #eee}.adm-table td{padding:10px 12px;border-bottom:1px solid #f5f5f5;color:#1a1a2e}.adm-table tr:hover td{background:#fafafa}
 .adm-btn{padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;border:none}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-.rc-table{width:100%;border-collapse:collapse}
-.rc-table th{background:#F26B3A;color:white;padding:8px 12px;font-size:11px;font-weight:700;text-align:center;letter-spacing:.05em}
-.rc-table td{padding:8px 12px;border:1px solid #e8e0d8;font-size:12px;text-align:center;color:#1a1a2e}
-.rc-table tr:nth-child(even) td{background:#fdf8f4}
-.rc-label{text-align:left!important;font-weight:600;color:#555;background:#fafafa!important}
-.grade-A{color:#16a34a;font-weight:800}.grade-B{color:#2563eb;font-weight:800}.grade-C{color:#d97706;font-weight:800}.grade-D{color:#ef4444;font-weight:800}
-.skill-dot{display:inline-block;width:14px;height:14px;border-radius:50%;margin:0 2px}
-.skill-filled{background:#F26B3A}.skill-empty{background:#e5e7eb}
 .inp{background:white;border:1px solid #ddd;border-radius:12px;width:100%;padding:12px 16px;font-size:14px;outline:none;transition:border-color .2s;font-family:inherit}
 .inp:focus{border-color:#F26B3A}
 </style>
@@ -572,23 +562,6 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbyyMLWer8JorKX3OijTOv6jDr
 var currentUser = null, chatPolling = null, activeChatId = null, activeChatType = null;
 var allContacts = [], reportStudents = [];
 
-// ===== IN-MEMORY CACHE (TTL 60s) =====
-var _cache = {};
-function cacheGet(k) {
-  var e = _cache[k]; if (!e) return null;
-  if (Date.now() - e.t > 60000) { delete _cache[k]; return null; }
-  return e.v;
-}
-function cacheSet(k, v) { _cache[k] = { v: v, t: Date.now() }; }
-function cacheBust() { _cache = {}; }
-var NO_CACHE = ['login','logout','register','registerSchool','inquiry','sendMessage',
-  'addReport','adminAddPayment','adminUpdateUserStatus','updateSchoolStatus','adminUpdateInquiryStatus'];
-function skeleton(rows) {
-  var o = '<div class="space-y-3">';
-  for (var i=0;i<(rows||4);i++) o+='<div style="height:44px;border-radius:12px;background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.4s infinite"></div>';
-  return o+'</div>';
-}
-
 // ===== TOAST =====
 function showToast(t, m, e) {
   document.getElementById('toastTitle').textContent = t;
@@ -605,22 +578,20 @@ function showToast(t, m, e) {
 }
 function hideToast() { document.getElementById('toastNotif').classList.remove('show'); }
 
-// ===== API — cached, no Content-Type to avoid CORS preflight =====
+// ===== API — FIX: no Content-Type header to avoid CORS preflight =====
 async function api(d) {
-  var action = d.action || '';
-  var useCache = NO_CACHE.indexOf(action) < 0;
-  var ck = action + '|' + (d.token || '') + '|' + JSON.stringify(d);
-  if (useCache) { var hit = cacheGet(ck); if (hit) return hit; }
   try {
-    var r = await fetch(API_URL, { method: 'POST', body: JSON.stringify(d), redirect: 'follow' });
+    var r = await fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify(d),
+      redirect: 'follow'
+    });
     var t = await r.text();
-    var parsed;
-    try { parsed = JSON.parse(t); } catch(e) { return { success: false, error: 'Bad response: ' + t.substring(0, 120) }; }
-    if (useCache && parsed.success) cacheSet(ck, parsed);
-    // Bust cache on writes
-    if (NO_CACHE.indexOf(action) >= 0) cacheBust();
-    return parsed;
-  } catch(e) { return { success: false, error: 'Network error: ' + e.message }; }
+    try { return JSON.parse(t); }
+    catch(e) { return { success: false, error: 'Bad response: ' + t.substring(0, 120) }; }
+  } catch(e) {
+    return { success: false, error: 'Network error: ' + e.message };
+  }
 }
 
 // ===== SESSION =====
@@ -875,7 +846,7 @@ function showAdminTab(t) {
 }
 
 async function admDash(c) {
-  c.innerHTML = '<div class="mb-4"><p class="text-2xl font-bold" style="color:#1a1a2e">Admin Dashboard</p></div>' + skeleton(6);
+  c.innerHTML = '<p class="text-sm" style="color:#999">Loading dashboard...</p>';
   var res = await Promise.all([
     api({ action: 'adminGetStats', token: getToken() }),
     api({ action: 'getSchools', token: getToken() })
@@ -903,7 +874,7 @@ async function admDash(c) {
 }
 
 async function admSchools(c) {
-  c.innerHTML = skeleton(4);
+  c.innerHTML = '<p class="text-sm" style="color:#999">Loading...</p>';
   var r = await api({ action: 'getSchools', token: getToken() });
   c.innerHTML = '<h2 class="text-2xl font-bold mb-2" style="color:#1a1a2e">🏫 Partner Schools</h2><p class="text-sm mb-8" style="color:#999">Manage partnerships.</p>';
   if (!r.success || !r.schools.length) { c.innerHTML += '<p class="text-sm" style="color:#999">No schools registered yet.</p>'; return; }
@@ -922,7 +893,7 @@ async function admActSchool(id, st) {
 }
 
 async function admStudents(c) {
-  c.innerHTML = skeleton(5);
+  c.innerHTML = '<p class="text-sm" style="color:#999">Loading...</p>';
   var r = await api({ action: 'adminGetStudents', token: getToken() });
   var count = r.success ? r.students.length : 0;
   c.innerHTML = '<h2 class="text-2xl font-bold mb-2" style="color:#1a1a2e">👨‍🎓 Students</h2><p class="text-sm mb-8" style="color:#999">' + count + ' total.</p>';
@@ -934,7 +905,7 @@ async function admStudents(c) {
 }
 
 async function admTeachers(c) {
-  c.innerHTML = skeleton(4);
+  c.innerHTML = '<p class="text-sm" style="color:#999">Loading...</p>';
   var r = await api({ action: 'adminGetTeachers', token: getToken() });
   var count = r.success ? r.teachers.length : 0;
   c.innerHTML = '<h2 class="text-2xl font-bold mb-2" style="color:#1a1a2e">👨‍🏫 Teachers</h2><p class="text-sm mb-8" style="color:#999">' + count + ' total.</p>';
@@ -953,7 +924,7 @@ async function admToggle(id, status, tabName) {
 }
 
 async function admInquiries(c) {
-  c.innerHTML = skeleton(4);
+  c.innerHTML = '<p class="text-sm" style="color:#999">Loading...</p>';
   var r = await api({ action: 'adminGetInquiries', token: getToken() });
   var count = r.success ? r.inquiries.length : 0;
   c.innerHTML = '<h2 class="text-2xl font-bold mb-2" style="color:#1a1a2e">📬 Inquiries</h2><p class="text-sm mb-8" style="color:#999">' + count + ' total.</p>';
@@ -971,7 +942,7 @@ async function admUpdInq(id, st) {
 }
 
 async function admPayments(c) {
-  c.innerHTML = skeleton(4);
+  c.innerHTML = '<p class="text-sm" style="color:#999">Loading...</p>';
   var r = await api({ action: 'adminGetPayments', token: getToken() });
   var tp = 0;
   if (r.success) r.payments.forEach(function(p) { if (p.status === 'Paid') tp += parseFloat(p.amount) || 0; });
@@ -1092,9 +1063,31 @@ async function usrDash(c) {
 // ===== CHAT =====
 async function usrChat(c) {
   c.innerHTML = '<p class="text-sm" style="color:#999">Loading chats...</p>';
-  var cl = await api({ action: 'getChatList', token: getToken() });
-  if (!cl.success) { c.innerHTML = '<p style="color:#999">Failed to load chats.</p>'; return; }
-  allContacts = cl.chats;
+  var results = await Promise.all([
+    api({ action: 'getContacts', token: getToken() }),
+    api({ action: 'getChatList', token: getToken() })
+  ]);
+  var contactsRes = results[0], chatListRes = results[1];
+  if (!contactsRes.success) { c.innerHTML = '<p style="color:#999">Failed to load contacts.</p>'; return; }
+
+  // Merge: start with all known contacts, overlay last-message info from chat history
+  var contactMap = {};
+  (contactsRes.contacts || []).forEach(function(u) {
+    contactMap[String(u.id)] = { id: u.id, name: u.name, type: u.type, lastMessage: '', unread: 0 };
+  });
+  if (chatListRes.success) {
+    (chatListRes.chats || []).forEach(function(ch) {
+      var key = String(ch.id);
+      if (contactMap[key]) {
+        contactMap[key].lastMessage = ch.lastMessage || '';
+        contactMap[key].unread = ch.unread || 0;
+      } else {
+        // partner exists in chat history but not in contacts list (e.g. deactivated) — still show
+        contactMap[key] = ch;
+      }
+    });
+  }
+  allContacts = Object.values(contactMap);
   c.innerHTML =
     '<div class="flex rounded-2xl overflow-hidden" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04);height:calc(100vh - 140px);min-height:400px">' +
     '<div id="chatContacts" class="w-full md:w-80 border-r flex flex-col shrink-0" style="border-color:#eee">' +
@@ -1186,230 +1179,91 @@ async function sendMsg(e) {
   else showToast('Error', r.error || 'Could not send message.', true);
 }
 
-// ===== HELPERS =====
-function gradeFromScore(score, max) {
-  var pct = max <= 5 ? (score/max)*100 : parseFloat(score);
-  if (pct >= 80) return 'A';
-  if (pct >= 65) return 'B';
-  if (pct >= 50) return 'C';
-  return 'D';
-}
-function skillDots(val, max) {
-  var n = parseInt(val) || 0; max = max || 5; var o = '';
-  for (var i = 1; i <= max; i++) o += '<span class="skill-dot ' + (i <= n ? 'skill-filled' : 'skill-empty') + '"></span>';
-  return o;
-}
-function progLabel(p) {
-  return {camp:'DreamQuest Holiday Camp', tuition:'Home Tuition Programme', skills:'Skill Development Programme'}[p] || p;
-}
-
-// ===== MY REPORTS (student view) =====
+// ===== REPORTS =====
 async function usrMyReports(c) {
-  c.innerHTML = '<h2 class="text-2xl font-bold mb-6" style="color:#1a1a2e">📄 My Reports</h2>' + skeleton(3);
+  c.innerHTML = '<p class="text-sm" style="color:#999">Loading reports...</p>';
   var r = await api({ action: 'getReports', token: getToken() });
-  if (!r.success || !r.reports || !r.reports.length) {
-    c.innerHTML = '<h2 class="text-2xl font-bold mb-6" style="color:#1a1a2e">📄 My Reports</h2><div class="rounded-2xl p-10 text-center" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-4xl mb-3">📋</p><p class="text-sm" style="color:#999">No reports have been issued yet.</p></div>';
-    return;
-  }
-  c.innerHTML = '<h2 class="text-2xl font-bold mb-2" style="color:#1a1a2e">📄 My Reports</h2><p class="text-sm mb-6" style="color:#999">' + r.reports.length + ' report(s) issued.</p>';
-  r.reports.forEach(function(rp) { c.innerHTML += buildReportCard(rp, false); });
-}
-
-// ===== OFFICIAL REPORT CARD BUILDER =====
-function buildReportCard(rp, showPrint) {
-  var perf = {}, skills = {};
-  try { perf  = JSON.parse(rp.performance_data || '{}'); } catch(e) {}
-  try { skills = JSON.parse(rp.core_skills || '{}');     } catch(e) {}
-  var prog = rp.program || 'camp';
-  var isTuition = prog === 'tuition';
-  var date = rp.created_at ? new Date(rp.created_at).toLocaleDateString('en-KE', {day:'numeric',month:'long',year:'numeric'}) : '';
-
-  // Performance rows
-  var perfRows = '';
-  var overallScores = [];
-  Object.keys(perf).forEach(function(k) {
-    var v = parseFloat(perf[k]) || 0;
-    var max = isTuition ? 100 : 5;
-    var g = gradeFromScore(v, max);
-    var pct = isTuition ? v : Math.round((v/max)*100);
-    overallScores.push(pct);
-    perfRows += '<tr><td class="rc-label">' + k + '</td><td>' +
-      (isTuition ? v + '%' : skillDots(v, 5)) +
-      '</td><td class="grade-' + g + '">' + g + '</td>' +
-      '<td>' + getRemark(pct) + '</td></tr>';
-  });
-  var overall = overallScores.length ? Math.round(overallScores.reduce(function(a,b){return a+b;},0)/overallScores.length) : 0;
-  var overallG = gradeFromScore(overall, 100);
-
-  // Core skills rows
-  var skillRows = '';
-  Object.keys(skills).forEach(function(k) {
-    var v = parseInt(skills[k]) || 0;
-    skillRows += '<tr><td class="rc-label">' + k + '</td><td>' + skillDots(v, 5) + '</td>' +
-      '<td style="color:#F26B3A;font-weight:600">' + v + '/5</td><td>' + skillRemark(v) + '</td></tr>';
-  });
-
-  var certBadge = rp.certificate_type ? '<div style="display:inline-block;background:#F26B3A;color:white;padding:4px 14px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.05em;margin-top:6px">' + ({best:'🥇 Best Performing',improved:'📈 Most Improved',participation:'🎖 Participation Award',excellence:'⭐ Certificate of Excellence'}[rp.certificate_type]||rp.certificate_type) + '</div>' : '';
-
-  var printId = 'rc_' + (rp.id || Math.random().toString(36).slice(2));
-  var printBtn = showPrint ? '<button onclick="printRC(\'' + printId + '\')" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-white text-sm" style="background:#1a1a2e"><i data-lucide="printer" style="width:16px;height:16px"></i> Print / Download</button>' : '<button onclick="printRC(\'' + printId + '\')" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-white text-sm" style="background:#1a1a2e"><i data-lucide="printer" style="width:16px;height:16px"></i> Print Report Card</button>';
-
-  return '<div class="rounded-2xl mb-6 overflow-hidden no-print" style="box-shadow:0 4px 20px rgba(0,0,0,.08)">' +
-    '<div class="flex items-center justify-between flex-wrap gap-3 px-6 py-3 no-print" style="background:#f9f9f9;border-bottom:1px solid #eee">' +
-    '<div><p class="text-xs font-semibold uppercase tracking-wider" style="color:#999">' + progLabel(prog) + ' · ' + (rp.term||'') + '</p><p class="font-bold" style="color:#1a1a2e">' + (rp.student_name||'Student') + ' — Report Card</p></div>' +
-    '<div class="flex gap-2 flex-wrap">' + printBtn + '</div></div>' +
-    '<div id="' + printId + '" class="rc-printable" style="background:white;padding:0">' +
-    buildReportCardHTML(rp, perf, skills, perfRows, skillRows, overallG, overall, certBadge, date) +
-    '</div></div>';
-}
-
-function buildReportCardHTML(rp, perf, skills, perfRows, skillRows, overallG, overall, certBadge, date) {
-  var prog = rp.program || 'camp';
-  var isTuition = prog === 'tuition';
-
-  return '<!-- REPORT CARD -->' +
-  '<div style="font-family:\'Outfit\',sans-serif;max-width:680px;margin:0 auto;padding:32px">' +
-
-  // Header
-  '<div style="background:linear-gradient(135deg,#1a1a2e,#2d2d50);padding:28px 32px;border-radius:16px 16px 0 0;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap">' +
-  '<div style="display:flex;align-items:center;gap:16px">' +
-  '<div style="width:52px;height:52px;border-radius:12px;background:#F26B3A;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>' +
-  '<div><p style="color:#F26B3A;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase">Smart Minds</p><p style="color:white;font-size:18px;font-weight:800;line-height:1.2">Tuition &amp; Skills Hub</p><p style="color:rgba(255,255,255,.5);font-size:11px">Nairobi, Kenya · info.dreamquestcamp.ke@gmail.com</p></div>' +
-  '</div>' +
-  '<div style="text-align:right"><p style="color:white;font-size:13px;font-weight:700">LEARNER PROGRESS REPORT</p><p style="color:rgba(255,255,255,.6);font-size:11px">Issued: ' + date + '</p></div>' +
-  '</div>' +
-
-  // Blue divider
-  '<div style="background:#F26B3A;height:4px"></div>' +
-
-  // Student info strip
-  '<div style="background:#fdf8f4;padding:18px 28px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;border-bottom:1px solid #e8e0d8">' +
-  infoCell('Student Name', rp.student_name || '—') +
-  infoCell('Grade / Level', rp.grade || '—') +
-  infoCell('Term / Period', rp.term || '—') +
-  '</div>' +
-  '<div style="background:#fdf8f4;padding:0 28px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;border-bottom:2px solid #F26B3A">' +
-  infoCell('Programme', progLabel(rp.program || '')) +
-  infoCell('Partner School', rp.host_school || '—') +
-  infoCell('Report Date', date) +
-  '</div>' +
-
-  // Performance table
-  (perfRows ? '<div style="padding:20px 28px 0">' +
-  '<p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#F26B3A;margin-bottom:10px">● Academic / Activity Performance</p>' +
-  '<table class="rc-table" style="margin-bottom:0"><thead><tr><th style="text-align:left;width:35%">Subject / Activity</th><th style="width:25%">Score</th><th style="width:15%">Grade</th><th style="width:25%">Remark</th></tr></thead><tbody>' + perfRows + '</tbody></table>' +
-  // Overall row
-  '<div style="display:flex;align-items:center;justify-content:space-between;background:#1a1a2e;color:white;padding:10px 16px;border-radius:0 0 10px 10px;margin-top:0">' +
-  '<span style="font-size:13px;font-weight:700">OVERALL PERFORMANCE</span>' +
-  '<span style="font-size:18px;font-weight:800;color:#F26B3A">' + overallG + ' &nbsp;<span style="font-size:13px;color:rgba(255,255,255,.7)">(' + overall + '%)</span></span>' +
-  '</div></div>' : '') +
-
-  // Core skills table
-  (skillRows ? '<div style="padding:20px 28px 0">' +
-  '<p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#F26B3A;margin-bottom:10px">● Core Skills Assessment</p>' +
-  '<table class="rc-table"><thead><tr><th style="text-align:left;width:30%">Skill</th><th style="width:30%">Rating</th><th style="width:15%">Score</th><th style="width:25%">Remark</th></tr></thead><tbody>' + skillRows + '</tbody></table>' +
-  '</div>' : '') +
-
-  // Teacher comments
-  '<div style="margin:20px 28px;padding:16px 20px;background:#fdf8f4;border-left:4px solid #F26B3A;border-radius:0 10px 10px 0">' +
-  '<p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#F26B3A;margin-bottom:6px">Teacher\'s Comments</p>' +
-  '<p style="font-size:13px;color:#444;line-height:1.7;font-style:italic">' + (rp.comments || 'No comments provided.') + '</p>' +
-  '</div>' +
-
-  // Certificate badge if awarded
-  (rp.certificate_type ? '<div style="text-align:center;padding:0 28px 16px">' + certBadge + '</div>' : '') +
-
-  // Signatures
-  '<div style="margin:0 28px 20px;padding:20px;border:1px solid #e8e0d8;border-radius:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;text-align:center">' +
-  sigBlock('Class Teacher') +
-  sigBlock('Director, Smart Minds') +
-  sigBlock("Parent / Guardian") +
-  '</div>' +
-
-  // Footer
-  '<div style="background:#1a1a2e;padding:14px 28px;border-radius:0 0 16px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">' +
-  '<p style="color:rgba(255,255,255,.5);font-size:10px">Smart Minds Home Tuition &amp; Skills Hub Ltd · Nairobi, Kenya</p>' +
-  '<p style="color:rgba(255,255,255,.5);font-size:10px">0798 156 000 · 0702 102 645</p>' +
-  '</div>' +
-
-  '</div>'; // end rc wrapper
-}
-
-function infoCell(label, val) {
-  return '<div><p style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px">' + label + '</p><p style="font-size:13px;font-weight:600;color:#1a1a2e">' + val + '</p></div>';
-}
-function sigBlock(label) {
-  return '<div><div style="border-bottom:1px solid #ccc;margin-bottom:6px;height:36px"></div><p style="font-size:10px;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:.05em">' + label + '</p></div>';
-}
-function getRemark(pct) {
-  if (pct >= 80) return '<span style="color:#16a34a;font-weight:600">Excellent</span>';
-  if (pct >= 65) return '<span style="color:#2563eb;font-weight:600">Good</span>';
-  if (pct >= 50) return '<span style="color:#d97706;font-weight:600">Satisfactory</span>';
-  return '<span style="color:#ef4444;font-weight:600">Needs Improvement</span>';
-}
-function skillRemark(v) {
-  if (v >= 5) return '<span style="color:#16a34a;font-weight:600">Outstanding</span>';
-  if (v >= 4) return '<span style="color:#16a34a;font-weight:600">Excellent</span>';
-  if (v >= 3) return '<span style="color:#2563eb;font-weight:600">Good</span>';
-  if (v >= 2) return '<span style="color:#d97706;font-weight:600">Developing</span>';
-  return '<span style="color:#ef4444;font-weight:600">Needs Support</span>';
-}
-
-function printRC(id) {
-  var el = document.getElementById(id);
-  if (!el) return;
-  var pa = document.getElementById('printArea');
-  pa.style.display = 'block';
-  pa.innerHTML = '<style>body{font-family:Outfit,sans-serif}.rc-table{width:100%;border-collapse:collapse}.rc-table th{background:#F26B3A;color:white;padding:8px 12px;font-size:11px;font-weight:700;text-align:center}.rc-table td{padding:8px 12px;border:1px solid #e8e0d8;font-size:12px;text-align:center;color:#1a1a2e}.rc-table tr:nth-child(even) td{background:#fdf8f4}.rc-label{text-align:left!important;font-weight:600;color:#555;background:#fafafa!important}.skill-dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin:0 2px}.skill-filled{background:#F26B3A}.skill-empty{background:#e5e7eb}.grade-A{color:#16a34a;font-weight:800}.grade-B{color:#2563eb;font-weight:800}.grade-C{color:#d97706;font-weight:800}.grade-D{color:#ef4444;font-weight:800}</style>' + el.innerHTML;
-  setTimeout(function() { window.print(); setTimeout(function() { pa.style.display = 'none'; pa.innerHTML=''; }, 800); }, 300);
-}
-
-function printCertificate() {
-  // Now delegates to printRC if a report card preview exists
-  var rcEl = document.querySelector('.rc-printable');
-  if (rcEl) { printRC(rcEl.id); return; }
-  showToast('Info', 'Save the report first, then print from My Reports.', false);
+  c.innerHTML = '<h2 class="text-2xl font-bold mb-6" style="color:#1a1a2e">📄 My Reports</h2>';
+  if (!r.success || !r.reports.length) { c.innerHTML += '<div class="rounded-2xl p-10 text-center" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><p class="text-4xl mb-3">📋</p><p class="text-sm" style="color:#999">No reports yet.</p></div>'; return; }
+  c.innerHTML += r.reports.map(function(rp) {
+    var perf = {}, skills = {};
+    try { perf = JSON.parse(rp.performance_data || '{}'); } catch(e) {}
+    try { skills = JSON.parse(rp.core_skills || '{}'); } catch(e) {}
+    return '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">' +
+      '<div class="flex items-start justify-between mb-4"><div><p class="font-bold" style="color:#1a1a2e">' + (rp.student_name || 'Unknown') + '</p><p class="text-xs mt-0.5" style="color:#999">' + (rp.program || '') + ' · ' + (rp.term || '') + ' · ' + (rp.host_school || '') + '</p></div><span class="badge badge-orange">' + (rp.grade || '') + '</span></div>' +
+      (Object.keys(perf).length ? '<div class="mb-3"><p class="text-xs font-semibold uppercase tracking-wider mb-2" style="color:#999">Performance</p>' + Object.entries(perf).map(function(e) { return '<div class="flex items-center gap-2 text-sm mb-1"><span class="w-32 shrink-0" style="color:#666">' + e[0] + '</span><span class="font-semibold" style="color:#1a1a2e">' + e[1] + '</span></div>'; }).join('') + '</div>' : '') +
+      (rp.comments ? '<p class="text-xs italic mt-2" style="color:#666">"' + rp.comments + '"</p>' : '') +
+      '<p class="text-xs mt-3" style="color:#bbb">' + (rp.created_at ? new Date(rp.created_at).toLocaleDateString('en-KE', { day: 'numeric', month: 'long', year: 'numeric' }) : '') + '</p>' +
+      '</div>';
+  }).join('');
 }
 
 // ===== CREATE REPORT =====
 async function usrCreateReport(c) {
-  c.innerHTML = '<h2 class="text-2xl font-bold mb-2" style="color:#1a1a2e">📊 Create Report</h2><p class="text-sm mb-6" style="color:#999">Loading students...</p>' + skeleton(3);
   var sr = await api({ action: 'getStudents', token: getToken() });
   reportStudents = sr.success ? sr.students.filter(function(s) { return s.status !== 'inactive'; }) : [];
-  var opts = '<option value="">Select student...</option>' + reportStudents.map(function(s) {
-    return '<option value="' + s.id + '">' + s.name + ' (' + (s.curriculum||'') + ' · ' + (s.grade||'?') + ') — ' + (s.school_name||'Independent') + '</option>';
-  }).join('');
+  var opts = '<option value="">Select student...</option>' + reportStudents.map(function(s) { return '<option value="' + s.id + '">' + s.name + ' (' + (s.curriculum || '') + ' - ' + (s.grade || '?') + ')</option>'; }).join('');
 
-  c.innerHTML = '<h2 class="text-2xl font-bold mb-2" style="color:#1a1a2e">📊 Create Report Card</h2><p class="text-sm mb-6" style="color:#999">Complete all sections. The official report card is generated automatically.</p>';
-  c.innerHTML += '<form id="reportForm" onsubmit="submitReport(event)">';
+  // Build entire HTML in ONE assignment — multiple innerHTML+= re-parses the DOM
+  // and severs event handlers on dynamically injected elements (like the save button)
+  c.innerHTML =
+    '<h2 class="text-2xl font-bold mb-2" style="color:#1a1a2e">📊 Create Report</h2>' +
+    '<p class="text-sm mb-8" style="color:#999">Fill in the student report and optionally generate a certificate.</p>' +
+    '<form id="reportForm">' +
 
-  c.innerHTML += '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">📋 Student Details</h3>' +
+    // Card 1: Student Info
+    '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">' +
+    '<h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">📋 Student Details</h3>' +
     '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">' +
     '<div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Student *</label><select id="rpStudent" required class="inp">' + opts + '</select></div>' +
-    '<div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Programme *</label><select id="rpProgram" required onchange="updatePerfFields()" class="inp"><option value="camp">DreamQuest Holiday Camp</option><option value="tuition">Home Tuition</option><option value="skills">Skill Programme</option></select></div>' +
-    '<div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Term / Period</label><select id="rpTerm" class="inp"><option>Term 1</option><option>Term 2</option><option>Term 3</option><option>Holiday Camp</option></select></div>' +
-    '<div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Partner / Host School</label><input id="rpSchool" type="text" value="Brighton International School, Katani" class="inp"></div>' +
-    '</div></div>';
+    '<div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Program *</label><select id="rpProgram" required class="inp"><option value="camp">DreamQuest Camp</option><option value="tuition">Home Tuition</option><option value="skills">Skill Program</option></select></div>' +
+    '<div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Term</label><select id="rpTerm" class="inp"><option>Term 1</option><option>Term 2</option><option>Term 3</option><option>Holiday Camp</option></select></div>' +
+    '<div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Host School</label><input id="rpSchool" type="text" value="Brighton International School, Katani" class="inp"></div>' +
+    '</div></div>' +
 
-  c.innerHTML += '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">⭐ Performance Scores</h3><div id="perfFields"></div></div>';
+    // Card 2: Performance
+    '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">' +
+    '<h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">⭐ Performance</h3>' +
+    '<div id="perfFields"></div></div>' +
 
-  c.innerHTML += '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">💡 Core Skills (1–5)</h3>' +
+    // Card 3: Core Skills
+    '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">' +
+    '<h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">💡 Core Skills (1–5)</h3>' +
     '<div class="grid grid-cols-2 md:grid-cols-4 gap-4">' +
-    '<div><label class="block text-xs mb-1.5" style="color:#999">Communication</label><input id="sk_comm" type="number" min="1" max="5" value="3" class="inp text-center"></div>' +
-    '<div><label class="block text-xs mb-1.5" style="color:#999">Teamwork</label><input id="sk_team" type="number" min="1" max="5" value="3" class="inp text-center"></div>' +
-    '<div><label class="block text-xs mb-1.5" style="color:#999">Creativity</label><input id="sk_creat" type="number" min="1" max="5" value="3" class="inp text-center"></div>' +
-    '<div><label class="block text-xs mb-1.5" style="color:#999">Confidence</label><input id="sk_conf" type="number" min="1" max="5" value="3" class="inp text-center"></div>' +
-    '</div></div>';
+    '<div><label class="block text-xs mb-1" style="color:#999">Communication</label><input id="sk_comm" type="number" min="1" max="5" value="3" class="inp text-center"></div>' +
+    '<div><label class="block text-xs mb-1" style="color:#999">Teamwork</label><input id="sk_team" type="number" min="1" max="5" value="3" class="inp text-center"></div>' +
+    '<div><label class="block text-xs mb-1" style="color:#999">Creativity</label><input id="sk_creat" type="number" min="1" max="5" value="3" class="inp text-center"></div>' +
+    '<div><label class="block text-xs mb-1" style="color:#999">Confidence</label><input id="sk_conf" type="number" min="1" max="5" value="3" class="inp text-center"></div>' +
+    '</div></div>' +
 
-  c.innerHTML += '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">💬 Teacher\'s Comments</h3>' +
-    '<textarea id="rpComments" rows="3" placeholder="Enter observations, strengths, and areas for improvement..." class="inp" style="resize:vertical"></textarea></div>';
+    // Card 4: Comments
+    '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">' +
+    '<h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">💬 Comments</h3>' +
+    '<textarea id="rpComments" rows="3" placeholder="Teacher comments and observations..." class="inp" style="resize:vertical"></textarea></div>' +
 
-  c.innerHTML += '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)"><h3 class="font-semibold text-sm mb-3" style="color:#1a1a2e">🏆 Award (Optional)</h3>' +
-    '<select id="rpCert" class="inp"><option value="">No Award</option><option value="best">🥇 Best Performing Student</option><option value="improved">📈 Most Improved Student</option><option value="participation">🎖 Participation Award</option><option value="excellence">⭐ Certificate of Excellence</option></select></div>';
+    // Card 5: Certificate
+    '<div class="rounded-2xl p-6 mb-4" style="background:white;box-shadow:0 2px 10px rgba(0,0,0,.04)">' +
+    '<h3 class="font-semibold text-sm mb-4" style="color:#1a1a2e">🏆 Certificate (Optional)</h3>' +
+    '<select id="rpCert" class="inp mb-4"><option value="">No Certificate</option><option value="best">Best Performing Student</option><option value="improved">Most Improved Student</option><option value="participation">Participation Award</option><option value="excellence">Certificate of Excellence</option></select>' +
+    '<div id="certPreview"></div></div>' +
 
-  c.innerHTML += '<div class="flex flex-wrap gap-3 mb-10"><button type="submit" id="saveReportBtn" class="px-8 py-3.5 rounded-xl font-semibold text-white flex items-center gap-2" style="background:#F26B3A"><i data-lucide="save" style="width:18px;height:18px"></i><span id="saveReportBtnText">Save &amp; Generate Report Card</span><span id="saveReportLoad" class="hidden"><span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span></span></button></div></form>';
+    // Buttons — use type="button" + onclick to avoid form submit race
+    '<div class="flex flex-wrap gap-3 mb-8">' +
+    '<button type="button" id="saveReportBtn" class="px-8 py-3.5 rounded-xl font-semibold text-white flex items-center gap-2" style="background:#F26B3A">' +
+    '<i data-lucide="save" style="width:18px;height:18px"></i>' +
+    '<span id="saveReportBtnText">Save Report</span>' +
+    '<span id="saveReportLoad" class="hidden"><span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span></span>' +
+    '</button>' +
+    '<button type="button" onclick="printCertificate()" id="printCertBtn" class="hidden px-8 py-3.5 rounded-xl font-semibold border-2 flex items-center gap-2" style="border-color:#F26B3A;color:#F26B3A">' +
+    '<i data-lucide="printer" style="width:18px;height:18px"></i> Print Certificate' +
+    '</button></div></form>';
 
   lucide.createIcons();
+
+  // Wire up events AFTER DOM is ready (cannot use inline onchange inside innerHTML safely)
+  document.getElementById('rpProgram').addEventListener('change', updatePerfFields);
+  document.getElementById('rpCert').addEventListener('change', updateCertPreview);
+  document.getElementById('saveReportBtn').addEventListener('click', submitReport);
   updatePerfFields();
 }
 
@@ -1419,17 +1273,15 @@ function updatePerfFields() {
   if (!el) return;
   var html = '';
   if (prog === 'camp') {
-    ['Coding & Robotics','Swimming','Art & Creativity','Music & Talent','Cooking','Outdoor Activities'].forEach(function(s) {
-      html += '<div class="flex items-center gap-3 mb-2"><span class="text-sm shrink-0" style="color:#1a1a2e;width:160px">' + s + '</span><input type="number" min="1" max="5" value="3" class="perf-field inp text-center" style="width:80px" data-label="' + s + '"><span class="text-xs ml-1" style="color:#999">/5</span></div>';
+    ['Coding', 'Swimming', 'Art & Creativity', 'Music', 'Cooking', 'Outdoor Activities'].forEach(function(s) {
+      html += '<div class="flex items-center gap-3 mb-2"><span class="text-sm shrink-0" style="color:#1a1a2e;width:140px">' + s + '</span><input type="number" min="1" max="5" value="3" class="perf-field inp text-center" style="width:80px" data-label="' + s + '"><span class="text-xs" style="color:#999">/5</span></div>';
     });
   } else if (prog === 'tuition') {
-    ['Mathematics','English Language','Sciences','Humanities','Other Subject'].forEach(function(s) {
-      html += '<div class="flex items-center gap-3 mb-2"><span class="text-sm shrink-0" style="color:#1a1a2e;width:160px">' + s + '</span><input type="number" min="0" max="100" placeholder="e.g. 78" class="perf-field inp text-center" style="width:80px" data-label="' + s + '"><span class="text-xs ml-1" style="color:#999">/ 100</span></div>';
+    ['Mathematics', 'English', 'Sciences'].forEach(function(s) {
+      html += '<div class="flex items-center gap-3 mb-2"><span class="text-sm shrink-0" style="color:#1a1a2e;width:140px">' + s + '</span><input type="number" min="0" max="100" placeholder="%" class="perf-field inp text-center" style="width:80px" data-label="' + s + '"><span class="text-xs" style="color:#999">%</span></div>';
     });
   } else {
-    ['Practical Skills','Theory Knowledge','Project Work'].forEach(function(s) {
-      html += '<div class="flex items-center gap-3 mb-2"><span class="text-sm shrink-0" style="color:#1a1a2e;width:160px">' + s + '</span><input type="number" min="1" max="5" value="3" class="perf-field inp text-center" style="width:80px" data-label="' + s + '"><span class="text-xs ml-1" style="color:#999">/5</span></div>';
-    });
+    html += '<div class="flex items-center gap-3 mb-2"><input type="text" placeholder="Skill name" class="perf-field-name inp" style="width:140px"><input type="number" min="1" max="5" value="3" class="perf-field inp text-center" style="width:80px" data-label="custom"><span class="text-xs" style="color:#999">/5</span></div>';
   }
   el.innerHTML = html;
 }
@@ -1438,7 +1290,11 @@ function gatherPerf() {
   var d = {};
   document.querySelectorAll('.perf-field').forEach(function(inp) {
     var l = inp.dataset.label;
-    if (l && inp.value !== '') d[l] = inp.value;
+    if (l === 'custom') {
+      var n = inp.parentElement.querySelector('.perf-field-name');
+      if (n && n.value) l = n.value;
+    }
+    if (l && l !== 'custom') d[l] = inp.value || '0';
   });
   return d;
 }
@@ -1452,16 +1308,55 @@ function gatherSkills() {
   };
 }
 
+function updateCertPreview() {
+  var type = document.getElementById('rpCert').value;
+  var el = document.getElementById('certPreview');
+  var btn = document.getElementById('printCertBtn');
+  if (!type) { el.innerHTML = ''; btn.classList.add('hidden'); return; }
+  btn.classList.remove('hidden');
+  var labels = { best: 'Best Performing Student', improved: 'Most Improved Student', participation: 'Participation Award', excellence: 'Certificate of Excellence' };
+  var sel = document.getElementById('rpStudent');
+  var nm = '[Student Name]';
+  var stu = reportStudents.find(function(s) { return s.id === sel.value; });
+  if (stu) nm = stu.name;
+  var prog = document.getElementById('rpProgram').value;
+  var pL = { camp: 'DreamQuest Holiday Camp', tuition: 'Home Tuition Program', skills: 'Skill Development Program' };
+  var school = document.getElementById('rpSchool').value || 'Smart Minds';
+  var today = new Date().toLocaleDateString('en-KE', { day: 'numeric', month: 'long', year: 'numeric' });
+  var teacher = currentUser ? currentUser.name : 'Director';
+
+  el.innerHTML = '<div class="certificate-frame mt-2 mb-4">' +
+    '<div class="certificate-inner">' +
+    '<div style="margin-bottom:12px"><div class="w-12 h-12 rounded-xl mx-auto flex items-center justify-center" style="background:#F26B3A"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><p style="color:#F26B3A;font-size:11px;font-weight:700;letter-spacing:3px;margin-top:8px">SMART MINDS</p><p style="color:#999;font-size:10px">TUITION &amp; SKILLS HUB</p></div>' +
+    '<h2 style="font-size:20px;font-weight:800;color:#1a1a2e;letter-spacing:2px;margin:16px 0 8px">CERTIFICATE OF ACHIEVEMENT</h2>' +
+    '<div style="width:60px;height:2px;background:#F26B3A;margin:0 auto 16px"></div>' +
+    '<p style="color:#666;font-size:13px">This is to certify that</p>' +
+    '<p style="font-size:22px;font-weight:700;color:#1a1a2e;margin:8px 0;border-bottom:2px solid #f0d0b8;display:inline-block;padding-bottom:4px">' + nm + '</p>' +
+    '<p style="color:#666;font-size:13px;margin-top:8px">has been awarded the</p>' +
+    '<p style="font-size:15px;font-weight:600;color:#F26B3A;margin:5px 0">' + (labels[type] || type) + '</p>' +
+    '<p style="color:#666;font-size:13px">for</p>' +
+    '<p style="font-size:14px;font-weight:600;color:#1a1a2e;margin:5px 0">' + (pL[prog] || prog) + '</p>' +
+    '<p style="color:#666;font-size:13px">at</p>' +
+    '<p style="font-size:14px;font-weight:600;color:#1a1a2e;margin:5px 0">' + school + '</p>' +
+    '<div class="certificate-seal"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M22 10v6M2 10l10 5 10 5z"/><path d="M6 12v5c0 2 4 3 6 3s6-1 6-3v-5"/></svg></div>' +
+    '<div style="margin-top:20px;display:flex;justify-content:space-around;padding:0 20px">' +
+    '<div style="text-align:center"><div style="width:120px;border-top:1px solid #ccc;margin-bottom:5px"></div><p style="font-size:11px;color:#666">' + teacher + '</p><p style="font-size:10px;color:#999">Instructor</p></div>' +
+    '<div style="text-align:center"><div style="width:120px;border-top:1px solid #ccc;margin-bottom:5px"></div><p style="font-size:11px;color:#666">' + today + '</p><p style="font-size:10px;color:#999">Date</p></div>' +
+    '</div></div></div>';
+}
+
 async function submitReport(e) {
-  e.preventDefault();
+  if (e && e.preventDefault) e.preventDefault();
+  var sel = document.getElementById('rpStudent');
+  if (!sel || !sel.value) { showToast('Error', 'Please select a student.', true); return; }
   var btn = document.getElementById('saveReportBtn');
   document.getElementById('saveReportBtnText').classList.add('hidden');
   document.getElementById('saveReportLoad').classList.remove('hidden');
   btn.disabled = true;
-  var sel = document.getElementById('rpStudent');
   var stu = reportStudents.find(function(s) { return s.id === sel.value; });
   var d = {
-    action: 'addReport', token: getToken(),
+    action: 'addReport',
+    token: getToken(),
     student_id: sel.value,
     student_name: stu ? stu.name : '',
     program: document.getElementById('rpProgram').value,
@@ -1478,12 +1373,25 @@ async function submitReport(e) {
   document.getElementById('saveReportLoad').classList.add('hidden');
   btn.disabled = false;
   if (r.success) {
-    showToast('Report Saved! 🎉', 'Opening report card...');
-    cacheBust(); // clear cache so My Reports reloads fresh
-    setTimeout(function() { showPortalTab('myReports'); }, 900);
+    showToast('Report Saved! 🎉', 'For ' + (stu ? stu.name : 'Student'));
+    // Only clear the text fields — do NOT reset() the whole form as it destroys dynamic fields
+    var commEl = document.getElementById('rpComments');
+    if (commEl) commEl.value = '';
+    var certEl = document.getElementById('rpCert');
+    if (certEl) { certEl.value = ''; updateCertPreview(); }
+    document.getElementById('printCertBtn').classList.add('hidden');
   } else {
     showToast('Error', r.error || 'Could not save report.', true);
   }
+}
+
+function printCertificate() {
+  var h = document.getElementById('certPreview') ? document.getElementById('certPreview').innerHTML : '';
+  if (!h) { showToast('Error', 'Please select a certificate type first.', true); return; }
+  var pa = document.getElementById('printArea');
+  pa.style.display = 'block';
+  pa.innerHTML = h;
+  setTimeout(function() { window.print(); setTimeout(function() { pa.style.display = 'none'; }, 500); }, 300);
 }
 
 // ===== PAYMENTS =====

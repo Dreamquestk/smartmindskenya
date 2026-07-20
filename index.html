@@ -35,6 +35,7 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
 .adm-table{width:100%;border-collapse:collapse;font-size:13px}.adm-table th{text-align:left;padding:10px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#999;border-bottom:2px solid #eee}.adm-table td{padding:10px 12px;border-bottom:1px solid #f5f5f5;color:#1a1a2e}.adm-table tr:hover td{background:#fafafa}
 .badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:600}
 .badge-green{background:rgba(34,197,94,.1);color:#22c55e}.badge-yellow{background:rgba(234,179,8,.1);color:#ca8a04}.badge-red{background:rgba(239,68,68,.1);color:#ef4444}.badge-blue{background:rgba(59,130,246,.1);color:#3b82f6}
+.chat-bubble{max-width:75%;word-wrap:break-word}.chat-bubble.sent{background:var(--brand-blue);color:white;border-radius:16px 16px 4px 16px}.chat-bubble.received{background:#f0f0f0;color:#1a1a2e;border-radius:16px 16px 16px 4px}
 </style>
 </head>
 <body class="h-full overflow-auto scroll-smooth" style="background-color:#F7FAFE;color:#1a1a2e">
@@ -78,7 +79,7 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
         <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Password</label><input type="password" id="regPwd" required minlength="6" placeholder="Min 6 chars" class="inp"></div>
         <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Confirm</label><input type="password" id="regPwd2" required minlength="6" placeholder="Re-enter" class="inp"></div>
       </div>
-      <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Account Type</label><select id="regType" required class="inp"><option value="student">Student</option><option value="teacher">Teacher</option></select></div>
+      <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Account Type</label><select id="regType" required class="inp"><option value="student">Student/Parent</option><option value="teacher">Teacher</option></select></div>
       <button type="submit" class="w-full py-3.5 rounded-xl font-semibold text-white transition hover:opacity-90" style="background:var(--brand-gradient)">Create Account</button>
     </div>
   </form>
@@ -122,14 +123,11 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
     <div class="hidden md:flex items-center gap-6">
       <a href="#home" class="nav-link text-sm font-medium" style="color:#1a1a2e">Home</a>
       <a href="#about" class="nav-link text-sm font-medium" style="color:#1a1a2e">About</a>
-      <a href="#services" class="nav-link text-sm font-medium" style="color:#1a1a2e">Services</a>
       <a href="#academies" class="nav-link text-sm font-medium" style="color:#1a1a2e">Academies</a>
-      <a href="#camp" class="nav-link text-sm font-medium" style="color:#1a1a2e">DreamQuest</a>
       <button onclick="openAuth()" class="px-4 py-2 rounded-full text-sm font-medium transition hover:opacity-80" style="border:2px solid var(--brand-blue);color:var(--brand-blue)">Portal Login</button>
     </div>
     <div class="flex items-center gap-2 md:hidden">
       <button onclick="openAuth()" class="px-3 py-1.5 rounded-full text-xs font-medium" style="border:1px solid var(--brand-blue);color:var(--brand-blue)">Login</button>
-      <button class="p-2" onclick="document.getElementById('mobileMenu').classList.toggle('open')"><i data-lucide="menu" style="width:24px;height:24px;color:#1a1a2e"></i></button>
     </div>
   </div>
 </nav>
@@ -159,79 +157,8 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
   </div>
 </section>
 
-<!-- ABOUT & IMPACT -->
-<section id="about" class="w-full py-20" style="background:#F7FAFE">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="grid md:grid-cols-2 gap-12 items-center">
-      <div class="fade-up">
-        <div class="rounded-3xl overflow-hidden shadow-xl relative h-[450px]">
-          <img src="https://z-cdn-media.chatglm.cn/files/b2a42349-bb46-4351-89f6-50d33e8ffb2d.png?auth_key=1884576629-db61b8a5b98c47d1a28445a24a12719e-0-2bcae2376500d635e99228672ef743d0" alt="Our Impact" class="w-full h-full object-cover">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-8 text-white">
-            <h3 class="text-3xl font-bold mb-4">Our Impact</h3>
-            <div class="grid grid-cols-2 gap-y-4 gap-x-6 text-sm font-medium">
-              <div class="flex items-center gap-2"><i data-lucide="users" style="width:18px;height:18px;color:#60a5fa"></i> 500+ Students Trained</div>
-              <div class="flex items-center gap-2"><i data-lucide="school" style="width:18px;height:18px;color:#4ade80"></i> 15+ Partner Schools</div>
-              <div class="flex items-center gap-2"><i data-lucide="smile" style="width:18px;height:18px;color:#60a5fa"></i> 95% Parent Satisfaction</div>
-              <div class="flex items-center gap-2"><i data-lucide="check-circle" style="width:18px;height:18px;color:#4ade80"></i> 100+ Projects Completed</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="fade-up stagger-2">
-        <p class="text-sm font-semibold tracking-widest uppercase mb-3" style="color:var(--brand-green)">About Us</p>
-        <h2 class="text-3xl md:text-4xl font-bold mb-6" style="color:#1a1a2e">Who We Are</h2>
-        <p class="text-lg leading-relaxed mb-8" style="color:#555">Smart Minds Home Tuition &amp; Skills Hub Ltd is an educational organization committed to transforming how children learn.</p>
-        <div class="space-y-6">
-          <div class="rounded-2xl p-6" style="background:white;box-shadow:0 4px 20px rgba(0,0,0,.05)"><h3 class="font-bold mb-2 flex items-center gap-2" style="color:#1a1a2e"><i data-lucide="compass" style="width:20px;height:20px;color:var(--brand-blue)"></i> Our Mission</h3><p class="text-sm leading-relaxed" style="color:#555">To empower learners through personalized education, creativity, and practical skills that prepare them for the future.</p></div>
-          <div class="rounded-2xl p-6" style="background:white;box-shadow:0 4px 20px rgba(0,0,0,.05)"><h3 class="font-bold mb-2 flex items-center gap-2" style="color:#1a1a2e"><i data-lucide="eye" style="width:20px;height:20px;color:var(--brand-green)"></i> Our Vision</h3><p class="text-sm leading-relaxed" style="color:#555">To become a leading hub for innovative learning and skill development across schools and communities.</p></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- SPECIALIZED ACADEMIES -->
-<section id="academies" class="w-full py-20" style="background:white">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-14 fade-up">
-      <p class="text-sm font-semibold tracking-widest uppercase mb-3" style="color:var(--brand-blue)">Specialized Academies</p>
-      <h2 class="text-3xl md:text-4xl font-bold" style="color:#1a1a2e">Explore Our Flagship Programs</h2>
-    </div>
-    <div class="grid md:grid-cols-3 gap-8">
-      <div class="card-hover fade-up rounded-3xl overflow-hidden shadow-lg border" style="border-color:#eee; background:white">
-        <div class="relative h-56 overflow-hidden">
-          <img src="https://z-cdn-media.chatglm.cn/files/544c0051-e384-4740-a187-b67cd1133fa4.png?auth_key=1884576629-c1f1f70a0fa341a3b38addfa92248114-0-c76e8510e43e0fd655f9982807f6e65c" class="w-full h-full object-cover" alt="Aviation & Drone Academy">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-5">
-            <h3 class="text-xl font-bold text-white">Aviation & Drone Academy</h3>
-            <p class="text-xs text-gray-200 mt-1">Explore. Fly. Soar.</p>
-          </div>
-        </div>
-      </div>
-      <div class="card-hover fade-up stagger-2 rounded-3xl overflow-hidden shadow-lg border" style="border-color:#eee; background:white">
-        <div class="relative h-56 overflow-hidden">
-          <img src="https://z-cdn-media.chatglm.cn/files/1ad9f5a1-c4d7-44d9-a628-9ac86b77f518.png?auth_key=1884576629-ed0f8173951f4b12a8b157a6e5e76151-0-20b7d4e074df8e5d6c72f9eff11e2834" class="w-full h-full object-cover" alt="Chess Academy">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-5">
-            <h3 class="text-xl font-bold text-white">Chess Academy</h3>
-            <p class="text-xs text-gray-200 mt-1">Think. Strategize. Win.</p>
-          </div>
-        </div>
-      </div>
-      <div class="card-hover fade-up stagger-3 rounded-3xl overflow-hidden shadow-lg border" style="border-color:#eee; background:white">
-        <div class="relative h-56 overflow-hidden">
-          <img src="https://z-cdn-media.chatglm.cn/files/f357e39b-87a4-4dec-b5f3-252a4a3e1fdf.png?auth_key=1884576629-6e4d5761cd6c420e90e86f84449a82a7-0-1e6dae172558cc41de4e1ca61ee23726" class="w-full h-full object-cover" alt="Fire Safety & First Aid">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-5">
-            <h3 class="text-xl font-bold text-white">Fire Safety & First Aid</h3>
-            <p class="text-xs text-gray-200 mt-1">Learn. Respond. Save Lives.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ENROLL CTA -->
 <section id="enroll" class="w-full py-20 relative overflow-hidden" style="background:#1a1a2e">
-  <div class="blob w-96 h-96" style="background:var(--brand-blue);top:-150px;right:-100px"></div>
   <div class="max-w-3xl mx-auto px-6 text-center relative z-10">
     <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-6">Give Your Child the<br><span class="brand-text-gradient">Smart Advantage</span></h2>
     <form id="enrollForm" class="max-w-md mx-auto mt-8" onsubmit="handleEnroll(event)">
@@ -249,14 +176,6 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
     </form>
   </div>
 </section>
-
-<!-- FOOTER -->
-<footer class="w-full py-12" style="background:#0f0f23">
-  <div class="max-w-7xl mx-auto px-6 text-center">
-    <div class="flex items-center gap-2 justify-center mb-4"><div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:var(--brand-gradient)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/></svg></div><span class="font-bold text-white text-sm"><span style="color:#60a5fa">SMART</span> <span style="color:#4ade80">MINDS</span></span></div>
-    <p class="text-xs text-gray-500">&copy; 2025 Smart Minds Home Tuition &amp; Skills Hub Ltd. All rights reserved.</p>
-  </div>
-</footer>
 </div>
 
 <!-- USER PORTAL (STUDENT/TEACHER) -->
@@ -267,7 +186,9 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
   <nav class="flex-1 space-y-1">
     <a href="javascript:void(0)" onclick="loadUserView('dashboard')" class="portal-nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> Dashboard</a>
     <a href="javascript:void(0)" onclick="loadUserView('reports')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="file-text" style="width:18px;height:18px"></i> Reports</a>
+    <a href="javascript:void(0)" onclick="loadUserView('progress')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="trending-up" style="width:18px;height:18px"></i> Progress</a>
     <a href="javascript:void(0)" onclick="loadUserView('payments')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="credit-card" style="width:18px;height:18px"></i> Payments</a>
+    <a href="javascript:void(0)" onclick="loadUserView('chat')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="message-square" style="width:18px;height:18px"></i> Messages</a>
   </nav>
   <div class="border-t pt-4 mt-4" style="border-color:rgba(255,255,255,.1)"><button onclick="handleLogout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition text-left"><i data-lucide="log-out" style="width:18px;height:18px"></i> Log Out</button></div>
 </aside>
@@ -286,7 +207,8 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
     <a href="javascript:void(0)" onclick="loadAdminView('dashboard')" class="portal-nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> Dashboard</a>
     <a href="javascript:void(0)" onclick="loadAdminView('schools')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="school" style="width:18px;height:18px"></i> Schools</a>
     <a href="javascript:void(0)" onclick="loadAdminView('students')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="users" style="width:18px;height:18px"></i> Students</a>
-    <a href="javascript:void(0)" onclick="loadAdminView('inquiries')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="mail-question" style="width:18px;height:18px"></i> Inquiries</a>
+    <a href="javascript:void(0)" onclick="loadAdminView('payments')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="dollar-sign" style="width:18px;height:18px"></i> Payments</a>
+    <a href="javascript:void(0)" onclick="loadAdminView('chat')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="message-square" style="width:18px;height:18px"></i> Messages</a>
   </nav>
   <div class="border-t pt-4 mt-4" style="border-color:rgba(255,255,255,.1)"><button onclick="handleLogout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition text-left"><i data-lucide="log-out" style="width:18px;height:18px"></i> Log Out</button></div>
 </aside>
@@ -304,7 +226,9 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
   <nav class="flex-1 space-y-1">
     <a href="javascript:void(0)" onclick="loadSchoolView('dashboard')" class="portal-nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> Dashboard</a>
     <a href="javascript:void(0)" onclick="loadSchoolView('students')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="users" style="width:18px;height:18px"></i> Students</a>
-    <a href="javascript:void(0)" onclick="loadSchoolView('revenue')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="dollar-sign" style="width:18px;height:18px"></i> Revenue</a>
+    <a href="javascript:void(0)" onclick="loadSchoolView('attendance')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="calendar-check" style="width:18px;height:18px"></i> Attendance</a>
+    <a href="javascript:void(0)" onclick="loadSchoolView('revenue')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="trending-up" style="width:18px;height:18px"></i> Revenue</a>
+    <a href="javascript:void(0)" onclick="loadSchoolView('chat')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="message-square" style="width:18px;height:18px"></i> Messages</a>
   </nav>
   <div class="border-t pt-4 mt-4" style="border-color:rgba(255,255,255,.1)"><button onclick="handleLogout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition text-left"><i data-lucide="log-out" style="width:18px;height:18px"></i> Log Out</button></div>
 </aside>
@@ -314,34 +238,33 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
 </div>
 </div>
 
+<!-- GENERIC MODAL FOR FORMS (ADD REPORT, ENROLL STUDENT, ETC) -->
+<div id="genericModal" class="modal-bg fixed inset-0 z-[90] flex items-center justify-center p-4" style="background:rgba(0,0,0,.5)" onclick="if(event.target===this)closeGenericModal()">
+  <div class="modal-body w-full max-w-lg rounded-3xl p-8 relative" style="background:#F7FAFE;max-height:90vh;overflow-y:auto">
+    <button onclick="closeGenericModal()" class="absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 transition"><i data-lucide="x" style="width:18px;height:18px;color:#1a1a2e"></i></button>
+    <div id="genericModalContent"></div>
+  </div>
+</div>
+
 <script>
-// =====================================================================
-//  GLOBAL CONFIG
-//  INJECTED WITH YOUR LIVE GOOGLE APPS SCRIPT URL
-// =====================================================================
 const API_URL = 'https://script.google.com/macros/s/AKfycbyyMLWer8JorKX3OijTOv6jDraHB1KePNIJRO_P_l3f2nns4oCPvH8ZGc6j1UnnYkFLEQ/exec'; 
 
-// =====================================================================
-//  API HELPER
-// =====================================================================
 async function api(action, data = {}) {
   const token = localStorage.getItem('sm_token') || '';
   try {
     const res = await fetch(API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Prevents CORS preflight
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
       body: JSON.stringify({ action, token, ...data })
     });
     return await res.json();
   } catch (err) {
     console.error('API Error:', err);
-    return { success: false, error: 'Network error. Check console.' };
+    return { success: false, error: 'Network error.' };
   }
 }
 
-// =====================================================================
-//  TOAST & MODAL CONTROLS
-// =====================================================================
+// --- UI Helpers ---
 function showToast(title, msg, isSuccess = true) {
   const toast = document.getElementById('toastNotif');
   document.getElementById('toastTitle').innerText = title;
@@ -356,6 +279,9 @@ function openAuth() { document.getElementById('authModal').classList.add('open')
 function closeAuth() { document.getElementById('authModal').classList.remove('open'); }
 function openSchoolReg() { document.getElementById('schoolModal').classList.add('open'); }
 function closeSchoolReg() { document.getElementById('schoolModal').classList.remove('open'); }
+function openGenericModal() { document.getElementById('genericModal').classList.add('open'); }
+function closeGenericModal() { document.getElementById('genericModal').classList.remove('open'); }
+
 function switchAuthTab(tab) {
   if (tab === 'login') {
     document.getElementById('loginForm').classList.remove('hidden');
@@ -374,9 +300,7 @@ function switchAuthTab(tab) {
   }
 }
 
-// =====================================================================
-//  AUTHENTICATION
-// =====================================================================
+// --- Auth Handlers ---
 async function handleLogin(e) {
   e.preventDefault();
   const email = document.getElementById('loginEmail').value;
@@ -449,6 +373,7 @@ async function handleEnroll(e) {
 }
 
 function handleLogout() {
+  api('logout', {}); // fire and forget
   localStorage.removeItem('sm_token');
   localStorage.removeItem('sm_user');
   document.getElementById('mainWebsite').classList.remove('hidden');
@@ -458,9 +383,6 @@ function handleLogout() {
   window.scrollTo(0, 0);
 }
 
-// =====================================================================
-//  ROUTING & PORTAL INITIALIZATION
-// =====================================================================
 function routeUser(user) {
   document.getElementById('mainWebsite').classList.add('hidden');
   document.getElementById('adminPortal').classList.add('hidden');
@@ -490,9 +412,7 @@ function checkAuth() {
   }
 }
 
-// =====================================================================
-//  USER PORTAL LOGIC
-// =====================================================================
+// --- USER PORTAL LOGIC ---
 async function loadUserView(view) {
   const content = document.getElementById('userContent');
   content.innerHTML = `<div class="animate-pulse text-gray-500">Loading ${view}...</div>`;
@@ -518,23 +438,48 @@ async function loadUserView(view) {
   } 
   else if (view === 'reports') {
     const res = await api('getReports');
+    let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">Reports</h1>`;
+    if (user.type === 'teacher') {
+      html += `<button onclick="openAddReportModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)"><i data-lucide="plus" style="width:16px;height:16px" class="inline-block mr-1"></i> Create Report</button>`;
+    }
+    html += `</div>`;
     if (res.success && res.reports.length > 0) {
-      let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">My Reports</h1><div class="space-y-4">`;
+      html += `<div class="space-y-4">`;
       res.reports.forEach(r => {
         html += `
           <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
             <div class="flex justify-between items-start">
-              <div><p class="font-bold" style="color:#1a1a2e">${r.program || 'General Report'}</p><p class="text-xs text-gray-500 mt-1">Term: ${r.term || 'N/A'}</p></div>
+              <div><p class="font-bold" style="color:#1a1a2e">${r.student_name || 'General Report'}</p><p class="text-xs text-gray-500 mt-1">Program: ${r.program || 'N/A'} | Term: ${r.term || 'N/A'}</p></div>
               <span class="badge badge-blue">${new Date(r.created_at).toLocaleDateString()}</span>
             </div>
-            <p class="text-sm mt-4" style="color:#555">${r.comments || 'No comments provided.'}</p>
+            <div class="mt-4 text-sm" style="color:#555"><strong>Performance:</strong> ${r.performance_data || 'N/A'}</div>
+            <div class="mt-2 text-sm" style="color:#555"><strong>Core Skills:</strong> ${r.core_skills || 'N/A'}</div>
+            <p class="text-sm mt-4 p-3 rounded-lg bg-gray-50" style="color:#555">${r.comments || 'No comments provided.'}</p>
           </div>`;
       });
       content.innerHTML = html + `</div>`;
     } else {
-      content.innerHTML = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">My Reports</h1><p class="text-gray-500">No reports available yet.</p>`;
+      content.innerHTML = html + `<p class="text-gray-500">No reports available yet.</p>`;
     }
   } 
+  else if (view === 'progress') {
+    const res = await api('getProgress');
+    let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">My Progress</h1>`;
+    if (res.success && res.reports.length > 0) {
+      html += `<div class="space-y-4">`;
+      res.reports.forEach(r => {
+        html += `
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+            <p class="font-bold" style="color:#1a1a2e">${r.program || 'General Progress'}</p>
+            <p class="text-xs text-gray-500 mt-1">Term: ${r.term || 'N/A'}</p>
+            <div class="mt-4 text-sm" style="color:#555">${r.comments || ''}</div>
+          </div>`;
+      });
+      content.innerHTML = html + `</div>`;
+    } else {
+      content.innerHTML = html + `<p class="text-gray-500">No progress data available.</p>`;
+    }
+  }
   else if (view === 'payments') {
     const res = await api('getPayments');
     let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Payment History</h1>`;
@@ -554,12 +499,13 @@ async function loadUserView(view) {
     }
     content.innerHTML = html;
   }
+  else if (view === 'chat') {
+    renderChatUI('userContent');
+  }
   lucide.createIcons();
 }
 
-// =====================================================================
-//  ADMIN PORTAL LOGIC
-// =====================================================================
+// --- ADMIN PORTAL LOGIC ---
 async function loadAdminView(view) {
   const content = document.getElementById('adminContent');
   content.innerHTML = `<div class="animate-pulse text-gray-500">Loading ${view}...</div>`;
@@ -572,11 +518,8 @@ async function loadAdminView(view) {
         <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Dashboard</h1>
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-3xl mb-2">👨‍🎓</div><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Students</p><p class="text-2xl font-bold mt-1" style="color:var(--brand-blue)">${d.totalStudents}</p></div>
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-3xl mb-2">👨‍🏫</div><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Teachers</p><p class="text-2xl font-bold mt-1" style="color:var(--brand-green)">${d.totalTeachers}</p></div>
           <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-3xl mb-2">🏫</div><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Schools</p><p class="text-2xl font-bold mt-1" style="color:#1a1a2e">${d.totalSchools}</p></div>
           <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-3xl mb-2">💰</div><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Revenue</p><p class="text-2xl font-bold mt-1" style="color:#1a1a2e">KES ${d.totalRevenue}</p></div>
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-3xl mb-2">⏳</div><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Pending Schools</p><p class="text-2xl font-bold mt-1" style="color:#ca8a04">${d.pendingSchools}</p></div>
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-3xl mb-2">📧</div><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Inquiries</p><p class="text-2xl font-bold mt-1" style="color:#1a1a2e">${d.totalInquiries}</p></div>
         </div>`;
     }
   } 
@@ -589,7 +532,7 @@ async function loadAdminView(view) {
         html += `<tr>
           <td><p class="font-semibold">${s.name}</p><p class="text-xs text-gray-500">${s.email}</p></td>
           <td>${s.location || 'N/A'}</td>
-          <td>${s.principal_name || 'N/A'}<br><span class="text-xs text-gray-500">${s.principal_phone}</span></td>
+          <td>${s.principal_name || 'N/A'}</td>
           <td><span class="badge ${s.status === 'approved' ? 'badge-green' : s.status === 'pending' ? 'badge-yellow' : 'badge-red'}">${s.status}</span></td>
           <td>
             <button onclick="updateSchoolStatus('${s.id}', 'approved')" class="text-xs font-bold text-green-600 hover:underline">Approve</button> | 
@@ -617,22 +560,22 @@ async function loadAdminView(view) {
     }
     content.innerHTML = html;
   }
-  else if (view === 'inquiries') {
-    const res = await api('adminGetInquiries');
-    let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Inquiries</h1>`;
-    if (res.success && res.inquiries.length > 0) {
-      html += `<div class="space-y-4">`;
-      res.inquiries.forEach(i => {
-        html += `<div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
-          <div class="flex justify-between"><div><p class="font-bold" style="color:#1a1a2e">${i.name}</p><p class="text-sm text-gray-500">${i.phone} | ${i.email || 'No email'}</p></div><span class="badge ${i.status === 'new' ? 'badge-blue' : 'badge-green'}">${i.status}</span></div>
-          <p class="text-sm mt-2" style="color:#555"><strong>Interest:</strong> ${i.interest}</p>
-        </div>`;
+  else if (view === 'payments') {
+    const res = await api('adminGetPayments');
+    let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">Payments</h1><button onclick="openAddPaymentModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)">Record Payment</button></div>`;
+    if (res.success && res.payments.length > 0) {
+      html += `<table class="adm-table"><thead><tr><th>Date</th><th>Student</th><th>Amount</th><th>Method</th><th>Status</th></tr></thead><tbody>`;
+      res.payments.forEach(p => {
+        html += `<tr><td>${new Date(p.created_at).toLocaleDateString()}</td><td>${p.student_name || 'N/A'}</td><td>KES ${p.amount}</td><td>${p.method || 'N/A'}</td><td><span class="badge ${p.status === 'Paid' ? 'badge-green' : 'badge-yellow'}">${p.status}</span></td></tr>`;
       });
-      html += `</div>`;
+      html += `</tbody></table>`;
     } else {
-      html += `<p class="text-gray-500">No inquiries found.</p>`;
+      html += `<p class="text-gray-500">No payments found.</p>`;
     }
     content.innerHTML = html;
+  }
+  else if (view === 'chat') {
+    renderChatUI('adminContent');
   }
   lucide.createIcons();
 }
@@ -647,9 +590,7 @@ async function updateSchoolStatus(id, status) {
   }
 }
 
-// =====================================================================
-//  SCHOOL PORTAL LOGIC
-// =====================================================================
+// --- SCHOOL PORTAL LOGIC ---
 async function loadSchoolView(view) {
   const content = document.getElementById('schoolContent');
   content.innerHTML = `<div class="animate-pulse text-gray-500">Loading ${view}...</div>`;
@@ -663,16 +604,13 @@ async function loadSchoolView(view) {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Location</p><p class="text-sm font-medium mt-2" style="color:#1a1a2e">${p.location}</p></div>
           <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Principal</p><p class="text-sm font-medium mt-2" style="color:#1a1a2e">${p.principal_name} (${p.principal_phone})</p></div>
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Curriculum</p><p class="text-sm font-medium mt-2" style="color:#1a1a2e">${p.curriculum || 'N/A'}</p></div>
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Account Status</p><p class="text-sm font-bold mt-2 capitalize ${p.status === 'approved' ? 'text-green-600' : 'text-yellow-600'}">${p.status}</p></div>
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Status</p><p class="text-sm font-bold mt-2 capitalize ${p.status === 'approved' ? 'text-green-600' : 'text-yellow-600'}">${p.status}</p></div>
         </div>`;
-    } else {
-      content.innerHTML = `<p class="text-red-500">Failed to load profile.</p>`;
     }
   } 
   else if (view === 'students') {
     const res = await api('getSchoolStudents');
-    let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Enrolled Students</h1>`;
+    let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">Enrolled Students</h1><button onclick="openEnrollStudentModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)">Enroll Student</button></div>`;
     if (res.success && res.students.length > 0) {
       html += `<table class="adm-table"><thead><tr><th>Name</th><th>Grade</th><th>Services</th><th>Monthly Fee</th><th>Status</th></tr></thead><tbody>`;
       res.students.forEach(s => {
@@ -681,6 +619,29 @@ async function loadSchoolView(view) {
       html += `</tbody></table>`;
     } else {
       html += `<p class="text-gray-500">No students enrolled yet.</p>`;
+    }
+    content.innerHTML = html;
+  }
+  else if (view === 'attendance') {
+    const res = await api('getSchoolStudents');
+    let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Mark Attendance</h1>`;
+    if (res.success && res.students.length > 0) {
+      html += `<input type="date" id="attDate" class="inp mb-4 max-w-xs" value="${new Date().toISOString().split('T')[0]}">`;
+      html += `<div class="space-y-3">`;
+      res.students.forEach(s => {
+        html += `
+          <div class="p-4 rounded-xl border flex items-center justify-between" style="background:white; border-color:#eee">
+            <div><p class="font-semibold">${s.name}</p><p class="text-xs text-gray-500">${s.grade}</p></div>
+            <select id="att_${s.id}" class="inp max-w-[120px]">
+              <option value="present">Present</option>
+              <option value="absent">Absent</option>
+              <option value="late">Late</option>
+            </select>
+          </div>`;
+      });
+      html += `</div><button onclick="saveAttendance()" class="mt-6 px-6 py-3 rounded-xl text-white font-bold" style="background:var(--brand-gradient)">Save Attendance</button>`;
+    } else {
+      html += `<p class="text-gray-500">No students to mark attendance for.</p>`;
     }
     content.innerHTML = html;
   }
@@ -693,27 +654,221 @@ async function loadSchoolView(view) {
           <div class="p-6 rounded-2xl shadow-sm" style="background:var(--brand-blue); color:white"><p class="text-xs uppercase font-bold opacity-80">Total Revenue</p><p class="text-2xl font-bold mt-2">KES ${res.total_revenue}</p></div>
           <div class="p-6 rounded-2xl shadow-sm" style="background:var(--brand-green); color:white"><p class="text-xs uppercase font-bold opacity-80">School Share (30%)</p><p class="text-2xl font-bold mt-2">KES ${res.school_share}</p></div>
           <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Active Students</p><p class="text-2xl font-bold mt-2" style="color:#1a1a2e">${res.active_students}</p></div>
-        </div>
-        <h2 class="text-lg font-bold mb-4" style="color:#1a1a2e">Service Breakdown</h2>
-        <table class="adm-table"><thead><tr><th>Service</th><th>Students</th><th>Total Revenue</th><th>School Share</th></tr></thead><tbody>`;
-      Object.keys(res.service_breakdown).forEach(k => {
-        const svc = res.service_breakdown[k];
-        if (svc.students > 0) {
-          html += `<tr><td class="capitalize">${k}</td><td>${svc.students}</td><td>KES ${svc.revenue}</td><td>KES ${svc.school_share}</td></tr>`;
-        }
-      });
-      html += `</tbody></table>`;
+        </div>`;
     } else {
       html += `<p class="text-gray-500">No revenue data available.</p>`;
     }
     content.innerHTML = html;
   }
+  else if (view === 'chat') {
+    renderChatUI('schoolContent');
+  }
   lucide.createIcons();
 }
 
-// =====================================================================
-//  INITIALIZATION
-// =====================================================================
+async function saveAttendance() {
+  const date = document.getElementById('attDate').value;
+  const students = await api('getSchoolStudents');
+  if (!students.success) return showToast('Error', 'Could not fetch students', false);
+  
+  const records = students.students.map(s => ({
+    student_id: s.id,
+    student_name: s.name,
+    status: document.getElementById(`att_${s.id}`).value
+  }));
+
+  const res = await api('markAttendance', { date, records });
+  if (res.success) {
+    showToast('Success', res.message, true);
+  } else {
+    showToast('Failed', res.error, false);
+  }
+}
+
+// --- CHAT SYSTEM (UNIVERSAL) ---
+async function renderChatUI(containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = `
+    <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Messages</h1>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border rounded-2xl overflow-hidden" style="background:white; border-color:#eee; height:70vh">
+      <div class="md:col-span-1 border-r overflow-y-auto" style="border-color:#eee" id="chatListContainer">
+        <div class="p-4 text-center text-gray-400 text-sm">Loading chats...</div>
+      </div>
+      <div class="md:col-span-2 flex flex-col" id="chatWindowContainer">
+        <div class="flex-1 flex items-center justify-center text-gray-400 text-sm">Select a chat to start messaging</div>
+      </div>
+    </div>
+  `;
+  loadChatList();
+}
+
+async function loadChatList() {
+  const res = await api('getChatList');
+  const listEl = document.getElementById('chatListContainer');
+  if (res.success && res.chats.length > 0) {
+    listEl.innerHTML = '';
+    res.chats.forEach(c => {
+      listEl.innerHTML += `
+        <div onclick="loadMessages('${c.id}')" class="p-4 border-b cursor-pointer hover:bg-gray-50" style="border-color:#eee">
+          <div class="flex justify-between"><p class="font-semibold text-sm" style="color:#1a1a2e">${c.name}</p>${c.unread > 0 ? `<span class="badge badge-blue">${c.unread} New</span>` : ''}</div>
+          <p class="text-xs text-gray-500 truncate">${c.lastMessage}</p>
+        </div>`;
+    });
+  } else {
+    listEl.innerHTML = `<div class="p-4 text-center text-gray-400 text-sm">No conversations yet.</div>`;
+  }
+}
+
+async function loadMessages(otherId) {
+  const res = await api('getMessages', { other_id: otherId });
+  const winEl = document.getElementById('chatWindowContainer');
+  if (res.success) {
+    let html = `
+      <div class="flex-1 overflow-y-auto p-4 space-y-3" id="messagesArea">`;
+    res.messages.forEach(m => {
+      const isSent = String(m.sender_id) === String(JSON.parse(localStorage.getItem('sm_user')).id);
+      html += `<div class="flex ${isSent ? 'justify-end' : 'justify-start'}"><div class="chat-bubble ${isSent ? 'sent' : 'received'} p-3 text-sm">${m.message}</div></div>`;
+    });
+    html += `</div>
+      <div class="p-4 border-t" style="border-color:#eee">
+        <form onsubmit="handleSendMessage(event, '${otherId}')" class="flex gap-2">
+          <input type="text" id="msgInput" required placeholder="Type a message..." class="inp flex-1">
+          <button type="submit" class="px-4 rounded-xl text-white font-semibold" style="background:var(--brand-blue)"><i data-lucide="send" style="width:18px;height:18px"></i></button>
+        </form>
+      </div>`;
+    winEl.innerHTML = html;
+    lucide.createIcons();
+    const area = document.getElementById('messagesArea');
+    area.scrollTop = area.scrollHeight;
+  }
+}
+
+async function handleSendMessage(e, otherId) {
+  e.preventDefault();
+  const msg = document.getElementById('msgInput').value;
+  const res = await api('sendMessage', { receiver_id: otherId, message: msg });
+  if (res.success) {
+    loadMessages(otherId);
+    loadChatList();
+  }
+}
+
+// --- MODAL FORMS (ADD REPORT, ENROLL STUDENT, ADD PAYMENT) ---
+async function openAddReportModal() {
+  const studentsRes = await api('getStudents');
+  let studentOptions = '<option value="">Select Student</option>';
+  if (studentsRes.success) {
+    studentsRes.students.forEach(s => studentOptions += `<option value="${s.id}">${s.name}</option>`);
+  }
+
+  document.getElementById('genericModalContent').innerHTML = `
+    <h2 class="text-lg font-bold mb-6" style="color:#1a1a2e">Create Student Report</h2>
+    <form onsubmit="handleAddReport(event)" class="space-y-3">
+      <select name="student_id" required class="inp">${studentOptions}</select>
+      <input type="text" name="student_name" required placeholder="Student Name" class="inp" value="Auto-fill on select" readonly>
+      <input type="text" name="program" placeholder="Program (e.g. Math Tutoring)" class="inp">
+      <input type="text" name="term" placeholder="Term" class="inp">
+      <textarea name="performance_data" rows="2" placeholder="Performance Data (Scores, Grades)" class="inp" style="resize:vertical"></textarea>
+      <textarea name="core_skills" rows="2" placeholder="Core Skills Observed" class="inp" style="resize:vertical"></textarea>
+      <textarea name="comments" rows="3" placeholder="Trainer Comments" class="inp" style="resize:vertical"></textarea>
+      <button type="button" onclick="generateAIComment()" class="w-full py-2 rounded-xl text-sm font-semibold text-white" style="background:var(--brand-green)"><i data-lucide="sparkles" style="width:14px;height:14px" class="inline-block mr-1"></i> Generate AI Comment</button>
+      <button type="submit" class="w-full py-3.5 rounded-xl font-semibold text-white" style="background:var(--brand-blue)">Save Report</button>
+    </form>
+  `;
+  openGenericModal();
+  lucide.createIcons();
+}
+
+async function handleAddReport(e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+  const res = await api('addReport', data);
+  if (res.success) {
+    showToast('Success', 'Report saved successfully!', true);
+    closeGenericModal();
+    loadUserView('reports');
+  } else {
+    showToast('Failed', res.error, false);
+  }
+}
+
+async function generateAIComment() {
+  showToast('AI', 'Generating comment...', true);
+  // Simplified AI call for UI demo
+  const res = await api('aiGenerateComment', { student_name: 'Student', perf_lines: 'B average', skill_lines: 'Good effort' });
+  if (res.success) {
+    document.querySelector('[name="comments"]').value = res.comment;
+    showToast('AI', 'Comment generated!', true);
+  } else {
+    showToast('AI Error', res.error, false);
+  }
+}
+
+async function openEnrollStudentModal() {
+  document.getElementById('genericModalContent').innerHTML = `
+    <h2 class="text-lg font-bold mb-6" style="color:#1a1a2e">Enroll New Student</h2>
+    <form onsubmit="handleEnrollStudent(event)" class="space-y-3">
+      <input type="text" name="name" required placeholder="Student Full Name" class="inp">
+      <input type="text" name="grade" required placeholder="Grade" class="inp">
+      <input type="text" name="parent_name" required placeholder="Parent Name" class="inp">
+      <input type="tel" name="parent_phone" required placeholder="Parent Phone" class="inp">
+      <div class="grid grid-cols-2 gap-2">
+        <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="services" value="transport"> Transport</label>
+        <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="services" value="kitchen"> Kitchen</label>
+        <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="services" value="swimming"> Swimming</label>
+        <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="services" value="classes"> Classes</label>
+      </div>
+      <button type="submit" class="w-full py-3.5 rounded-xl font-semibold text-white" style="background:var(--brand-blue)">Enroll</button>
+    </form>
+  `;
+  openGenericModal();
+}
+
+async function handleEnrollStudent(e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+  data.services = formData.getAll('services');
+  const res = await api('enrollSchoolStudent', data);
+  if (res.success) {
+    showToast('Success', res.message, true);
+    closeGenericModal();
+    loadSchoolView('students');
+  } else {
+    showToast('Failed', res.error, false);
+  }
+}
+
+async function openAddPaymentModal() {
+  document.getElementById('genericModalContent').innerHTML = `
+    <h2 class="text-lg font-bold mb-6" style="color:#1a1a2e">Record Payment</h2>
+    <form onsubmit="handleAddPayment(event)" class="space-y-3">
+      <input type="text" name="student_name" required placeholder="Student Name" class="inp">
+      <input type="number" name="amount" required placeholder="Amount (KES)" class="inp">
+      <input type="text" name="description" placeholder="Description" class="inp">
+      <select name="method" class="inp"><option value="Cash">Cash</option><option value="M-Pesa">M-Pesa</option><option value="Bank">Bank</option></select>
+      <button type="submit" class="w-full py-3.5 rounded-xl font-semibold text-white" style="background:var(--brand-blue)">Save Payment</button>
+    </form>
+  `;
+  openGenericModal();
+}
+
+async function handleAddPayment(e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+  const res = await api('adminAddPayment', data);
+  if (res.success) {
+    showToast('Success', res.message, true);
+    closeGenericModal();
+    loadAdminView('payments');
+  } else {
+    showToast('Failed', res.error, false);
+  }
+}
+
+// --- INIT ---
 document.addEventListener('DOMContentLoaded', () => {
   lucide.createIcons();
   checkAuth();

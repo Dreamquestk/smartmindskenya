@@ -4,15 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Smart Minds Home Tuition &amp; Skills Hub</title>
-<script src="https://script.google.com/macros/s/AKfycbyyMLWer8JorKX3OijTOv6jDraHB1KePNIJRO_P_l3f2nns4oCPvH8ZGc6j1UnnYkFLEQ/exec"></script>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
 <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
   --brand-blue:#2563EB;
   --brand-green:#16A34A;
-  --brand-blue-rgb:37,99,235;
-  --brand-green-rgb:22,163,74;
   --brand-gradient:linear-gradient(135deg,#2563EB 0%,#16A34A 100%);
 }
 html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:border-box}
@@ -20,7 +18,7 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
 .nav-link{position:relative}.nav-link::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:2px;background:var(--brand-green);transition:width .3s}.nav-link:hover::after{width:100%}
 .card-hover{transition:transform .3s,box-shadow .3s}.card-hover:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,.1)}
 .fade-up{opacity:0;transform:translateY(30px);animation:fadeUp .7s ease forwards}@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
-.stagger-1{animation-delay:.1s}.stagger-2{animation-delay:.2s}.stagger-3{animation-delay:.3s}.stagger-4{animation-delay:.4s}.stagger-5{animation-delay:.5s}
+.stagger-1{animation-delay:.1s}.stagger-2{animation-delay:.2s}.stagger-3{animation-delay:.3s}
 .blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.15;pointer-events:none}
 .scroll-smooth{scroll-behavior:smooth}
 .mobile-menu{transform:translateX(100%);transition:transform .3s ease}.mobile-menu.open{transform:translateX(0)}
@@ -29,43 +27,18 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
 .modal-bg .modal-body{transform:translateY(20px) scale(.97);transition:transform .3s}.modal-bg.open .modal-body{transform:translateY(0) scale(1)}
 .portal-sidebar{width:260px;min-height:100vh}
 .portal-nav-item{transition:all .2s;border-left:3px solid transparent}.portal-nav-item:hover,.portal-nav-item.active{background:rgba(37,99,235,.08);border-left-color:var(--brand-blue)}.portal-nav-item.active{color:var(--brand-blue);font-weight:600}
-.chat-bubble{max-width:75%;word-wrap:break-word}.chat-bubble.sent{background:var(--brand-gradient);color:white;border-radius:16px 16px 4px 16px}.chat-bubble.received{background:#f0f0f0;color:#1a1a2e;border-radius:16px 16px 16px 4px}
 .sidebar-overlay{display:none;position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.3)}.sidebar-overlay.open{display:block}
 @media(max-width:768px){.portal-sidebar{position:fixed;left:0;top:0;z-index:80;transform:translateX(-100%);transition:transform .3s}.portal-sidebar.open{transform:translateX(0)}}
-.badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:600}
-.badge-green{background:rgba(34,197,94,.1);color:#22c55e}.badge-yellow{background:rgba(234,179,8,.1);color:#ca8a04}.badge-red{background:rgba(239,68,68,.1);color:#ef4444}.badge-blue{background:rgba(59,130,246,.1);color:#3b82f6}.brand-blue{background:rgba(37,99,235,.1);color:var(--brand-blue)}
-.adm-table{width:100%;border-collapse:collapse;font-size:13px}.adm-table th{text-align:left;padding:10px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#999;border-bottom:2px solid #eee}.adm-table td{padding:10px 12px;border-bottom:1px solid #f5f5f5;color:#1a1a2e}.adm-table tr:hover td{background:#fafafa}
-.adm-btn{padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;border:none}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 .inp{background:white;border:1px solid #ddd;border-radius:12px;width:100%;padding:12px 16px;font-size:14px;outline:none;transition:border-color .2s;font-family:inherit}
 .inp:focus{border-color:var(--brand-blue)}
-/* Brand gradient text */
 .brand-text-gradient{background:var(--brand-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
-/* Certificate Styles */
-.certificate-frame{position:relative;background:white;padding:40px;border:3px solid var(--brand-blue);box-shadow:inset 0 0 0 1px var(--brand-blue),inset 0 0 0 6px white,inset 0 0 0 7px #cdd9f5,0 8px 40px rgba(0,0,0,.15)}
-.certificate-frame::before{content:'';position:absolute;inset:8px;border:1px solid #cdd9f5;pointer-events:none}
-.certificate-inner{border:2px solid #cdd9f5;padding:30px;text-align:center;position:relative}
-.certificate-seal{width:80px;height:80px;border-radius:50%;background:var(--brand-gradient);display:flex;align-items:center;justify-content:center;margin:12px auto;color:white;font-size:9px;font-weight:700;text-align:center;line-height:1.3;border:3px solid #b3c7f0;flex-direction:column;gap:2px}
-/* Premium Report Card Styles */
-.rc-perf-table{width:100%;border-collapse:collapse;font-size:12px}
-.rc-perf-table th{background:#1a1a2e;color:white;padding:9px 12px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
-.rc-perf-table th:first-child{text-align:left}
-.rc-perf-table th:not(:first-child){text-align:center}
-.rc-perf-table td{padding:9px 12px;border-bottom:0.5px solid #eee;font-size:12px;color:#333}
-.rc-perf-table td:not(:first-child){text-align:center}
-.rc-perf-table td:first-child{font-weight:600}
-.rc-perf-table tr:nth-child(even) td{background:#f4f7fe}
-.rc-perf-table tr:last-child td{border-bottom:none}
-.grade-A{color:#16a34a;font-weight:700}.grade-B{color:#2563eb;font-weight:700}.grade-C{color:#d97706;font-weight:700}.grade-D{color:#ef4444;font-weight:700}
-.skill-dot-f{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--brand-blue);margin:0 1px}
-.skill-dot-e{display:inline-block;width:8px;height:8px;border-radius:50%;background:#e5e7eb;margin:0 1px}
-@media print{body *{visibility:hidden}#printArea,#printArea *{visibility:visible}#printArea{position:fixed;left:0;top:0;width:100%;padding:20px;background:white}.no-print{display:none!important}.rc-perf-table th{background:#1a1a2e!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.rc-printable-header{background:#1a1a2e!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.rc-printable-footer{background:#1a1a2e!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.rc-overall-bar{background:#1a1a2e!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+.adm-table{width:100%;border-collapse:collapse;font-size:13px}.adm-table th{text-align:left;padding:10px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#999;border-bottom:2px solid #eee}.adm-table td{padding:10px 12px;border-bottom:1px solid #f5f5f5;color:#1a1a2e}.adm-table tr:hover td{background:#fafafa}
+.badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:600}
+.badge-green{background:rgba(34,197,94,.1);color:#22c55e}.badge-yellow{background:rgba(234,179,8,.1);color:#ca8a04}.badge-red{background:rgba(239,68,68,.1);color:#ef4444}.badge-blue{background:rgba(59,130,246,.1);color:#3b82f6}
 </style>
 </head>
 <body class="h-full overflow-auto scroll-smooth" style="background-color:#F7FAFE;color:#1a1a2e">
 
-<!-- Reusable brand logo SVG -->
 <svg width="0" height="0" style="position:absolute"><defs>
 <linearGradient id="brandGradient" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
 <stop stop-color="#2563EB"/><stop offset="1" stop-color="#16A34A"/>
@@ -83,12 +56,6 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
 <div id="authModal" class="modal-bg fixed inset-0 z-[80] flex items-center justify-center p-4" style="background:rgba(0,0,0,.4)" onclick="if(event.target===this)closeAuth()">
 <div class="modal-body w-full max-w-md rounded-3xl p-8 relative" style="background:#F7FAFE;max-height:90vh;overflow-y:auto">
   <button onclick="closeAuth()" class="absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 transition"><i data-lucide="x" style="width:18px;height:18px;color:#1a1a2e"></i></button>
-  <div class="flex items-center gap-3 mb-6">
-    <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:var(--brand-gradient)">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/></svg>
-    </div>
-    <div><h2 class="text-lg font-bold" style="color:#1a1a2e">Welcome Back</h2><p class="text-xs" style="color:#999">Log in to your portal</p></div>
-  </div>
   <div class="flex gap-1 mb-6 p-1 rounded-xl" style="background:#f0f0f0">
     <button onclick="switchAuthTab('login')" id="tabLogin" class="flex-1 py-2.5 rounded-lg text-sm font-semibold transition" style="background:var(--brand-blue);color:white">Log In</button>
     <button onclick="switchAuthTab('register')" id="tabRegister" class="flex-1 py-2.5 rounded-lg text-sm font-semibold transition" style="color:#666">Register</button>
@@ -97,12 +64,8 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
     <div class="space-y-4">
       <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Email</label><input id="loginEmail" type="email" required placeholder="you@example.com" class="inp"></div>
       <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Password</label><input id="loginPwd" type="password" required placeholder="Enter your password" class="inp"></div>
-      <button type="submit" id="loginBtn" class="w-full py-3.5 rounded-xl font-semibold text-white transition hover:opacity-90 flex items-center justify-center gap-2" style="background:var(--brand-gradient)">
-        <span id="loginBtnText">Log In</span>
-        <span id="loginBtnLoad" class="hidden"><span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span></span>
-      </button>
+      <button type="submit" class="w-full py-3.5 rounded-xl font-semibold text-white transition hover:opacity-90" style="background:var(--brand-gradient)">Log In</button>
     </div>
-    <p class="text-center text-xs mt-4" style="color:#999">Students, teachers, partner schools &amp; admins</p>
   </form>
   <form id="registerForm" onsubmit="handleRegister(event)" class="hidden">
     <div class="space-y-3">
@@ -115,26 +78,8 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
         <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Password</label><input type="password" id="regPwd" required minlength="6" placeholder="Min 6 chars" class="inp"></div>
         <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Confirm</label><input type="password" id="regPwd2" required minlength="6" placeholder="Re-enter" class="inp"></div>
       </div>
-      <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Account Type</label><select id="regType" required onchange="handleRegTypeChange(this.value)" class="inp"><option value="student">Student</option><option value="teacher">Teacher</option></select></div>
-      <div id="studentFields">
-        <div class="grid grid-cols-2 gap-3">
-          <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Curriculum</label><select id="regCurriculum" class="inp"><option value="CBC">CBC</option><option value="Cambridge">Cambridge</option><option value="IB">IB</option></select></div>
-          <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Grade</label><input type="text" id="regGrade" placeholder="e.g. Grade 8" class="inp"></div>
-        </div>
-        <div class="grid grid-cols-2 gap-3 mt-3">
-          <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Parent/Guardian</label><input type="text" id="regParent" placeholder="Parent name" class="inp"></div>
-          <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Parent Phone</label><input type="tel" id="regParentPhone" placeholder="Parent number" class="inp"></div>
-        </div>
-        <div class="mt-3"><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Interest</label><select id="regInterest" class="inp"><option value="Home Tuition">Home Tuition</option><option value="Skill Development">Skill Development</option><option value="DreamQuest Camp">DreamQuest Camp</option><option value="Multiple">Multiple Programs</option></select></div>
-      </div>
-      <div id="teacherFields" class="hidden space-y-3">
-        <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Subjects (comma separated)</label><input type="text" id="regSubjects" placeholder="e.g. Mathematics, English" class="inp"></div>
-        <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Certification</label><input type="text" id="regCert" placeholder="e.g. TSC, Cambridge" class="inp"></div>
-      </div>
-      <button type="submit" id="regBtn" class="w-full py-3.5 rounded-xl font-semibold text-white transition hover:opacity-90 flex items-center justify-center gap-2" style="background:var(--brand-gradient)">
-        <span id="regBtnText">Create Account</span>
-        <span id="regBtnLoad" class="hidden"><span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span></span>
-      </button>
+      <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Account Type</label><select id="regType" required class="inp"><option value="student">Student</option><option value="teacher">Teacher</option></select></div>
+      <button type="submit" class="w-full py-3.5 rounded-xl font-semibold text-white transition hover:opacity-90" style="background:var(--brand-gradient)">Create Account</button>
     </div>
   </form>
 </div>
@@ -144,10 +89,7 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
 <div id="schoolModal" class="modal-bg fixed inset-0 z-[80] flex items-center justify-center p-4" style="background:rgba(0,0,0,.4)" onclick="if(event.target===this)closeSchoolReg()">
 <div class="modal-body w-full max-w-lg rounded-3xl p-8 relative" style="background:#F7FAFE;max-height:90vh;overflow-y:auto">
   <button onclick="closeSchoolReg()" class="absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 transition"><i data-lucide="x" style="width:18px;height:18px;color:#1a1a2e"></i></button>
-  <div class="flex items-center gap-3 mb-6">
-    <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(37,99,235,.1)"><i data-lucide="school" style="width:20px;height:20px;color:var(--brand-blue)"></i></div>
-    <div><h2 class="text-lg font-bold" style="color:#1a1a2e">Partner School Registration</h2><p class="text-xs" style="color:#999">Join our growing network</p></div>
-  </div>
+  <h2 class="text-lg font-bold mb-6" style="color:#1a1a2e">Partner School Registration</h2>
   <form id="schoolRegForm" onsubmit="handleSchoolReg(event)">
     <div class="space-y-3">
       <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">School Name *</label><input type="text" id="schName" required placeholder="e.g. Brighton International" class="inp"></div>
@@ -157,26 +99,15 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
       </div>
       <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Location *</label><input type="text" id="schLocation" required placeholder="e.g. Katani, Machakos Road" class="inp"></div>
       <div class="grid grid-cols-2 gap-3">
-        <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Curriculums</label><input type="text" id="schCurriculum" placeholder="e.g. CBC, Cambridge" class="inp"></div>
-        <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Student Count</label><input type="number" id="schStudents" placeholder="e.g. 300" class="inp"></div>
-      </div>
-      <div class="grid grid-cols-2 gap-3">
         <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Principal *</label><input type="text" id="schPrincipal" required placeholder="Full name" class="inp"></div>
         <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Principal Phone *</label><input type="tel" id="schPrincipalPhone" required placeholder="0723 456 789" class="inp"></div>
       </div>
       <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Password *</label><input type="password" id="schPwd" required minlength="6" placeholder="Min 6 characters" class="inp"></div>
-      <div><label class="block text-xs font-semibold uppercase tracking-wider mb-1.5" style="color:#999">Notes</label><textarea id="schNotes" rows="2" placeholder="About your school..." class="inp" style="resize:vertical"></textarea></div>
-      <div class="p-3 rounded-xl text-xs" style="background:rgba(37,99,235,.06);color:#666"><strong style="color:var(--brand-blue)">Benefits:</strong> 30% revenue share · Boost visibility · Attract learners · Zero burden</div>
-      <button type="submit" id="schRegBtn" class="w-full py-3.5 rounded-xl font-semibold text-white transition hover:opacity-90 flex items-center justify-center gap-2" style="background:var(--brand-gradient)">
-        <span id="schRegBtnText">Submit Application</span>
-        <span id="schRegBtnLoad" class="hidden"><span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span></span>
-      </button>
+      <button type="submit" class="w-full py-3.5 rounded-xl font-semibold text-white transition hover:opacity-90" style="background:var(--brand-gradient)">Submit Application</button>
     </div>
   </form>
 </div>
 </div>
-
-<div id="printArea" style="display:none"></div>
 
 <!-- MAIN WEBSITE -->
 <div id="mainWebsite">
@@ -184,7 +115,7 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
   <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
     <a href="#home" class="flex items-center gap-2">
       <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:var(--brand-gradient)">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/></svg>
       </div>
       <div><span class="font-bold text-sm leading-tight block" style="color:#1a1a2e"><span style="color:var(--brand-blue)">SMART</span> <span style="color:var(--brand-green)">MINDS</span></span><span class="text-[10px] tracking-widest uppercase" style="color:#666">Tuition &amp; Skills Hub</span></div>
     </a>
@@ -192,10 +123,9 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
       <a href="#home" class="nav-link text-sm font-medium" style="color:#1a1a2e">Home</a>
       <a href="#about" class="nav-link text-sm font-medium" style="color:#1a1a2e">About</a>
       <a href="#services" class="nav-link text-sm font-medium" style="color:#1a1a2e">Services</a>
+      <a href="#academies" class="nav-link text-sm font-medium" style="color:#1a1a2e">Academies</a>
       <a href="#camp" class="nav-link text-sm font-medium" style="color:#1a1a2e">DreamQuest</a>
-      <a href="#partners" class="nav-link text-sm font-medium" style="color:#1a1a2e">Partners</a>
       <button onclick="openAuth()" class="px-4 py-2 rounded-full text-sm font-medium transition hover:opacity-80" style="border:2px solid var(--brand-blue);color:var(--brand-blue)">Portal Login</button>
-      <a href="#enroll" class="px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-all hover:scale-105" style="background:var(--brand-gradient)">Enroll Today</a>
     </div>
     <div class="flex items-center gap-2 md:hidden">
       <button onclick="openAuth()" class="px-3 py-1.5 rounded-full text-xs font-medium" style="border:1px solid var(--brand-blue);color:var(--brand-blue)">Login</button>
@@ -204,70 +134,50 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
   </div>
 </nav>
 
-<div id="mobileMenu" class="mobile-menu fixed top-0 right-0 w-72 h-full z-50 p-8 flex flex-col gap-6" style="background:#F7FAFE;box-shadow:-4px 0 20px rgba(0,0,0,.1)">
-  <button onclick="document.getElementById('mobileMenu').classList.remove('open')" class="self-end"><i data-lucide="x" style="width:24px;height:24px"></i></button>
-  <a href="#home" onclick="document.getElementById('mobileMenu').classList.remove('open')" class="text-lg font-medium">Home</a>
-  <a href="#about" onclick="document.getElementById('mobileMenu').classList.remove('open')" class="text-lg font-medium">About</a>
-  <a href="#services" onclick="document.getElementById('mobileMenu').classList.remove('open')" class="text-lg font-medium">Services</a>
-  <a href="#camp" onclick="document.getElementById('mobileMenu').classList.remove('open')" class="text-lg font-medium">DreamQuest</a>
-  <a href="#partners" onclick="document.getElementById('mobileMenu').classList.remove('open')" class="text-lg font-medium">Partners</a>
-  <button onclick="document.getElementById('mobileMenu').classList.remove('open');openAuth()" class="px-5 py-3 rounded-full text-center font-semibold" style="border:2px solid var(--brand-blue);color:var(--brand-blue)">Portal Login</button>
-  <a href="#enroll" onclick="document.getElementById('mobileMenu').classList.remove('open')" class="px-5 py-3 rounded-full text-center font-semibold text-white" style="background:var(--brand-gradient)">Enroll Today</a>
-</div>
-
 <!-- HERO -->
 <section id="home" class="relative w-full overflow-hidden" style="padding-top:100px">
   <div class="blob w-96 h-96" style="background:var(--brand-blue);top:-100px;right:-100px"></div>
-  <div class="blob w-72 h-72" style="background:var(--brand-green);bottom:0;left:-50px"></div>
   <div class="max-w-7xl mx-auto px-6 py-16 md:py-24 flex flex-col md:flex-row items-center gap-12 relative z-10">
     <div class="flex-1 fade-up">
-      <p class="text-sm font-semibold tracking-widest uppercase mb-4" style="color:var(--brand-green)">Nurturing Skills · Inspiring Minds · Building Futures</p>
       <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6" style="color:#1a1a2e">Unlock Your Child's<br><span class="brand-text-gradient">Full Potential</span></h1>
       <p class="text-lg md:text-xl leading-relaxed mb-8 max-w-xl" style="color:#555">At Smart Minds Home Tuition &amp; Skills Hub, we provide personalized learning, skill development, and engaging holiday programs designed to help every child thrive.</p>
-      <div class="flex flex-wrap gap-4 mb-8">
-        <span class="flex items-center gap-2 text-sm font-medium" style="color:#1a1a2e"><i data-lucide="check-circle" style="width:18px;height:18px;color:var(--brand-green)"></i> Home Tuition</span>
-        <span class="flex items-center gap-2 text-sm font-medium" style="color:#1a1a2e"><i data-lucide="check-circle" style="width:18px;height:18px;color:var(--brand-green)"></i> Skill-Based Learning</span>
-        <span class="flex items-center gap-2 text-sm font-medium" style="color:#1a1a2e"><i data-lucide="check-circle" style="width:18px;height:18px;color:var(--brand-green)"></i> Holiday Camps</span>
-      </div>
       <div class="flex flex-wrap gap-4">
         <a href="#enroll" class="px-8 py-3.5 rounded-full font-semibold text-white transition-all hover:scale-105 shadow-lg" style="background:var(--brand-gradient)">Enroll Today →</a>
         <button onclick="openSchoolReg()" class="px-8 py-3.5 rounded-full font-semibold border-2 transition-all hover:scale-105" style="border-color:#1a1a2e;color:#1a1a2e">Partner With Us</button>
       </div>
     </div>
-    <div class="flex-1 fade-up stagger-2 flex justify-center">
-      <div class="relative">
-        <div class="w-72 h-72 md:w-96 md:h-96 rounded-3xl overflow-hidden shadow-2xl" style="background:var(--brand-gradient)">
-          <div class="w-full h-full flex flex-col items-center justify-center text-white p-8 text-center">
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-4"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/></svg>
-            <p class="text-2xl font-bold">Learning That</p><p class="text-2xl font-bold">Transforms</p><p class="text-sm mt-2 opacity-80">Cambridge · CBC · IB</p>
-          </div>
+    <div class="flex-1 fade-up stagger-2 w-full md:w-auto">
+      <div class="relative w-full h-[450px] md:h-[620px] md:w-[36rem] rounded-[2rem] overflow-hidden shadow-2xl group">
+        <img src="https://z-cdn-media.chatglm.cn/files/ea4f390a-29dd-4f14-bf54-5ed53ab68c8c.png?auth_key=1884577225-a36dfc028c4d41ab972ef58cf7d8c091-0-0a0f951f6b6c05f3c71a061ebec2d63c" alt="Student building a robot" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none"></div>
+        <div class="absolute bottom-8 left-8 right-8 text-white">
+          <p class="text-3xl md:text-4xl font-extrabold drop-shadow-lg leading-tight">Learning That Transforms</p>
+          <p class="text-sm opacity-90 drop-shadow-md mt-2">Build. Code. Innovate.</p>
         </div>
-        <div class="absolute -bottom-4 -left-4 w-24 h-24 rounded-2xl flex items-center justify-center shadow-xl" style="background:#1a1a2e"><div class="text-center text-white"><p class="text-2xl font-bold">150+</p><p class="text-[10px] uppercase tracking-wider">Per Camp</p></div></div>
-        <div class="absolute -top-4 -right-4 w-24 h-24 rounded-2xl flex items-center justify-center shadow-xl" style="background:white"><div class="text-center"><p class="text-xl">⭐</p><p class="text-[10px] font-bold" style="color:#1a1a2e">Trusted</p></div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- WHY US -->
-<section class="w-full py-20" style="background:#1a1a2e">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-14 fade-up"><p class="text-sm font-semibold tracking-widest uppercase mb-3" style="color:var(--brand-green)">Why Choose Us</p><h2 class="text-3xl md:text-4xl font-bold text-white">The Smart Minds Difference</h2></div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-      <div class="card-hover fade-up stagger-1 rounded-2xl p-6 text-center" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)"><div class="w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center" style="background:rgba(37,99,235,.25)"><i data-lucide="award" style="width:24px;height:24px;color:#60a5fa"></i></div><p class="text-white font-semibold text-sm mb-1">30 Qualified Tutors</p><p class="text-xs text-gray-400">TSC &amp; International</p></div>
-      <div class="card-hover fade-up stagger-2 rounded-2xl p-6 text-center" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)"><div class="w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center" style="background:rgba(37,99,235,.25)"><i data-lucide="target" style="width:24px;height:24px;color:#60a5fa"></i></div><p class="text-white font-semibold text-sm mb-1">Personalized Learning</p><p class="text-xs text-gray-400">Tailored to each child</p></div>
-      <div class="card-hover fade-up stagger-3 rounded-2xl p-6 text-center" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)"><div class="w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center" style="background:rgba(22,163,74,.25)"><i data-lucide="lightbulb" style="width:24px;height:24px;color:#4ade80"></i></div><p class="text-white font-semibold text-sm mb-1">3 Curriculums</p><p class="text-xs text-gray-400">Cambridge · CBC · IB</p></div>
-      <div class="card-hover fade-up stagger-4 rounded-2xl p-6 text-center" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)"><div class="w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center" style="background:rgba(37,99,235,.25)"><i data-lucide="shield" style="width:24px;height:24px;color:#60a5fa"></i></div><p class="text-white font-semibold text-sm mb-1">Safe &amp; Engaging</p><p class="text-xs text-gray-400">Supervised always</p></div>
-      <div class="card-hover fade-up stagger-5 rounded-2xl p-6 text-center" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)"><div class="w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center" style="background:rgba(22,163,74,.25)"><i data-lucide="heart" style="width:24px;height:24px;color:#4ade80"></i></div><p class="text-white font-semibold text-sm mb-1">Up to Diploma Level</p><p class="text-xs text-gray-400">Academic depth</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ABOUT -->
+<!-- ABOUT & IMPACT -->
 <section id="about" class="w-full py-20" style="background:#F7FAFE">
   <div class="max-w-7xl mx-auto px-6">
-    <div class="grid md:grid-cols-2 gap-16 items-center">
+    <div class="grid md:grid-cols-2 gap-12 items-center">
       <div class="fade-up">
+        <div class="rounded-3xl overflow-hidden shadow-xl relative h-[450px]">
+          <img src="https://z-cdn-media.chatglm.cn/files/b2a42349-bb46-4351-89f6-50d33e8ffb2d.png?auth_key=1884576629-db61b8a5b98c47d1a28445a24a12719e-0-2bcae2376500d635e99228672ef743d0" alt="Our Impact" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-8 text-white">
+            <h3 class="text-3xl font-bold mb-4">Our Impact</h3>
+            <div class="grid grid-cols-2 gap-y-4 gap-x-6 text-sm font-medium">
+              <div class="flex items-center gap-2"><i data-lucide="users" style="width:18px;height:18px;color:#60a5fa"></i> 500+ Students Trained</div>
+              <div class="flex items-center gap-2"><i data-lucide="school" style="width:18px;height:18px;color:#4ade80"></i> 15+ Partner Schools</div>
+              <div class="flex items-center gap-2"><i data-lucide="smile" style="width:18px;height:18px;color:#60a5fa"></i> 95% Parent Satisfaction</div>
+              <div class="flex items-center gap-2"><i data-lucide="check-circle" style="width:18px;height:18px;color:#4ade80"></i> 100+ Projects Completed</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fade-up stagger-2">
         <p class="text-sm font-semibold tracking-widest uppercase mb-3" style="color:var(--brand-green)">About Us</p>
         <h2 class="text-3xl md:text-4xl font-bold mb-6" style="color:#1a1a2e">Who We Are</h2>
         <p class="text-lg leading-relaxed mb-8" style="color:#555">Smart Minds Home Tuition &amp; Skills Hub Ltd is an educational organization committed to transforming how children learn.</p>
@@ -276,91 +186,42 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
           <div class="rounded-2xl p-6" style="background:white;box-shadow:0 4px 20px rgba(0,0,0,.05)"><h3 class="font-bold mb-2 flex items-center gap-2" style="color:#1a1a2e"><i data-lucide="eye" style="width:20px;height:20px;color:var(--brand-green)"></i> Our Vision</h3><p class="text-sm leading-relaxed" style="color:#555">To become a leading hub for innovative learning and skill development across schools and communities.</p></div>
         </div>
       </div>
-      <div class="fade-up stagger-2">
-        <div class="grid grid-cols-2 gap-4">
-          <div class="rounded-2xl p-6 text-center card-hover" style="background:white;box-shadow:0 4px 20px rgba(0,0,0,.05)"><div class="text-3xl mb-2">🏆</div><p class="font-bold text-sm" style="color:#1a1a2e">Excellence</p></div>
-          <div class="rounded-2xl p-6 text-center card-hover" style="background:white;box-shadow:0 4px 20px rgba(0,0,0,.05)"><div class="text-3xl mb-2">🎨</div><p class="font-bold text-sm" style="color:#1a1a2e">Creativity</p></div>
-          <div class="rounded-2xl p-6 text-center card-hover" style="background:white;box-shadow:0 4px 20px rgba(0,0,0,.05)"><div class="text-3xl mb-2">🤝</div><p class="font-bold text-sm" style="color:#1a1a2e">Integrity</p></div>
-          <div class="rounded-2xl p-6 text-center card-hover" style="background:white;box-shadow:0 4px 20px rgba(0,0,0,.05)"><div class="text-3xl mb-2">💡</div><p class="font-bold text-sm" style="color:#1a1a2e">Innovation</p></div>
-          <div class="col-span-2 rounded-2xl p-6 text-center card-hover" style="background:var(--brand-gradient)"><div class="text-3xl mb-2">👶</div><p class="font-bold text-sm text-white">Child-Centered Learning</p></div>
-        </div>
-      </div>
     </div>
   </div>
 </section>
 
-<!-- SERVICES -->
-<section id="services" class="w-full py-20" style="background:white">
+<!-- SPECIALIZED ACADEMIES -->
+<section id="academies" class="w-full py-20" style="background:white">
   <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-14 fade-up"><p class="text-sm font-semibold tracking-widest uppercase mb-3" style="color:var(--brand-green)">Our Services</p><h2 class="text-3xl md:text-4xl font-bold" style="color:#1a1a2e">What We Offer</h2></div>
-    <div class="grid md:grid-cols-2 gap-8">
-      <div class="card-hover fade-up rounded-3xl p-8 border" style="border-color:#eee">
-        <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-6" style="background:rgba(37,99,235,.1)"><i data-lucide="book-open" style="width:28px;height:28px;color:var(--brand-blue)"></i></div>
-        <h3 class="text-xl font-bold mb-3" style="color:#1a1a2e">Home Tuition</h3>
-        <p class="mb-5 text-sm leading-relaxed" style="color:#555">Professional home tutoring by 30 qualified tutors with TSC and international certifications. Cambridge, CBC, and IB — up to Diploma level.</p>
-        <div class="flex flex-wrap gap-2 mb-5"><span class="px-3 py-1 rounded-full text-xs font-medium" style="background:#F7FAFE;color:#1a1a2e">Mathematics</span><span class="px-3 py-1 rounded-full text-xs font-medium" style="background:#F7FAFE;color:#1a1a2e">English</span><span class="px-3 py-1 rounded-full text-xs font-medium" style="background:#F7FAFE;color:#1a1a2e">Sciences</span><span class="px-3 py-1 rounded-full text-xs font-medium" style="background:#F7FAFE;color:#1a1a2e">CBC</span><span class="px-3 py-1 rounded-full text-xs font-medium" style="background:#F7FAFE;color:#1a1a2e">Cambridge</span><span class="px-3 py-1 rounded-full text-xs font-medium" style="background:#F7FAFE;color:#1a1a2e">IB</span></div>
-        <ul class="space-y-2"><li class="flex items-center gap-2 text-sm" style="color:#555"><i data-lucide="check" style="width:16px;height:16px;color:var(--brand-green)"></i> Personalized lesson plans</li><li class="flex items-center gap-2 text-sm" style="color:#555"><i data-lucide="check" style="width:16px;height:16px;color:var(--brand-green)"></i> Up to Diploma level</li></ul>
-      </div>
-      <div class="card-hover fade-up stagger-2 rounded-3xl p-8 border" style="border-color:#eee">
-        <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-6" style="background:rgba(22,163,74,.1)"><i data-lucide="cpu" style="width:28px;height:28px;color:var(--brand-green)"></i></div>
-        <h3 class="text-xl font-bold mb-3" style="color:#1a1a2e">Skill Development</h3>
-        <p class="mb-5 text-sm leading-relaxed" style="color:#555">Beyond academics — essential life and future skills taught by qualified instructors.</p>
-        <div class="grid gap-3">
-          <div class="flex items-center gap-3 p-3 rounded-xl" style="background:#F7FAFE"><span class="text-xl">💻</span><span class="text-sm font-medium" style="color:#1a1a2e">Coding &amp; Programming</span></div>
-          <div class="flex items-center gap-3 p-3 rounded-xl" style="background:#F7FAFE"><span class="text-xl">🤖</span><span class="text-sm font-medium" style="color:#1a1a2e">LEGO Robotics</span></div>
-          <div class="flex items-center gap-3 p-3 rounded-xl" style="background:#F7FAFE"><span class="text-xl">🎨</span><span class="text-sm font-medium" style="color:#1a1a2e">Art &amp; Animation</span></div>
-          <div class="flex items-center gap-3 p-3 rounded-xl" style="background:#F7FAFE"><span class="text-xl">🎵</span><span class="text-sm font-medium" style="color:#1a1a2e">Music &amp; Instruments</span></div>
+    <div class="text-center mb-14 fade-up">
+      <p class="text-sm font-semibold tracking-widest uppercase mb-3" style="color:var(--brand-blue)">Specialized Academies</p>
+      <h2 class="text-3xl md:text-4xl font-bold" style="color:#1a1a2e">Explore Our Flagship Programs</h2>
+    </div>
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="card-hover fade-up rounded-3xl overflow-hidden shadow-lg border" style="border-color:#eee; background:white">
+        <div class="relative h-56 overflow-hidden">
+          <img src="https://z-cdn-media.chatglm.cn/files/544c0051-e384-4740-a187-b67cd1133fa4.png?auth_key=1884576629-c1f1f70a0fa341a3b38addfa92248114-0-c76e8510e43e0fd655f9982807f6e65c" class="w-full h-full object-cover" alt="Aviation & Drone Academy">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-5">
+            <h3 class="text-xl font-bold text-white">Aviation & Drone Academy</h3>
+            <p class="text-xs text-gray-200 mt-1">Explore. Fly. Soar.</p>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- DREAMQUEST -->
-<section id="camp" class="w-full py-20 relative overflow-hidden" style="background:linear-gradient(135deg,#2563EB 0%,#4f8de8 45%,#16A34A 100%)">
-  <div class="max-w-7xl mx-auto px-6 relative z-10">
-    <div class="text-center mb-14 fade-up"><p class="text-sm font-semibold tracking-widest uppercase mb-3 text-white opacity-80">Flagship Program</p><h2 class="text-3xl md:text-5xl font-extrabold text-white mb-4">🏕️ DreamQuest Holiday Camp</h2><p class="text-lg text-white opacity-90 max-w-2xl mx-auto">150+ students per camp. A unique blend of learning and adventure!</p></div>
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-12">
-      <div class="card-hover fade-up stagger-1 rounded-2xl p-5 text-center" style="background:rgba(255,255,255,.2);backdrop-filter:blur(10px)"><span class="text-3xl block mb-2">🏊</span><p class="text-white font-semibold text-sm">Swimming</p></div>
-      <div class="card-hover fade-up stagger-2 rounded-2xl p-5 text-center" style="background:rgba(255,255,255,.2);backdrop-filter:blur(10px)"><span class="text-3xl block mb-2">💻</span><p class="text-white font-semibold text-sm">Coding &amp; Robotics</p></div>
-      <div class="card-hover fade-up stagger-3 rounded-2xl p-5 text-center" style="background:rgba(255,255,255,.2);backdrop-filter:blur(10px)"><span class="text-3xl block mb-2">🎨</span><p class="text-white font-semibold text-sm">Art &amp; Creativity</p></div>
-      <div class="card-hover fade-up stagger-4 rounded-2xl p-5 text-center" style="background:rgba(255,255,255,.2);backdrop-filter:blur(10px)"><span class="text-3xl block mb-2">🍳</span><p class="text-white font-semibold text-sm">Cooking</p></div>
-      <div class="card-hover fade-up stagger-5 rounded-2xl p-5 text-center" style="background:rgba(255,255,255,.2);backdrop-filter:blur(10px)"><span class="text-3xl block mb-2">🎵</span><p class="text-white font-semibold text-sm">Music &amp; Talent</p></div>
-      <div class="card-hover fade-up rounded-2xl p-5 text-center" style="background:rgba(255,255,255,.2);backdrop-filter:blur(10px)"><span class="text-3xl block mb-2">🐴</span><p class="text-white font-semibold text-sm">Outdoor Adventures</p></div>
-    </div>
-    <div class="rounded-3xl p-8 md:p-10" style="background:rgba(255,255,255,.15);backdrop-filter:blur(10px)">
-      <h3 class="text-xl font-bold text-white mb-6 text-center">Why Parents Love It</h3>
-      <div class="grid sm:grid-cols-2 gap-4">
-        <div class="flex items-center gap-3"><i data-lucide="shield-check" style="width:20px;height:20px;color:white"></i><span class="text-white text-sm">Safe &amp; structured</span></div>
-        <div class="flex items-center gap-3"><i data-lucide="smile" style="width:20px;height:20px;color:white"></i><span class="text-white text-sm">Balanced learning &amp; fun</span></div>
-        <div class="flex items-center gap-3"><i data-lucide="users" style="width:20px;height:20px;color:white"></i><span class="text-white text-sm">Teamwork &amp; social skills</span></div>
-        <div class="flex items-center gap-3"><i data-lucide="truck" style="width:20px;height:20px;color:white"></i><span class="text-white text-sm">Transport &amp; meals included*</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PARTNERS -->
-<section id="partners" class="w-full py-20" style="background:#F7FAFE">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="grid md:grid-cols-2 gap-16 items-center">
-      <div class="fade-up">
-        <p class="text-sm font-semibold tracking-widest uppercase mb-3" style="color:var(--brand-green)">School Partnerships</p>
-        <h2 class="text-3xl md:text-4xl font-bold mb-6" style="color:#1a1a2e">Partner With Us</h2>
-        <div class="rounded-2xl p-6 mb-8 flex items-center gap-4" style="background:white;box-shadow:0 4px 20px rgba(0,0,0,.06);border-left:4px solid var(--brand-blue)">
-          <div class="w-14 h-14 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(37,99,235,.1)"><i data-lucide="school" style="width:28px;height:28px;color:var(--brand-blue)"></i></div>
-          <div><p class="font-bold text-sm" style="color:#1a1a2e">Brighton International School — Katani</p><p class="text-xs mt-0.5" style="color:#999">Partner for 2 years · 150+ students per camp</p></div>
+      <div class="card-hover fade-up stagger-2 rounded-3xl overflow-hidden shadow-lg border" style="border-color:#eee; background:white">
+        <div class="relative h-56 overflow-hidden">
+          <img src="https://z-cdn-media.chatglm.cn/files/1ad9f5a1-c4d7-44d9-a628-9ac86b77f518.png?auth_key=1884576629-ed0f8173951f4b12a8b157a6e5e76151-0-20b7d4e074df8e5d6c72f9eff11e2834" class="w-full h-full object-cover" alt="Chess Academy">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-5">
+            <h3 class="text-xl font-bold text-white">Chess Academy</h3>
+            <p class="text-xs text-gray-200 mt-1">Think. Strategize. Win.</p>
+          </div>
         </div>
-        <button onclick="openSchoolReg()" class="px-8 py-3.5 rounded-full font-semibold text-white transition-all hover:scale-105 shadow-lg" style="background:var(--brand-gradient)">Register Your School →</button>
       </div>
-      <div class="fade-up stagger-2">
-        <div class="rounded-3xl p-8" style="background:#1a1a2e">
-          <h3 class="text-xl font-bold text-white mb-6 text-center">Benefits to Schools</h3>
-          <div class="space-y-5">
-            <div class="flex items-start gap-4"><div class="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center" style="background:rgba(22,163,74,.25)"><span class="text-lg font-bold" style="color:#4ade80">30%</span></div><div><p class="text-white font-semibold text-sm">Revenue Share</p><p class="text-xs text-gray-400">Earn from every enrollment</p></div></div>
-            <div class="flex items-start gap-4"><div class="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center" style="background:rgba(37,99,235,.25)"><i data-lucide="trending-up" style="width:20px;height:20px;color:#60a5fa"></i></div><div><p class="text-white font-semibold text-sm">Boost Visibility</p><p class="text-xs text-gray-400">Enhanced school profile</p></div></div>
-            <div class="flex items-start gap-4"><div class="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center" style="background:rgba(22,163,74,.25)"><i data-lucide="user-plus" style="width:20px;height:20px;color:#4ade80"></i></div><div><p class="text-white font-semibold text-sm">Attract Learners</p><p class="text-xs text-gray-400">More enrollments</p></div></div>
-            <div class="flex items-start gap-4"><div class="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center" style="background:rgba(37,99,235,.25)"><i data-lucide="thumbs-up" style="width:20px;height:20px;color:#60a5fa"></i></div><div><p class="text-white font-semibold text-sm">Zero Burden</p><p class="text-xs text-gray-400">We handle everything</p></div></div>
+      <div class="card-hover fade-up stagger-3 rounded-3xl overflow-hidden shadow-lg border" style="border-color:#eee; background:white">
+        <div class="relative h-56 overflow-hidden">
+          <img src="https://z-cdn-media.chatglm.cn/files/f357e39b-87a4-4dec-b5f3-252a4a3e1fdf.png?auth_key=1884576629-6e4d5761cd6c420e90e86f84449a82a7-0-1e6dae172558cc41de4e1ca61ee23726" class="w-full h-full object-cover" alt="Fire Safety & First Aid">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-5">
+            <h3 class="text-xl font-bold text-white">Fire Safety & First Aid</h3>
+            <p class="text-xs text-gray-200 mt-1">Learn. Respond. Save Lives.</p>
           </div>
         </div>
       </div>
@@ -368,89 +229,68 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
   </div>
 </section>
 
-<!-- TESTIMONIALS -->
-<section class="w-full py-20" style="background:white">
-  <div class="max-w-4xl mx-auto px-6 text-center">
-    <p class="text-sm font-semibold tracking-widest uppercase mb-3" style="color:var(--brand-green)">Testimonials</p>
-    <h2 class="text-3xl md:text-4xl font-bold mb-12" style="color:#1a1a2e">What Parents Say</h2>
-    <div class="grid md:grid-cols-2 gap-8">
-      <div class="card-hover fade-up rounded-3xl p-8 text-left" style="background:#F7FAFE"><div class="flex gap-1 mb-4">⭐⭐⭐⭐⭐</div><p class="font-serif italic text-lg leading-relaxed mb-6" style="color:#555">"My child gained confidence and learned new skills. The DreamQuest camp was incredible!"</p><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background:var(--brand-blue)">A</div><div><p class="font-semibold text-sm" style="color:#1a1a2e">Agnes K.</p><p class="text-xs" style="color:#999">Parent, Nairobi</p></div></div></div>
-      <div class="card-hover fade-up stagger-2 rounded-3xl p-8 text-left" style="background:#F7FAFE"><div class="flex gap-1 mb-4">⭐⭐⭐⭐⭐</div><p class="font-serif italic text-lg leading-relaxed mb-6" style="color:#555">"The IB tutoring has been a game-changer. Well-organized with caring teachers."</p><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background:var(--brand-green)">J</div><div><p class="font-semibold text-sm" style="color:#1a1a2e">James M.</p><p class="text-xs" style="color:#999">Parent, Nairobi</p></div></div></div>
-    </div>
-  </div>
-</section>
-
 <!-- ENROLL CTA -->
 <section id="enroll" class="w-full py-20 relative overflow-hidden" style="background:#1a1a2e">
   <div class="blob w-96 h-96" style="background:var(--brand-blue);top:-150px;right:-100px"></div>
-  <div class="blob w-72 h-72" style="background:var(--brand-green);bottom:-80px;left:-50px"></div>
   <div class="max-w-3xl mx-auto px-6 text-center relative z-10">
     <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-6">Give Your Child the<br><span class="brand-text-gradient">Smart Advantage</span></h2>
-    <p class="text-lg text-gray-300 mb-10 max-w-xl mx-auto">Join Smart Minds today and unlock a world of learning, creativity, and growth.</p>
-    <form id="enrollForm" class="max-w-md mx-auto" onsubmit="handleEnroll(event)">
+    <form id="enrollForm" class="max-w-md mx-auto mt-8" onsubmit="handleEnroll(event)">
       <div class="space-y-4 mb-6">
         <input type="text" name="name" placeholder="Parent's Name" required class="w-full px-5 py-3.5 rounded-xl text-sm outline-none" style="background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.15)">
         <input type="tel" name="phone" placeholder="Phone Number" required class="w-full px-5 py-3.5 rounded-xl text-sm outline-none" style="background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.15)">
-        <input type="email" name="email" placeholder="Email (Optional)" class="w-full px-5 py-3.5 rounded-xl text-sm outline-none" style="background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.15)">
         <select name="interest" required class="w-full px-5 py-3.5 rounded-xl text-sm outline-none" style="background:rgba(26,26,46,.8);color:white;border:1px solid rgba(255,255,255,.15)">
           <option value="" disabled selected>Interested In...</option>
           <option value="Home Tuition">Home Tuition</option>
           <option value="Skill Development">Skill Development</option>
           <option value="DreamQuest Camp">DreamQuest Camp</option>
-          <option value="School Partnership">School Partnership</option>
         </select>
       </div>
-      <button type="submit" id="enrollBtn" class="w-full px-8 py-4 rounded-full font-bold text-white text-lg transition-all hover:scale-105 shadow-xl" style="background:var(--brand-gradient)">Enroll Now →</button>
+      <button type="submit" class="w-full px-8 py-4 rounded-full font-bold text-white text-lg" style="background:var(--brand-gradient)">Submit Inquiry →</button>
     </form>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer class="w-full py-12" style="background:#0f0f23">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="grid md:grid-cols-3 gap-10 mb-10">
-      <div>
-        <div class="flex items-center gap-2 mb-4"><div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:var(--brand-gradient)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/></svg></div><span class="font-bold text-white text-sm"><span style="color:#60a5fa">SMART</span> <span style="color:#4ade80">MINDS</span></span></div>
-        <p class="text-sm text-gray-400 leading-relaxed">Nurturing Skills. Inspiring Minds. Building Futures.</p>
-      </div>
-      <div>
-        <h4 class="font-bold text-white text-sm mb-4">Quick Links</h4>
-        <div class="space-y-2">
-          <a href="#home" class="block text-sm text-gray-400 hover:text-white transition-colors">Home</a>
-          <a href="#about" class="block text-sm text-gray-400 hover:text-white transition-colors">About</a>
-          <a href="#services" class="block text-sm text-gray-400 hover:text-white transition-colors">Services</a>
-          <a href="#camp" class="block text-sm text-gray-400 hover:text-white transition-colors">DreamQuest</a>
-          <a href="#partners" class="block text-sm text-gray-400 hover:text-white transition-colors">Partnerships</a>
-          <a href="javascript:void(0)" onclick="openSchoolReg()" class="block text-sm text-gray-400 hover:text-white transition-colors">School Registration</a>
-          <a href="javascript:void(0)" onclick="openAuth()" class="block text-sm text-gray-400 hover:text-white transition-colors">Portal Login</a>
-        </div>
-      </div>
-      <div>
-        <h4 class="font-bold text-white text-sm mb-4">Contact</h4>
-        <div class="space-y-3">
-          <a href="mailto:info.dreamquestcamp.ke@gmail.com" class="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"><i data-lucide="mail" style="width:14px;height:14px;color:#60a5fa"></i> info.dreamquestcamp.ke@gmail.com</a>
-          <a href="tel:0798156000" class="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"><i data-lucide="phone" style="width:14px;height:14px;color:#60a5fa"></i> 0798 156 000</a>
-          <a href="tel:0702102645" class="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"><i data-lucide="phone" style="width:14px;height:14px;color:#60a5fa"></i> 0702 102 645</a>
-          <p class="flex items-center gap-2 text-sm text-gray-400"><i data-lucide="map-pin" style="width:14px;height:14px;color:#4ade80"></i> Nairobi, Kenya</p>
-        </div>
-      </div>
-    </div>
-    <div class="border-t pt-6 text-center" style="border-color:rgba(255,255,255,.1)"><p class="text-xs text-gray-500">&copy; 2025 Smart Minds Home Tuition &amp; Skills Hub Ltd. All rights reserved.</p></div>
+  <div class="max-w-7xl mx-auto px-6 text-center">
+    <div class="flex items-center gap-2 justify-center mb-4"><div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:var(--brand-gradient)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/></svg></div><span class="font-bold text-white text-sm"><span style="color:#60a5fa">SMART</span> <span style="color:#4ade80">MINDS</span></span></div>
+    <p class="text-xs text-gray-500">&copy; 2025 Smart Minds Home Tuition &amp; Skills Hub Ltd. All rights reserved.</p>
   </div>
 </footer>
+</div>
+
+<!-- USER PORTAL (STUDENT/TEACHER) -->
+<div id="userPortal" class="hidden">
+<div class="flex min-h-screen">
+<aside class="portal-sidebar fixed md:sticky top-0 h-screen flex flex-col py-6 px-4 z-40" style="background:#1a1a2e">
+  <div class="flex items-center gap-2 mb-8 px-2"><div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:var(--brand-gradient)"><i data-lucide="user" style="width:18px;height:18px;color:white"></i></div><div><span class="font-bold text-sm text-white block leading-tight" id="userPortalName">User</span><span class="text-[9px] tracking-widest uppercase" style="color:#4ade80">Portal</span></div></div>
+  <nav class="flex-1 space-y-1">
+    <a href="javascript:void(0)" onclick="loadUserView('dashboard')" class="portal-nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> Dashboard</a>
+    <a href="javascript:void(0)" onclick="loadUserView('reports')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="file-text" style="width:18px;height:18px"></i> Reports</a>
+    <a href="javascript:void(0)" onclick="loadUserView('payments')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="credit-card" style="width:18px;height:18px"></i> Payments</a>
+  </nav>
+  <div class="border-t pt-4 mt-4" style="border-color:rgba(255,255,255,.1)"><button onclick="handleLogout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition text-left"><i data-lucide="log-out" style="width:18px;height:18px"></i> Log Out</button></div>
+</aside>
+<main class="flex-1 min-h-screen" style="background:#F7FAFE">
+  <div class="p-4 md:p-8 max-w-6xl" id="userContent"></div>
+</main>
+</div>
 </div>
 
 <!-- ADMIN PORTAL -->
 <div id="adminPortal" class="hidden">
 <div class="flex min-h-screen">
-<div id="adminSidebarOverlay" class="sidebar-overlay" onclick="closeAdminSidebar()"></div>
-<aside id="adminSidebar" class="portal-sidebar fixed md:sticky top-0 h-screen flex flex-col py-6 px-4 z-40" style="background:#1a1a2e">
+<aside class="portal-sidebar fixed md:sticky top-0 h-screen flex flex-col py-6 px-4 z-40" style="background:#1a1a2e">
   <div class="flex items-center gap-2 mb-8 px-2"><div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:var(--brand-gradient)"><i data-lucide="shield" style="width:18px;height:18px;color:white"></i></div><div><span class="font-bold text-sm text-white block leading-tight">ADMIN</span><span class="text-[9px] tracking-widest uppercase" style="color:#4ade80">Smart Minds</span></div></div>
-  <nav class="flex-1 space-y-1" id="adminSidebarNav"></nav>
+  <nav class="flex-1 space-y-1">
+    <a href="javascript:void(0)" onclick="loadAdminView('dashboard')" class="portal-nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> Dashboard</a>
+    <a href="javascript:void(0)" onclick="loadAdminView('schools')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="school" style="width:18px;height:18px"></i> Schools</a>
+    <a href="javascript:void(0)" onclick="loadAdminView('students')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="users" style="width:18px;height:18px"></i> Students</a>
+    <a href="javascript:void(0)" onclick="loadAdminView('inquiries')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="mail-question" style="width:18px;height:18px"></i> Inquiries</a>
+  </nav>
   <div class="border-t pt-4 mt-4" style="border-color:rgba(255,255,255,.1)"><button onclick="handleLogout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition text-left"><i data-lucide="log-out" style="width:18px;height:18px"></i> Log Out</button></div>
 </aside>
 <main class="flex-1 min-h-screen" style="background:#F7FAFE">
-  <div class="md:hidden flex items-center gap-3 px-4 py-3 sticky top-0 z-30" style="background:#F7FAFE;border-bottom:1px solid #eee"><button onclick="openAdminSidebar()" class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:white;border:1px solid #ddd"><i data-lucide="menu" style="width:18px;height:18px;color:#1a1a2e"></i></button><span class="font-bold text-sm" style="color:#1a1a2e">Admin Panel</span></div>
   <div class="p-4 md:p-8 max-w-6xl" id="adminContent"></div>
 </main>
 </div>
@@ -459,11 +299,14 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
 <!-- SCHOOL PORTAL -->
 <div id="schoolPortal" class="hidden">
 <div class="flex min-h-screen">
-<div id="schoolSidebarOverlay" class="sidebar-overlay" onclick="closeSchoolSidebar()"></div>
-<aside id="schoolSidebar" class="portal-sidebar fixed md:sticky top-0 h-screen flex flex-col py-6 px-4 z-40" style="background:#1a1a2e">
-  <div class="flex items-center gap-2 mb-8 px-2"><div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:var(--brand-gradient)"><i data-lucide="school" style="width:18px;height:18px;color:white"></i></div><div><span class="font-bold text-sm text-white block leading-tight" id="schoolSidebarName">School</span><span class="text-[9px] tracking-widest uppercase" style="color:#4ade80">Partner Portal</span></div></div>
-  <nav class="flex-1 space-y-1" id="schoolSidebarNav"></nav>
-  <!-- ...rest of portal continues unchanged... -->
+<aside class="portal-sidebar fixed md:sticky top-0 h-screen flex flex-col py-6 px-4 z-40" style="background:#1a1a2e">
+  <div class="flex items-center gap-2 mb-8 px-2"><div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:var(--brand-gradient)"><i data-lucide="school" style="width:18px;height:18px;color:white"></i></div><div><span class="font-bold text-sm text-white block leading-tight" id="schoolPortalName">School</span><span class="text-[9px] tracking-widest uppercase" style="color:#4ade80">Partner Portal</span></div></div>
+  <nav class="flex-1 space-y-1">
+    <a href="javascript:void(0)" onclick="loadSchoolView('dashboard')" class="portal-nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> Dashboard</a>
+    <a href="javascript:void(0)" onclick="loadSchoolView('students')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="users" style="width:18px;height:18px"></i> Students</a>
+    <a href="javascript:void(0)" onclick="loadSchoolView('revenue')" class="portal-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 text-left"><i data-lucide="dollar-sign" style="width:18px;height:18px"></i> Revenue</a>
+  </nav>
+  <div class="border-t pt-4 mt-4" style="border-color:rgba(255,255,255,.1)"><button onclick="handleLogout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition text-left"><i data-lucide="log-out" style="width:18px;height:18px"></i> Log Out</button></div>
 </aside>
 <main class="flex-1 min-h-screen" style="background:#F7FAFE">
   <div class="p-4 md:p-8 max-w-6xl" id="schoolContent"></div>
@@ -472,10 +315,409 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
 </div>
 
 <script>
-// (Your existing JavaScript remains unchanged — all functions like openAuth, closeAuth,
-//  handleLogin, handleRegister, openSchoolReg, handleSchoolReg, handleEnroll, hideToast,
-//  switchAuthTab, handleRegTypeChange, handleLogout, openAdminSidebar, closeAdminSidebar,
-//  openSchoolSidebar, closeSchoolSidebar, and portal rendering logic stay exactly the same.)
+// =====================================================================
+//  GLOBAL CONFIG
+//  INJECTED WITH YOUR LIVE GOOGLE APPS SCRIPT URL
+// =====================================================================
+const API_URL = 'https://script.google.com/macros/s/AKfycbyyMLWer8JorKX3OijTOv6jDraHB1KePNIJRO_P_l3f2nns4oCPvH8ZGc6j1UnnYkFLEQ/exec'; 
+
+// =====================================================================
+//  API HELPER
+// =====================================================================
+async function api(action, data = {}) {
+  const token = localStorage.getItem('sm_token') || '';
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Prevents CORS preflight
+      body: JSON.stringify({ action, token, ...data })
+    });
+    return await res.json();
+  } catch (err) {
+    console.error('API Error:', err);
+    return { success: false, error: 'Network error. Check console.' };
+  }
+}
+
+// =====================================================================
+//  TOAST & MODAL CONTROLS
+// =====================================================================
+function showToast(title, msg, isSuccess = true) {
+  const toast = document.getElementById('toastNotif');
+  document.getElementById('toastTitle').innerText = title;
+  document.getElementById('toastMsg').innerText = msg;
+  document.getElementById('toastIconWrap').style.background = isSuccess ? 'rgba(34,197,94,.2)' : 'rgba(239,68,68,.2)';
+  document.getElementById('toastIconEl').setAttribute('color', isSuccess ? '#22c55e' : '#ef4444');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 4000);
+}
+function hideToast() { document.getElementById('toastNotif').classList.remove('show'); }
+function openAuth() { document.getElementById('authModal').classList.add('open'); }
+function closeAuth() { document.getElementById('authModal').classList.remove('open'); }
+function openSchoolReg() { document.getElementById('schoolModal').classList.add('open'); }
+function closeSchoolReg() { document.getElementById('schoolModal').classList.remove('open'); }
+function switchAuthTab(tab) {
+  if (tab === 'login') {
+    document.getElementById('loginForm').classList.remove('hidden');
+    document.getElementById('registerForm').classList.add('hidden');
+    document.getElementById('tabLogin').style.background = 'var(--brand-blue)';
+    document.getElementById('tabLogin').style.color = 'white';
+    document.getElementById('tabRegister').style.background = 'transparent';
+    document.getElementById('tabRegister').style.color = '#666';
+  } else {
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('registerForm').classList.remove('hidden');
+    document.getElementById('tabRegister').style.background = 'var(--brand-blue)';
+    document.getElementById('tabRegister').style.color = 'white';
+    document.getElementById('tabLogin').style.background = 'transparent';
+    document.getElementById('tabLogin').style.color = '#666';
+  }
+}
+
+// =====================================================================
+//  AUTHENTICATION
+// =====================================================================
+async function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPwd').value;
+  const res = await api('login', { email, password });
+  if (res.success) {
+    localStorage.setItem('sm_token', res.token);
+    localStorage.setItem('sm_user', JSON.stringify(res.user));
+    closeAuth();
+    routeUser(res.user);
+  } else {
+    showToast('Login Failed', res.error, false);
+  }
+}
+
+async function handleRegister(e) {
+  e.preventDefault();
+  const data = {
+    name: document.getElementById('regName').value,
+    phone: document.getElementById('regPhone').value,
+    email: document.getElementById('regEmail').value,
+    password: document.getElementById('regPwd').value,
+    type: document.getElementById('regType').value
+  };
+  if (document.getElementById('regPwd').value !== document.getElementById('regPwd2').value) {
+    return showToast('Error', 'Passwords do not match', false);
+  }
+  const res = await api('register', data);
+  if (res.success) {
+    localStorage.setItem('sm_token', res.token);
+    localStorage.setItem('sm_user', JSON.stringify(res.user));
+    closeAuth();
+    routeUser(res.user);
+  } else {
+    showToast('Registration Failed', res.error, false);
+  }
+}
+
+async function handleSchoolReg(e) {
+  e.preventDefault();
+  const data = {
+    name: document.getElementById('schName').value,
+    email: document.getElementById('schEmail').value,
+    phone: document.getElementById('schPhone').value,
+    location: document.getElementById('schLocation').value,
+    principal_name: document.getElementById('schPrincipal').value,
+    principal_phone: document.getElementById('schPrincipalPhone').value,
+    password: document.getElementById('schPwd').value
+  };
+  const res = await api('registerSchool', data);
+  if (res.success) {
+    showToast('Success!', res.message, true);
+    closeSchoolReg();
+  } else {
+    showToast('Failed', res.error, false);
+  }
+}
+
+async function handleEnroll(e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+  const res = await api('inquiry', data);
+  if (res.success) {
+    showToast('Inquiry Sent!', res.message, true);
+    e.target.reset();
+  } else {
+    showToast('Failed', res.error, false);
+  }
+}
+
+function handleLogout() {
+  localStorage.removeItem('sm_token');
+  localStorage.removeItem('sm_user');
+  document.getElementById('mainWebsite').classList.remove('hidden');
+  document.getElementById('adminPortal').classList.add('hidden');
+  document.getElementById('schoolPortal').classList.add('hidden');
+  document.getElementById('userPortal').classList.add('hidden');
+  window.scrollTo(0, 0);
+}
+
+// =====================================================================
+//  ROUTING & PORTAL INITIALIZATION
+// =====================================================================
+function routeUser(user) {
+  document.getElementById('mainWebsite').classList.add('hidden');
+  document.getElementById('adminPortal').classList.add('hidden');
+  document.getElementById('schoolPortal').classList.add('hidden');
+  document.getElementById('userPortal').classList.add('hidden');
+  
+  if (user.type === 'admin') {
+    document.getElementById('adminPortal').classList.remove('hidden');
+    loadAdminView('dashboard');
+  } else if (user.type === 'school') {
+    document.getElementById('schoolPortal').classList.remove('hidden');
+    document.getElementById('schoolPortalName').innerText = user.school_name || 'School';
+    loadSchoolView('dashboard');
+  } else {
+    document.getElementById('userPortal').classList.remove('hidden');
+    document.getElementById('userPortalName').innerText = user.name;
+    loadUserView('dashboard');
+  }
+  lucide.createIcons();
+}
+
+function checkAuth() {
+  const token = localStorage.getItem('sm_token');
+  const userStr = localStorage.getItem('sm_user');
+  if (token && userStr) {
+    routeUser(JSON.parse(userStr));
+  }
+}
+
+// =====================================================================
+//  USER PORTAL LOGIC
+// =====================================================================
+async function loadUserView(view) {
+  const content = document.getElementById('userContent');
+  content.innerHTML = `<div class="animate-pulse text-gray-500">Loading ${view}...</div>`;
+  const user = JSON.parse(localStorage.getItem('sm_user'));
+
+  if (view === 'dashboard') {
+    content.innerHTML = `
+      <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Welcome, ${user.name}</h1>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+          <p class="text-xs uppercase font-bold tracking-wider text-gray-400">Account Type</p>
+          <p class="text-xl font-bold mt-2 capitalize" style="color:var(--brand-blue)">${user.type}</p>
+        </div>
+        <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+          <p class="text-xs uppercase font-bold tracking-wider text-gray-400">Email</p>
+          <p class="text-sm font-medium mt-2" style="color:#1a1a2e">${user.email}</p>
+        </div>
+        <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+          <p class="text-xs uppercase font-bold tracking-wider text-gray-400">Phone</p>
+          <p class="text-sm font-medium mt-2" style="color:#1a1a2e">${user.phone}</p>
+        </div>
+      </div>`;
+  } 
+  else if (view === 'reports') {
+    const res = await api('getReports');
+    if (res.success && res.reports.length > 0) {
+      let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">My Reports</h1><div class="space-y-4">`;
+      res.reports.forEach(r => {
+        html += `
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+            <div class="flex justify-between items-start">
+              <div><p class="font-bold" style="color:#1a1a2e">${r.program || 'General Report'}</p><p class="text-xs text-gray-500 mt-1">Term: ${r.term || 'N/A'}</p></div>
+              <span class="badge badge-blue">${new Date(r.created_at).toLocaleDateString()}</span>
+            </div>
+            <p class="text-sm mt-4" style="color:#555">${r.comments || 'No comments provided.'}</p>
+          </div>`;
+      });
+      content.innerHTML = html + `</div>`;
+    } else {
+      content.innerHTML = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">My Reports</h1><p class="text-gray-500">No reports available yet.</p>`;
+    }
+  } 
+  else if (view === 'payments') {
+    const res = await api('getPayments');
+    let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Payment History</h1>`;
+    if (res.success && res.payments.length > 0) {
+      html += `
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div class="p-6 rounded-2xl shadow-sm" style="background:var(--brand-green); color:white"><p class="text-xs uppercase font-bold opacity-80">Total Paid</p><p class="text-2xl font-bold mt-2">KES ${res.totalPaid}</p></div>
+          <div class="p-6 rounded-2xl shadow-sm" style="background:var(--brand-blue); color:white"><p class="text-xs uppercase font-bold opacity-80">Total Due</p><p class="text-2xl font-bold mt-2">KES ${res.totalDue}</p></div>
+        </div>
+        <table class="adm-table"><thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Status</th></tr></thead><tbody>`;
+      res.payments.forEach(p => {
+        html += `<tr><td>${new Date(p.created_at).toLocaleDateString()}</td><td>${p.description}</td><td>KES ${p.amount}</td><td><span class="badge ${p.status === 'Paid' ? 'badge-green' : 'badge-yellow'}">${p.status}</span></td></tr>`;
+      });
+      html += `</tbody></table>`;
+    } else {
+      html += `<p class="text-gray-500">No payment records found.</p>`;
+    }
+    content.innerHTML = html;
+  }
+  lucide.createIcons();
+}
+
+// =====================================================================
+//  ADMIN PORTAL LOGIC
+// =====================================================================
+async function loadAdminView(view) {
+  const content = document.getElementById('adminContent');
+  content.innerHTML = `<div class="animate-pulse text-gray-500">Loading ${view}...</div>`;
+
+  if (view === 'dashboard') {
+    const res = await api('adminGetStats');
+    if (res.success) {
+      const d = res.data;
+      content.innerHTML = `
+        <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Dashboard</h1>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-3xl mb-2">👨‍🎓</div><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Students</p><p class="text-2xl font-bold mt-1" style="color:var(--brand-blue)">${d.totalStudents}</p></div>
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-3xl mb-2">👨‍🏫</div><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Teachers</p><p class="text-2xl font-bold mt-1" style="color:var(--brand-green)">${d.totalTeachers}</p></div>
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-3xl mb-2">🏫</div><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Schools</p><p class="text-2xl font-bold mt-1" style="color:#1a1a2e">${d.totalSchools}</p></div>
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-3xl mb-2">💰</div><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Revenue</p><p class="text-2xl font-bold mt-1" style="color:#1a1a2e">KES ${d.totalRevenue}</p></div>
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-3xl mb-2">⏳</div><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Pending Schools</p><p class="text-2xl font-bold mt-1" style="color:#ca8a04">${d.pendingSchools}</p></div>
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-3xl mb-2">📧</div><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Inquiries</p><p class="text-2xl font-bold mt-1" style="color:#1a1a2e">${d.totalInquiries}</p></div>
+        </div>`;
+    }
+  } 
+  else if (view === 'schools') {
+    const res = await api('getSchools');
+    let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Partner Schools</h1>`;
+    if (res.success && res.schools.length > 0) {
+      html += `<table class="adm-table"><thead><tr><th>Name</th><th>Location</th><th>Principal</th><th>Status</th><th>Action</th></tr></thead><tbody>`;
+      res.schools.forEach(s => {
+        html += `<tr>
+          <td><p class="font-semibold">${s.name}</p><p class="text-xs text-gray-500">${s.email}</p></td>
+          <td>${s.location || 'N/A'}</td>
+          <td>${s.principal_name || 'N/A'}<br><span class="text-xs text-gray-500">${s.principal_phone}</span></td>
+          <td><span class="badge ${s.status === 'approved' ? 'badge-green' : s.status === 'pending' ? 'badge-yellow' : 'badge-red'}">${s.status}</span></td>
+          <td>
+            <button onclick="updateSchoolStatus('${s.id}', 'approved')" class="text-xs font-bold text-green-600 hover:underline">Approve</button> | 
+            <button onclick="updateSchoolStatus('${s.id}', 'rejected')" class="text-xs font-bold text-red-600 hover:underline">Reject</button>
+          </td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+    } else {
+      html += `<p class="text-gray-500">No schools registered yet.</p>`;
+    }
+    content.innerHTML = html;
+  }
+  else if (view === 'students') {
+    const res = await api('adminGetStudents');
+    let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">All Students</h1>`;
+    if (res.success && res.students.length > 0) {
+      html += `<table class="adm-table"><thead><tr><th>Name</th><th>Phone</th><th>Source</th><th>Status</th></tr></thead><tbody>`;
+      res.students.forEach(s => {
+        html += `<tr><td><p class="font-semibold">${s.name}</p><p class="text-xs text-gray-500">${s.email || 'No email'}</p></td><td>${s.phone || s.parent_phone || 'N/A'}</td><td><span class="badge badge-blue">${s._source || 'portal'}</span></td><td><span class="badge ${s.status === 'active' ? 'badge-green' : 'badge-red'}">${s.status}</span></td></tr>`;
+      });
+      html += `</tbody></table>`;
+    } else {
+      html += `<p class="text-gray-500">No students found.</p>`;
+    }
+    content.innerHTML = html;
+  }
+  else if (view === 'inquiries') {
+    const res = await api('adminGetInquiries');
+    let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Inquiries</h1>`;
+    if (res.success && res.inquiries.length > 0) {
+      html += `<div class="space-y-4">`;
+      res.inquiries.forEach(i => {
+        html += `<div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+          <div class="flex justify-between"><div><p class="font-bold" style="color:#1a1a2e">${i.name}</p><p class="text-sm text-gray-500">${i.phone} | ${i.email || 'No email'}</p></div><span class="badge ${i.status === 'new' ? 'badge-blue' : 'badge-green'}">${i.status}</span></div>
+          <p class="text-sm mt-2" style="color:#555"><strong>Interest:</strong> ${i.interest}</p>
+        </div>`;
+      });
+      html += `</div>`;
+    } else {
+      html += `<p class="text-gray-500">No inquiries found.</p>`;
+    }
+    content.innerHTML = html;
+  }
+  lucide.createIcons();
+}
+
+async function updateSchoolStatus(id, status) {
+  const res = await api('updateSchoolStatus', { school_id: id, status });
+  if (res.success) {
+    showToast('Updated!', res.message, true);
+    loadAdminView('schools');
+  } else {
+    showToast('Failed', res.error, false);
+  }
+}
+
+// =====================================================================
+//  SCHOOL PORTAL LOGIC
+// =====================================================================
+async function loadSchoolView(view) {
+  const content = document.getElementById('schoolContent');
+  content.innerHTML = `<div class="animate-pulse text-gray-500">Loading ${view}...</div>`;
+
+  if (view === 'dashboard') {
+    const res = await api('getSchoolProfile');
+    if (res.success) {
+      const p = res.profile;
+      content.innerHTML = `
+        <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">${p.name}</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Location</p><p class="text-sm font-medium mt-2" style="color:#1a1a2e">${p.location}</p></div>
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Principal</p><p class="text-sm font-medium mt-2" style="color:#1a1a2e">${p.principal_name} (${p.principal_phone})</p></div>
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Curriculum</p><p class="text-sm font-medium mt-2" style="color:#1a1a2e">${p.curriculum || 'N/A'}</p></div>
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Account Status</p><p class="text-sm font-bold mt-2 capitalize ${p.status === 'approved' ? 'text-green-600' : 'text-yellow-600'}">${p.status}</p></div>
+        </div>`;
+    } else {
+      content.innerHTML = `<p class="text-red-500">Failed to load profile.</p>`;
+    }
+  } 
+  else if (view === 'students') {
+    const res = await api('getSchoolStudents');
+    let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Enrolled Students</h1>`;
+    if (res.success && res.students.length > 0) {
+      html += `<table class="adm-table"><thead><tr><th>Name</th><th>Grade</th><th>Services</th><th>Monthly Fee</th><th>Status</th></tr></thead><tbody>`;
+      res.students.forEach(s => {
+        html += `<tr><td><p class="font-semibold">${s.name}</p><p class="text-xs text-gray-500">${s.parent_phone}</p></td><td>${s.grade}</td><td>${Array.isArray(s.services) ? s.services.join(', ') : s.services}</td><td>KES ${s.monthly_fee}</td><td><span class="badge ${s.status === 'active' ? 'badge-green' : 'badge-red'}">${s.status}</span></td></tr>`;
+      });
+      html += `</tbody></table>`;
+    } else {
+      html += `<p class="text-gray-500">No students enrolled yet.</p>`;
+    }
+    content.innerHTML = html;
+  }
+  else if (view === 'revenue') {
+    const res = await api('getSchoolRevenue');
+    let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Revenue Share</h1>`;
+    if (res.success) {
+      html += `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div class="p-6 rounded-2xl shadow-sm" style="background:var(--brand-blue); color:white"><p class="text-xs uppercase font-bold opacity-80">Total Revenue</p><p class="text-2xl font-bold mt-2">KES ${res.total_revenue}</p></div>
+          <div class="p-6 rounded-2xl shadow-sm" style="background:var(--brand-green); color:white"><p class="text-xs uppercase font-bold opacity-80">School Share (30%)</p><p class="text-2xl font-bold mt-2">KES ${res.school_share}</p></div>
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Active Students</p><p class="text-2xl font-bold mt-2" style="color:#1a1a2e">${res.active_students}</p></div>
+        </div>
+        <h2 class="text-lg font-bold mb-4" style="color:#1a1a2e">Service Breakdown</h2>
+        <table class="adm-table"><thead><tr><th>Service</th><th>Students</th><th>Total Revenue</th><th>School Share</th></tr></thead><tbody>`;
+      Object.keys(res.service_breakdown).forEach(k => {
+        const svc = res.service_breakdown[k];
+        if (svc.students > 0) {
+          html += `<tr><td class="capitalize">${k}</td><td>${svc.students}</td><td>KES ${svc.revenue}</td><td>KES ${svc.school_share}</td></tr>`;
+        }
+      });
+      html += `</tbody></table>`;
+    } else {
+      html += `<p class="text-gray-500">No revenue data available.</p>`;
+    }
+    content.innerHTML = html;
+  }
+  lucide.createIcons();
+}
+
+// =====================================================================
+//  INITIALIZATION
+// =====================================================================
+document.addEventListener('DOMContentLoaded', () => {
+  lucide.createIcons();
+  checkAuth();
+});
 </script>
 </body>
 </html>

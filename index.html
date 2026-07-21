@@ -147,7 +147,7 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
     <div class="flex-1 fade-up stagger-2 w-full md:w-auto">
       <div class="relative w-full h-[450px] md:h-[620px] md:w-[36rem] rounded-[2rem] overflow-hidden shadow-2xl group">
         <img src="https://z-cdn-media.chatglm.cn/files/ea4f390a-29dd-4f14-bf54-5ed53ab68c8c.png?auth_key=1884577225-a36dfc028c4d41ab972ef58cf7d8c091-0-0a0f951f6b6c05f3c71a061ebec2d63c" alt="Student building a robot" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events:none"></div>
         <div class="absolute bottom-8 left-8 right-8 text-white">
           <p class="text-3xl md:text-4xl font-extrabold drop-shadow-lg leading-tight">Learning That Transforms</p>
           <p class="text-sm opacity-90 drop-shadow-md mt-2">Build. Code. Innovate.</p>
@@ -560,7 +560,8 @@ async function loadAdminView(view) {
   }
   else if (view === 'students') {
     const res = await api('adminGetStudents');
-    let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">All Students</h1>`;
+    // Added Add Student button here
+    let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">All Students</h1><button onclick="openAddStudentModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)"><i data-lucide="plus" style="width:16px;height:16px" class="inline-block mr-1"></i> Add Student</button></div>`;
     if (res.success && res.students.length > 0) {
       html += `<table class="adm-table"><thead><tr><th>Name</th><th>Phone</th><th>Source</th><th>Status</th></tr></thead><tbody>`;
       res.students.forEach(s => {
@@ -568,7 +569,7 @@ async function loadAdminView(view) {
       });
       html += `</tbody></table>`;
     } else {
-      html += `<p class="text-gray-500">No students found.</p>`;
+      html += `<p class="text-gray-500">No students found. Click "Add Student" to create one.</p>`;
     }
     content.innerHTML = html;
   }
@@ -701,7 +702,10 @@ async function saveAttendance() {
 async function renderChatUI(containerId) {
   const container = document.getElementById(containerId);
   container.innerHTML = `
-    <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Messages</h1>
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold" style="color:#1a1a2e">Messages</h1>
+      <button onclick="openNewChatModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)"><i data-lucide="edit" style="width:16px;height:16px" class="inline-block mr-1"></i> New Chat</button>
+    </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border rounded-2xl overflow-hidden" style="background:white; border-color:#eee; height:70vh">
       <div class="md:col-span-1 border-r overflow-y-auto" style="border-color:#eee" id="chatListContainer">
         <div class="p-4 text-center text-gray-400 text-sm">Loading chats...</div>
@@ -727,7 +731,7 @@ async function loadChatList() {
         </div>`;
     });
   } else {
-    listEl.innerHTML = `<div class="p-4 text-center text-gray-400 text-sm">No conversations yet.</div>`;
+    listEl.innerHTML = `<div class="p-4 text-center text-gray-400 text-sm">No conversations yet. Click "New Chat".</div>`;
   }
 }
 
@@ -735,8 +739,10 @@ async function loadMessages(otherId) {
   const res = await api('getMessages', { other_id: otherId });
   const winEl = document.getElementById('chatWindowContainer');
   if (res.success) {
-    let html = `
-      <div class="flex-1 overflow-y-auto p-4 space-y-3" id="messagesArea">`;
+    let html = `<div class="flex-1 overflow-y-auto p-4 space-y-3" id="messagesArea">`;
+    if (res.messages.length === 0) {
+      html += `<div class="text-center text-gray-400 text-sm mt-10">No messages yet. Say hi!</div>`;
+    }
     res.messages.forEach(m => {
       const isSent = String(m.sender_id) === String(JSON.parse(localStorage.getItem('sm_user')).id);
       html += `<div class="flex ${isSent ? 'justify-end' : 'justify-start'}"><div class="chat-bubble ${isSent ? 'sent' : 'received'} p-3 text-sm">${m.message}</div></div>`;
@@ -765,7 +771,75 @@ async function handleSendMessage(e, otherId) {
   }
 }
 
+// Function to start a new chat
+async function openNewChatModal() {
+  document.getElementById('genericModalContent').innerHTML = `<div class="text-center text-gray-500">Loading users...</div>`;
+  openGenericModal();
+  
+  let contacts = [];
+  const user = JSON.parse(localStorage.getItem('sm_user'));
+  
+  // Fetch students
+  const studentsRes = await api('getStudents');
+  if (studentsRes.success) contacts = contacts.concat(studentsRes.students);
+  
+  // If admin, also fetch teachers
+  if (user.type === 'admin') {
+    const teachersRes = await api('adminGetTeachers');
+    if (teachersRes.success) contacts = contacts.concat(teachersRes.teachers);
+  }
+  
+  // Filter out self
+  contacts = contacts.filter(c => c.id !== user.id);
+  
+  let html = `<h2 class="text-lg font-bold mb-4" style="color:#1a1a2e">Start a New Chat</h2><div class="space-y-2 max-h-96 overflow-y-auto">`;
+  if (contacts.length === 0) {
+    html += `<p class="text-gray-500 text-sm">No other users available to message.</p>`;
+  } else {
+    contacts.forEach(c => {
+      html += `<button onclick="startChat('${c.id}')" class="w-full text-left p-3 rounded-xl hover:bg-gray-100 border" style="border-color:#eee"><p class="font-semibold text-sm" style="color:#1a1a2e">${c.name}</p><p class="text-xs text-gray-500 capitalize">${c.type}</p></button>`;
+    });
+  }
+  html += `</div>`;
+  document.getElementById('genericModalContent').innerHTML = html;
+}
+
+function startChat(userId) {
+  closeGenericModal();
+  loadMessages(userId);
+}
+
 // --- MODAL FORMS ---
+// Admin Add Student Form
+function openAddStudentModal() {
+  document.getElementById('genericModalContent').innerHTML = `
+    <h2 class="text-lg font-bold mb-6" style="color:#1a1a2e">Add New Student</h2>
+    <form onsubmit="handleAddStudent(event)" class="space-y-3">
+      <input type="text" name="name" required placeholder="Student Full Name" class="inp">
+      <input type="email" name="email" required placeholder="Student/Parent Email" class="inp">
+      <input type="tel" name="phone" required placeholder="Phone Number" class="inp">
+      <input type="password" name="password" required minlength="6" placeholder="Set Password (min 6 chars)" class="inp">
+      <button type="submit" class="w-full py-3.5 rounded-xl font-semibold text-white" style="background:var(--brand-blue)">Create Account</button>
+    </form>
+  `;
+  openGenericModal();
+}
+
+async function handleAddStudent(e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+  data.type = 'student'; // Force type to student
+  const res = await api('register', data);
+  if (res.success) {
+    showToast('Success', 'Student added successfully!', true);
+    closeGenericModal();
+    loadAdminView('students');
+  } else {
+    showToast('Failed', res.error, false);
+  }
+}
+
 async function openAddReportModal() {
   const studentsRes = await api('getStudents');
   let studentOptions = '<option value="">Select Student</option>';

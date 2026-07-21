@@ -259,6 +259,27 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
 <script>
 const API_URL = 'https://script.google.com/macros/s/AKfycbyyMLWer8JorKX3OijTOv6jDraHB1KePNIJRO_P_l3f2nns4oCPvH8ZGc6j1UnnYkFLEQ/exec'; 
 
+// --- MOCK DATA FOR NEW FEATURES ---
+let mockAnnouncements = [
+  { id: 'a1', title: 'DreamQuest Camp Registration Open!', body: 'Join our holiday camp for coding, robotics, and outdoor adventures. Limited slots available!', date: '2024-08-01', author: 'Admin' },
+  { id: 'a2', title: 'Term 1 Exams Timetable Released', body: 'Please check the Schedule section for your specific exam dates and times.', date: '2024-07-25', author: 'Admin' }
+];
+let mockBooks = [
+  { id: 'b1', title: 'Mathematics for Grade 8', author: 'KIE', type: 'PDF' },
+  { id: 'b2', title: 'Introduction to Python', author: 'Guido van Rossum', type: 'PDF' },
+  { id: 'b3', title: 'Chess Strategies', author: 'Bobby Fischer', type: 'Doc' }
+];
+let mockHomeworks = [
+  { id: 'hw1', subject: 'Mathematics', title: 'Algebra Worksheet 4', due: 'Tomorrow', status: 'Pending' },
+  { id: 'hw2', subject: 'Sciences', title: 'Plant Cell Diagram', due: 'In 3 days', status: 'Pending' },
+  { id: 'hw3', subject: 'Coding', title: 'Build a Login Form', due: 'Completed', status: 'Submitted' }
+];
+let mockExams = [
+  { id: 'ex1', title: 'Math Form 1 Assessment', duration: '30 mins', questions: 10, status: 'Pending' },
+  { id: 'ex2', title: 'English Grammar Quiz', duration: '15 mins', questions: 20, status: 'Completed' }
+];
+let cachedReports = []; // Global cache for reports
+
 async function api(action, data = {}) {
   const token = localStorage.getItem('sm_token') || '';
   try {
@@ -444,8 +465,53 @@ function dashCard(icon, color, title, subtitle, onClick) {
     </button>`;
 }
 
+// --- SHARED ACADEMIC VIEWS (ANNOUNCEMENTS, LIBRARY) ---
+function loadAnnouncementsView(containerId, isAdmin) {
+  const content = document.getElementById(containerId);
+  let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">Announcements</h1>`;
+  if (isAdmin) {
+    html += `<button onclick="openAddAnnouncementModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)"><i data-lucide="plus" style="width:16px;height:16px" class="inline-block mr-1"></i> New Announcement</button>`;
+  }
+  html += `</div><div class="space-y-4">`;
+  
+  mockAnnouncements.forEach(a => {
+    html += `
+      <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+        <div class="flex justify-between mb-2"><h4 class="font-bold" style="color:#1a1a2e">${a.title}</h4><span class="badge badge-blue">${a.date}</span></div>
+        <p class="text-sm text-gray-600">${a.body}</p>
+        <p class="text-xs text-gray-400 mt-2">Posted by ${a.author}</p>
+      </div>`;
+  });
+  html += `</div>`;
+  content.innerHTML = html;
+  lucide.createIcons();
+}
+
+function loadLibraryView(containerId, isAdmin) {
+  const content = document.getElementById(containerId);
+  let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">Library Resources</h1>`;
+  if (isAdmin) {
+    html += `<button onclick="openAddBookModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)"><i data-lucide="plus" style="width:16px;height:16px" class="inline-block mr-1"></i> Add Resource</button>`;
+  }
+  html += `</div><div class="grid md:grid-cols-3 gap-6">`;
+  
+  mockBooks.forEach(b => {
+    html += `
+      <div class="p-6 rounded-2xl shadow-sm border text-center" style="background:white; border-color:#eee">
+        <div class="w-16 h-16 rounded-xl mx-auto mb-4 flex items-center justify-center" style="background:#8b5cf61a"><i data-lucide="book" style="width:28px;height:28px;color:#8b5cf6"></i></div>
+        <h4 class="font-bold text-sm" style="color:#1a1a2e">${b.title}</h4>
+        <p class="text-xs text-gray-500 mb-3">${b.author}</p>
+        <button onclick="showToast('Library', 'Downloading ${b.title}...', true)" class="w-full py-2 rounded-lg text-xs font-semibold text-white" style="background:var(--brand-blue)">
+          <i data-lucide="download" style="width:14px;height:14px" class="inline-block mr-1"></i> Download ${b.type}
+        </button>
+      </div>`;
+  });
+  html += `</div>`;
+  content.innerHTML = html;
+  lucide.createIcons();
+}
+
 // --- USER PORTAL LOGIC ---
-let cachedUserReports = []; 
 async function loadUserView(view) {
   const content = document.getElementById('userContent');
   content.innerHTML = `<div class="animate-pulse text-gray-500">Loading ${view}...</div>`;
@@ -540,14 +606,10 @@ async function loadUserView(view) {
   }
 
   else if (view === 'exams') {
-    const exams = [
-      { id: 'ex1', title: 'Math Form 1 Assessment', duration: '30 mins', questions: 10, status: 'Pending' },
-      { id: 'ex2', title: 'English Grammar Quiz', duration: '15 mins', questions: 20, status: 'Completed' }
-    ];
     content.innerHTML = `
       <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Exam Board</h1>
       <div class="grid md:grid-cols-2 gap-4">
-        ${exams.map(e => `
+        ${mockExams.map(e => `
           <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
             <div class="flex justify-between mb-4">
               <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background:#ef44441a"><i data-lucide="clipboard-list" style="width:20px;height:20px;color:#ef4444"></i></div>
@@ -555,7 +617,7 @@ async function loadUserView(view) {
             </div>
             <h4 class="font-bold" style="color:#1a1a2e">${e.title}</h4>
             <p class="text-xs text-gray-500 mt-1">${e.questions} Questions | ${e.duration}</p>
-            ${e.status === 'Pending' ? `<button onclick="showToast('Exam', 'Starting exam...', true)" class="mt-4 w-full py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)">Start Assessment</button>` : `<button onclick="showToast('Exam', 'Viewing results...', true)" class="mt-4 w-full py-2 rounded-lg text-sm font-semibold border" style="border-color:#ddd; color:#555">View Results</button>`}
+            ${e.status === 'Pending' ? `<button onclick="openExamModal('${e.id}')" class="mt-4 w-full py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)">Start Assessment</button>` : `<button onclick="showToast('Exam', 'You scored 85%', true)" class="mt-4 w-full py-2 rounded-lg text-sm font-semibold border" style="border-color:#ddd; color:#555">View Results</button>`}
           </div>
         `).join('')}
       </div>
@@ -563,15 +625,10 @@ async function loadUserView(view) {
   }
 
   else if (view === 'homeworks') {
-    const hw = [
-      { id: 'hw1', subject: 'Mathematics', title: 'Algebra Worksheet 4', due: 'Tomorrow', status: 'Pending' },
-      { id: 'hw2', subject: 'Sciences', title: 'Plant Cell Diagram', due: 'In 3 days', status: 'Pending' },
-      { id: 'hw3', subject: 'Coding', title: 'Build a Login Form', due: 'Completed', status: 'Submitted' }
-    ];
     content.innerHTML = `
       <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Homework & Assignments</h1>
       <div class="space-y-4">
-        ${hw.map(h => `
+        ${mockHomeworks.map(h => `
           <div class="p-6 rounded-2xl shadow-sm border flex justify-between items-center" style="background:white; border-color:#eee">
             <div class="flex items-center gap-4">
               <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background:#8b5cf61a"><i data-lucide="book-open" style="width:20px;height:20px;color:#8b5cf6"></i></div>
@@ -580,7 +637,7 @@ async function loadUserView(view) {
                 <p class="text-xs text-gray-500">${h.subject} | Due: ${h.due}</p>
               </div>
             </div>
-            ${h.status === 'Pending' ? `<button onclick="showToast('Homework', 'Opening submission form...', true)" class="px-4 py-2 rounded-lg text-xs font-semibold text-white" style="background:var(--brand-green)">Submit</button>` : `<span class="badge badge-green">Submitted</span>`}
+            ${h.status === 'Pending' ? `<button onclick="openSubmitHomeworkModal('${h.id}')" class="px-4 py-2 rounded-lg text-xs font-semibold text-white" style="background:var(--brand-green)">Submit</button>` : `<span class="badge badge-green">Submitted</span>`}
           </div>
         `).join('')}
       </div>
@@ -633,57 +690,21 @@ async function loadUserView(view) {
     `;
   }
 
-  else if (view === 'library') {
-    const books = [
-      { id: 'b1', title: 'Mathematics for Grade 8', author: 'KIE', type: 'PDF' },
-      { id: 'b2', title: 'Introduction to Python', author: 'Guido van Rossum', type: 'PDF' },
-      { id: 'b3', title: 'Chess Strategies', author: 'Bobby Fischer', type: 'Doc' }
-    ];
-    content.innerHTML = `
-      <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Library Resources</h1>
-      <div class="grid md:grid-cols-3 gap-6">
-        ${books.map(b => `
-          <div class="p-6 rounded-2xl shadow-sm border text-center" style="background:white; border-color:#eee">
-            <div class="w-16 h-16 rounded-xl mx-auto mb-4 flex items-center justify-center" style="background:#8b5cf61a"><i data-lucide="book" style="width:28px;height:28px;color:#8b5cf6"></i></div>
-            <h4 class="font-bold text-sm" style="color:#1a1a2e">${b.title}</h4>
-            <p class="text-xs text-gray-500 mb-3">${b.author}</p>
-            <button onclick="showToast('Library', 'Downloading ${b.title}...', true)" class="w-full py-2 rounded-lg text-xs font-semibold text-white" style="background:var(--brand-blue)">
-              <i data-lucide="download" style="width:14px;height:14px" class="inline-block mr-1"></i> Download ${b.type}
-            </button>
-          </div>
-        `).join('')}
-      </div>
-    `;
-  }
-
-  else if (view === 'announcements') {
-    content.innerHTML = `
-      <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Announcements</h1>
-      <div class="space-y-4">
-        <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
-          <div class="flex justify-between mb-2"><h4 class="font-bold" style="color:#1a1a2e">DreamQuest Camp Registration Open!</h4><span class="badge badge-blue">New</span></div>
-          <p class="text-sm text-gray-600">Join our holiday camp for coding, robotics, and outdoor adventures. Limited slots available!</p>
-        </div>
-        <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
-          <div class="flex justify-between mb-2"><h4 class="font-bold" style="color:#1a1a2e">Term 1 Exams Timetable Released</h4><span class="badge badge-yellow">Old</span></div>
-          <p class="text-sm text-gray-600">Please check the Schedule section for your specific exam dates and times.</p>
-        </div>
-      </div>
-    `;
-  }
+  else if (view === 'library') { loadLibraryView('userContent', false); }
+  else if (view === 'announcements') { loadAnnouncementsView('userContent', false); }
 
   // --- EXISTING VIEWS ---
   else if (view === 'reports') {
     const res = await api('getReports');
-    cachedUserReports = res.success ? res.reports : [];
+    cachedReports = res.success ? res.reports : [];
     let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">Reports</h1>`;
     if (user.type === 'teacher') {
       html += `<button onclick="openAddReportModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)"><i data-lucide="plus" style="width:16px;height:16px" class="inline-block mr-1"></i> Create Report</button>`;
     }
     html += `</div>`;
-    if (res.success && cachedUserReports.length > 0) {
+    if (res.success && cachedReports.length > 0) {
       html += `<div class="space-y-4">`;
-      cachedUserReports.forEach((r, i) => {
+      cachedReports.forEach((r, i) => {
         html += `
           <div class="p-6 rounded-2xl shadow-sm border flex justify-between items-center" style="background:white; border-color:#eee">
             <div>
@@ -746,7 +767,7 @@ async function loadUserView(view) {
 
 // --- ANIMATED REPORT CARD GENERATOR ---
 function viewAnimatedReport(reportId) {
-  const report = cachedUserReports.find(r => r.id === reportId);
+  const report = cachedReports.find(r => r.id === reportId);
   if (!report) return showToast('Error', 'Report not found', false);
 
   const modalBody = document.getElementById('genericModalBody');
@@ -872,14 +893,14 @@ async function loadAdminView(view) {
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
         ${dashCard('users', '#2563EB', 'Students', 'View & add', "loadAdminView('students')")}
         ${dashCard('school', '#16A34A', 'Schools', 'Manage partners', "loadAdminView('schools')")}
-        ${dashCard('file-text', '#8b5cf6', 'Grade Report', 'All reports', "showToast('Info', 'Coming soon!', true)")}
-        ${dashCard('library', '#0ea5e9', 'Libraries', 'Resources', "showToast('Info', 'Coming soon!', true)")}
+        ${dashCard('file-text', '#8b5cf6', 'Grade Report', 'All reports', "loadAdminView('reports')")}
+        ${dashCard('library', '#0ea5e9', 'Libraries', 'Resources', "loadAdminView('library')")}
       </div>
 
       <h2 class="text-lg font-bold mb-4" style="color:#1a1a2e">Administrative</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         ${dashCard('dollar-sign', '#ca8a04', 'Finance', 'Record payment', "loadAdminView('payments')")}
-        ${dashCard('megaphone', '#ef4444', 'Announcements', 'Send news', "showToast('Info', 'Coming soon!', true)")}
+        ${dashCard('megaphone', '#ef4444', 'Announcements', 'Send news', "loadAdminView('announcements')")}
         ${dashCard('message-square', '#2563EB', 'Messages', 'Support chat', "loadAdminView('chat')")}
       </div>
     `;
@@ -921,6 +942,27 @@ async function loadAdminView(view) {
     }
     content.innerHTML = html;
   }
+  else if (view === 'reports') {
+    const res = await api('adminGetReports');
+    cachedReports = res.success ? res.reports : [];
+    let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">All Reports</h1>`;
+    if (cachedReports.length > 0) {
+      html += `<table class="adm-table"><thead><tr><th>Student</th><th>Program</th><th>Term</th><th>Date</th><th>Action</th></tr></thead><tbody>`;
+      cachedReports.forEach(r => {
+        html += `<tr>
+          <td>${r.student_name || 'N/A'}</td>
+          <td>${r.program || 'N/A'}</td>
+          <td>${r.term || 'N/A'}</td>
+          <td>${new Date(r.created_at).toLocaleDateString()}</td>
+          <td><button onclick="viewAnimatedReport('${r.id}')" class="text-blue-600 hover:underline font-semibold text-xs">View Report</button></td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+    } else {
+      html += `<p class="text-gray-500">No reports found.</p>`;
+    }
+    content.innerHTML = html;
+  }
   else if (view === 'payments') {
     const res = await api('adminGetPayments');
     let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">Payments</h1><button onclick="openAddPaymentModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)">Record Payment</button></div>`;
@@ -935,9 +977,9 @@ async function loadAdminView(view) {
     }
     content.innerHTML = html;
   }
-  else if (view === 'chat') {
-    renderChatUI('adminContent');
-  }
+  else if (view === 'announcements') { loadAnnouncementsView('adminContent', true); }
+  else if (view === 'library') { loadLibraryView('adminContent', true); }
+  else if (view === 'chat') { renderChatUI('adminContent'); }
   lucide.createIcons();
 }
 
@@ -974,14 +1016,14 @@ async function loadSchoolView(view) {
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
         ${dashCard('users', '#2563EB', 'Students', 'View & enroll', "loadSchoolView('students')")}
         ${dashCard('check-square', '#16A34A', 'Attendance', 'Mark daily', "loadSchoolView('attendance')")}
-        ${dashCard('file-text', '#8b5cf6', 'Grade Report', 'Student reports', "showToast('Info', 'Coming soon!', true)")}
-        ${dashCard('library', '#0ea5e9', 'Libraries', 'Resources', "showToast('Info', 'Coming soon!', true)")}
+        ${dashCard('file-text', '#8b5cf6', 'Grade Report', 'Student reports', "loadSchoolView('reports')")}
+        ${dashCard('library', '#0ea5e9', 'Libraries', 'Resources', "loadSchoolView('library')")}
       </div>
 
       <h2 class="text-lg font-bold mb-4" style="color:#1a1a2e">Administrative</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         ${dashCard('trending-up', '#ca8a04', 'Finance', 'Fees & shares', "loadSchoolView('revenue')")}
-        ${dashCard('megaphone', '#ef4444', 'Announcements', 'School news', "showToast('Info', 'Coming soon!', true)")}
+        ${dashCard('megaphone', '#ef4444', 'Announcements', 'School news', "loadSchoolView('announcements')")}
         ${dashCard('message-square', '#2563EB', 'Messages', 'Chat with admin', "loadSchoolView('chat')")}
       </div>
     `;
@@ -1038,9 +1080,30 @@ async function loadSchoolView(view) {
     }
     content.innerHTML = html;
   }
-  else if (view === 'chat') {
-    renderChatUI('schoolContent');
+  else if (view === 'reports') {
+    const res = await api('getReports'); // Schools can view reports list
+    cachedReports = res.success ? res.reports : [];
+    let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Student Reports</h1>`;
+    if (cachedReports.length > 0) {
+      html += `<table class="adm-table"><thead><tr><th>Student</th><th>Program</th><th>Term</th><th>Date</th><th>Action</th></tr></thead><tbody>`;
+      cachedReports.forEach(r => {
+        html += `<tr>
+          <td>${r.student_name || 'N/A'}</td>
+          <td>${r.program || 'N/A'}</td>
+          <td>${r.term || 'N/A'}</td>
+          <td>${new Date(r.created_at).toLocaleDateString()}</td>
+          <td><button onclick="viewAnimatedReport('${r.id}')" class="text-blue-600 hover:underline font-semibold text-xs">View Report</button></td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+    } else {
+      html += `<p class="text-gray-500">No reports found.</p>`;
+    }
+    content.innerHTML = html;
   }
+  else if (view === 'announcements') { loadAnnouncementsView('schoolContent', true); }
+  else if (view === 'library') { loadLibraryView('schoolContent', true); }
+  else if (view === 'chat') { renderChatUI('schoolContent'); }
   lucide.createIcons();
 }
 
@@ -1274,49 +1337,4 @@ async function handleEnrollStudent(e) {
   const formData = new FormData(e.target);
   const data = Object.fromEntries(formData.entries());
   data.services = formData.getAll('services');
-  const res = await api('enrollSchoolStudent', data);
-  if (res.success) {
-    showToast('Success', res.message, true);
-    closeGenericModal();
-    loadSchoolView('students');
-  } else {
-    showToast('Failed', res.error, false);
-  }
-}
-
-async function openAddPaymentModal() {
-  document.getElementById('genericModalContent').innerHTML = `
-    <h2 class="text-lg font-bold mb-6" style="color:#1a1a2e">Record Payment</h2>
-    <form onsubmit="handleAddPayment(event)" class="space-y-3">
-      <input type="text" name="student_name" required placeholder="Student Name" class="inp">
-      <input type="number" name="amount" required placeholder="Amount (KES)" class="inp">
-      <input type="text" name="description" placeholder="Description" class="inp">
-      <select name="method" class="inp"><option value="Cash">Cash</option><option value="M-Pesa">M-Pesa</option><option value="Bank">Bank</option></select>
-      <button type="submit" class="w-full py-3.5 rounded-xl font-semibold text-white" style="background:var(--brand-blue)">Save Payment</button>
-    </form>
-  `;
-  openGenericModal();
-}
-
-async function handleAddPayment(e) {
-  e.preventDefault();
-  const formData = new FormData(e.target);
-  const data = Object.fromEntries(formData.entries());
-  const res = await api('adminAddPayment', data);
-  if (res.success) {
-    showToast('Success', res.message, true);
-    closeGenericModal();
-    loadAdminView('payments');
-  } else {
-    showToast('Failed', res.error, false);
-  }
-}
-
-// --- INIT ---
-document.addEventListener('DOMContentLoaded', () => {
-  lucide.createIcons();
-  checkAuth();
-});
-</script>
-</body>
-</html>
+  const res =

@@ -258,27 +258,7 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
 
 <script>
 const API_URL = 'https://script.google.com/macros/s/AKfycbyyMLWer8JorKX3OijTOv6jDraHB1KePNIJRO_P_l3f2nns4oCPvH8ZGc6j1UnnYkFLEQ/exec'; 
-
-// --- MOCK DATA FOR NEW FEATURES ---
-let mockAnnouncements = [
-  { id: 'a1', title: 'DreamQuest Camp Registration Open!', body: 'Join our holiday camp for coding, robotics, and outdoor adventures. Limited slots available!', date: '2024-08-01', author: 'Admin' },
-  { id: 'a2', title: 'Term 1 Exams Timetable Released', body: 'Please check the Schedule section for your specific exam dates and times.', date: '2024-07-25', author: 'Admin' }
-];
-let mockBooks = [
-  { id: 'b1', title: 'Mathematics for Grade 8', author: 'KIE', type: 'PDF' },
-  { id: 'b2', title: 'Introduction to Python', author: 'Guido van Rossum', type: 'PDF' },
-  { id: 'b3', title: 'Chess Strategies', author: 'Bobby Fischer', type: 'Doc' }
-];
-let mockHomeworks = [
-  { id: 'hw1', subject: 'Mathematics', title: 'Algebra Worksheet 4', due: 'Tomorrow', status: 'Pending' },
-  { id: 'hw2', subject: 'Sciences', title: 'Plant Cell Diagram', due: 'In 3 days', status: 'Pending' },
-  { id: 'hw3', subject: 'Coding', title: 'Build a Login Form', due: 'Completed', status: 'Submitted' }
-];
-let mockExams = [
-  { id: 'ex1', title: 'Math Form 1 Assessment', duration: '30 mins', questions: 10, status: 'Pending' },
-  { id: 'ex2', title: 'English Grammar Quiz', duration: '15 mins', questions: 20, status: 'Completed' }
-];
-let cachedReports = []; // Global cache for reports
+let cachedReports = []; 
 
 async function api(action, data = {}) {
   const token = localStorage.getItem('sm_token') || '';
@@ -366,9 +346,7 @@ async function handleRegister(e) {
     password: document.getElementById('regPwd').value,
     type: document.getElementById('regType').value
   };
-  if (document.getElementById('regPwd').value !== document.getElementById('regPwd2').value) {
-    return showToast('Error', 'Passwords do not match', false);
-  }
+  if (document.getElementById('regPwd').value !== document.getElementById('regPwd2').value) return showToast('Error', 'Passwords do not match', false);
   const res = await api('register', data);
   if (res.success) {
     localStorage.setItem('sm_token', res.token);
@@ -392,12 +370,7 @@ async function handleSchoolReg(e) {
     password: document.getElementById('schPwd').value
   };
   const res = await api('registerSchool', data);
-  if (res.success) {
-    showToast('Success!', res.message, true);
-    closeSchoolReg();
-  } else {
-    showToast('Failed', res.error, false);
-  }
+  if (res.success) { showToast('Success!', res.message, true); closeSchoolReg(); } else { showToast('Failed', res.error, false); }
 }
 
 async function handleEnroll(e) {
@@ -405,12 +378,7 @@ async function handleEnroll(e) {
   const formData = new FormData(e.target);
   const data = Object.fromEntries(formData.entries());
   const res = await api('inquiry', data);
-  if (res.success) {
-    showToast('Inquiry Sent!', res.message, true);
-    e.target.reset();
-  } else {
-    showToast('Failed', res.error, false);
-  }
+  if (res.success) { showToast('Inquiry Sent!', res.message, true); e.target.reset(); } else { showToast('Failed', res.error, false); }
 }
 
 function handleLogout() {
@@ -448,12 +416,9 @@ function routeUser(user) {
 function checkAuth() {
   const token = localStorage.getItem('sm_token');
   const userStr = localStorage.getItem('sm_user');
-  if (token && userStr) {
-    routeUser(JSON.parse(userStr));
-  }
+  if (token && userStr) routeUser(JSON.parse(userStr));
 }
 
-// --- DASHBOARD SQUARE CARD GENERATOR ---
 function dashCard(icon, color, title, subtitle, onClick) {
   return `
     <button onclick="${onClick}" class="card-hover p-6 rounded-2xl border flex flex-col items-center text-center" style="background:white; border-color:#eee">
@@ -465,47 +430,59 @@ function dashCard(icon, color, title, subtitle, onClick) {
     </button>`;
 }
 
-// --- SHARED ACADEMIC VIEWS (ANNOUNCEMENTS, LIBRARY) ---
-function loadAnnouncementsView(containerId, isAdmin) {
+// --- SHARED ACADEMIC VIEWS ---
+async function loadAnnouncementsView(containerId, isAdmin) {
   const content = document.getElementById(containerId);
+  content.innerHTML = `<div class="animate-pulse text-gray-500">Loading announcements...</div>`;
+  const res = await api('getAnnouncements');
+  const anns = res.success ? res.announcements : [];
+  
   let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">Announcements</h1>`;
-  if (isAdmin) {
-    html += `<button onclick="openAddAnnouncementModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)"><i data-lucide="plus" style="width:16px;height:16px" class="inline-block mr-1"></i> New Announcement</button>`;
-  }
+  if (isAdmin) html += `<button onclick="openAddAnnouncementModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)"><i data-lucide="plus" style="width:16px;height:16px" class="inline-block mr-1"></i> New Announcement</button>`;
   html += `</div><div class="space-y-4">`;
   
-  mockAnnouncements.forEach(a => {
-    html += `
-      <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
-        <div class="flex justify-between mb-2"><h4 class="font-bold" style="color:#1a1a2e">${a.title}</h4><span class="badge badge-blue">${a.date}</span></div>
-        <p class="text-sm text-gray-600">${a.body}</p>
-        <p class="text-xs text-gray-400 mt-2">Posted by ${a.author}</p>
-      </div>`;
-  });
+  if (anns.length > 0) {
+    anns.forEach(a => {
+      html += `
+        <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+          <div class="flex justify-between mb-2"><h4 class="font-bold" style="color:#1a1a2e">${a.title}</h4><span class="badge badge-blue">${new Date(a.date).toLocaleDateString()}</span></div>
+          <p class="text-sm text-gray-600">${a.body}</p>
+          <p class="text-xs text-gray-400 mt-2">Posted by ${a.author}</p>
+        </div>`;
+    });
+  } else {
+    html += `<p class="text-gray-500">No announcements available.</p>`;
+  }
   html += `</div>`;
   content.innerHTML = html;
   lucide.createIcons();
 }
 
-function loadLibraryView(containerId, isAdmin) {
+async function loadLibraryView(containerId, isAdmin) {
   const content = document.getElementById(containerId);
+  content.innerHTML = `<div class="animate-pulse text-gray-500">Loading library...</div>`;
+  const res = await api('getLibrary');
+  const books = res.success ? res.books : [];
+  
   let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">Library Resources</h1>`;
-  if (isAdmin) {
-    html += `<button onclick="openAddBookModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)"><i data-lucide="plus" style="width:16px;height:16px" class="inline-block mr-1"></i> Add Resource</button>`;
-  }
+  if (isAdmin) html += `<button onclick="openAddBookModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)"><i data-lucide="plus" style="width:16px;height:16px" class="inline-block mr-1"></i> Add Resource</button>`;
   html += `</div><div class="grid md:grid-cols-3 gap-6">`;
   
-  mockBooks.forEach(b => {
-    html += `
-      <div class="p-6 rounded-2xl shadow-sm border text-center" style="background:white; border-color:#eee">
-        <div class="w-16 h-16 rounded-xl mx-auto mb-4 flex items-center justify-center" style="background:#8b5cf61a"><i data-lucide="book" style="width:28px;height:28px;color:#8b5cf6"></i></div>
-        <h4 class="font-bold text-sm" style="color:#1a1a2e">${b.title}</h4>
-        <p class="text-xs text-gray-500 mb-3">${b.author}</p>
-        <button onclick="showToast('Library', 'Downloading ${b.title}...', true)" class="w-full py-2 rounded-lg text-xs font-semibold text-white" style="background:var(--brand-blue)">
-          <i data-lucide="download" style="width:14px;height:14px" class="inline-block mr-1"></i> Download ${b.type}
-        </button>
-      </div>`;
-  });
+  if (books.length > 0) {
+    books.forEach(b => {
+      html += `
+        <div class="p-6 rounded-2xl shadow-sm border text-center" style="background:white; border-color:#eee">
+          <div class="w-16 h-16 rounded-xl mx-auto mb-4 flex items-center justify-center" style="background:#8b5cf61a"><i data-lucide="book" style="width:28px;height:28px;color:#8b5cf6"></i></div>
+          <h4 class="font-bold text-sm" style="color:#1a1a2e">${b.title}</h4>
+          <p class="text-xs text-gray-500 mb-3">${b.author}</p>
+          <button onclick="showToast('Library', 'Downloading ${b.title}...', true)" class="w-full py-2 rounded-lg text-xs font-semibold text-white" style="background:var(--brand-blue)">
+            <i data-lucide="download" style="width:14px;height:14px" class="inline-block mr-1"></i> Download ${b.type}
+          </button>
+        </div>`;
+    });
+  } else {
+    html += `<p class="text-gray-500 col-span-3">No resources available.</p>`;
+  }
   html += `</div>`;
   content.innerHTML = html;
   lucide.createIcons();
@@ -519,7 +496,6 @@ async function loadUserView(view) {
 
   if (view === 'dashboard') {
     const [reportsRes, paymentsRes] = await Promise.all([api('getReports'), api('getPayments')]);
-    
     content.innerHTML = `
       <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Welcome, ${user.name}!</h1>
       <div class="grid grid-cols-2 gap-4 mb-8">
@@ -561,20 +537,10 @@ async function loadUserView(view) {
       </div>
     `;
   } 
-  
-  // --- NEW ACADEMIC VIEWS ---
   else if (view === 'schedule') {
-    const schedule = [
-      { day: 'Monday', time: '09:00 - 10:30', subject: 'Mathematics', tutor: 'Mr. Kago' },
-      { day: 'Monday', time: '11:00 - 12:30', subject: 'Coding & Robotics', tutor: 'Ms. Wanjiru' },
-      { day: 'Tuesday', time: '10:00 - 11:30', subject: 'English Language', tutor: 'Mrs. Kamau' },
-      { day: 'Wednesday', time: '09:00 - 10:30', subject: 'Sciences', tutor: 'Mr. Otieno' },
-      { day: 'Friday', time: '15:00 - 17:00', subject: 'Chess Academy', tutor: 'Coach Dennis' }
-    ];
-    const exams = [
-      { subject: 'Mathematics Term 1', date: '2024-08-15', time: '10:00 AM', status: 'Upcoming' },
-      { subject: 'Coding Project Submission', date: '2024-08-20', time: '11:59 PM', status: 'Upcoming' }
-    ];
+    const [schedRes, examRes] = await Promise.all([api('getSchedule'), api('getExams')]);
+    const schedule = schedRes.success ? schedRes.schedule : [];
+    const exams = examRes.success ? examRes.exams : [];
 
     content.innerHTML = `
       <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Schedule & Exams</h1>
@@ -582,23 +548,23 @@ async function loadUserView(view) {
         <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
           <h3 class="font-bold mb-4" style="color:#1a1a2e">Weekly Timetable</h3>
           <div class="space-y-3">
-            ${schedule.map(s => `
+            ${schedule.length > 0 ? schedule.map(s => `
               <div class="p-3 rounded-lg flex justify-between items-center" style="background:#F7FAFE">
                 <div><p class="font-semibold text-sm" style="color:#1a1a2e">${s.subject}</p><p class="text-xs text-gray-500">${s.day} | ${s.tutor}</p></div>
                 <span class="text-xs font-bold text-gray-600">${s.time}</span>
               </div>
-            `).join('')}
+            `).join('') : '<p class="text-sm text-gray-500">No schedule available.</p>'}
           </div>
         </div>
         <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
           <h3 class="font-bold mb-4" style="color:#1a1a2e">Upcoming Exams</h3>
           <div class="space-y-3">
-            ${exams.map(e => `
+            ${exams.length > 0 ? exams.map(e => `
               <div class="p-3 rounded-lg flex justify-between items-center border" style="border-color:#eee">
-                <div><p class="font-semibold text-sm" style="color:#1a1a2e">${e.subject}</p><p class="text-xs text-gray-500">${e.date} at ${e.time}</p></div>
+                <div><p class="font-semibold text-sm" style="color:#1a1a2e">${e.title}</p><p class="text-xs text-gray-500">${e.questions} Questions | ${e.duration}</p></div>
                 <span class="badge badge-yellow">${e.status}</span>
               </div>
-            `).join('')}
+            `).join('') : '<p class="text-sm text-gray-500">No exams scheduled.</p>'}
           </div>
         </div>
       </div>
@@ -606,10 +572,12 @@ async function loadUserView(view) {
   }
 
   else if (view === 'exams') {
+    const res = await api('getExams');
+    const exams = res.success ? res.exams : [];
     content.innerHTML = `
       <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Exam Board</h1>
       <div class="grid md:grid-cols-2 gap-4">
-        ${mockExams.map(e => `
+        ${exams.length > 0 ? exams.map(e => `
           <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
             <div class="flex justify-between mb-4">
               <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background:#ef44441a"><i data-lucide="clipboard-list" style="width:20px;height:20px;color:#ef4444"></i></div>
@@ -617,43 +585,42 @@ async function loadUserView(view) {
             </div>
             <h4 class="font-bold" style="color:#1a1a2e">${e.title}</h4>
             <p class="text-xs text-gray-500 mt-1">${e.questions} Questions | ${e.duration}</p>
-            ${e.status === 'Pending' ? `<button onclick="openExamModal('${e.id}')" class="mt-4 w-full py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)">Start Assessment</button>` : `<button onclick="showToast('Exam', 'You scored 85%', true)" class="mt-4 w-full py-2 rounded-lg text-sm font-semibold border" style="border-color:#ddd; color:#555">View Results</button>`}
+            ${e.status === 'Pending' ? `<button onclick="showToast('Exam', 'Starting exam...', true)" class="mt-4 w-full py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)">Start Assessment</button>` : `<button onclick="showToast('Exam', 'You scored 85%', true)" class="mt-4 w-full py-2 rounded-lg text-sm font-semibold border" style="border-color:#ddd; color:#555">View Results</button>`}
           </div>
-        `).join('')}
+        `).join('') : '<p class="text-gray-500">No exams available.</p>'}
       </div>
     `;
   }
 
   else if (view === 'homeworks') {
+    const res = await api('getHomeworks');
+    const hw = res.success ? res.homeworks : [];
     content.innerHTML = `
       <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Homework & Assignments</h1>
       <div class="space-y-4">
-        ${mockHomeworks.map(h => `
+        ${hw.length > 0 ? hw.map(h => `
           <div class="p-6 rounded-2xl shadow-sm border flex justify-between items-center" style="background:white; border-color:#eee">
             <div class="flex items-center gap-4">
               <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background:#8b5cf61a"><i data-lucide="book-open" style="width:20px;height:20px;color:#8b5cf6"></i></div>
               <div>
                 <p class="font-bold" style="color:#1a1a2e">${h.title}</p>
-                <p class="text-xs text-gray-500">${h.subject} | Due: ${h.due}</p>
+                <p class="text-xs text-gray-500">${h.subject} | Due: ${h.due_date}</p>
               </div>
             </div>
             ${h.status === 'Pending' ? `<button onclick="openSubmitHomeworkModal('${h.id}')" class="px-4 py-2 rounded-lg text-xs font-semibold text-white" style="background:var(--brand-green)">Submit</button>` : `<span class="badge badge-green">Submitted</span>`}
           </div>
-        `).join('')}
+        `).join('') : '<p class="text-gray-500">No homeworks available.</p>'}
       </div>
     `;
   }
 
   else if (view === 'courses') {
-    const courses = [
-      { id: 'c1', title: 'Aviation & Drone Academy', progress: 40, tutor: 'Mr. Kago' },
-      { id: 'c2', title: 'Coding & Robotics', progress: 75, tutor: 'Ms. Wanjiru' },
-      { id: 'c3', title: 'Chess Academy', progress: 20, tutor: 'Coach Dennis' }
-    ];
+    const res = await api('getCourses');
+    const courses = res.success ? res.courses : [];
     content.innerHTML = `
       <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Enrolled Courses</h1>
       <div class="grid md:grid-cols-2 gap-6">
-        ${courses.map(c => `
+        ${courses.length > 0 ? courses.map(c => `
           <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
             <h4 class="font-bold mb-1" style="color:#1a1a2e">${c.title}</h4>
             <p class="text-xs text-gray-500 mb-4">Tutor: ${c.tutor}</p>
@@ -662,29 +629,28 @@ async function loadUserView(view) {
               <div class="h-2 rounded-full" style="background:var(--brand-gradient); width:${c.progress}%"></div>
             </div>
           </div>
-        `).join('')}
+        `).join('') : '<p class="text-gray-500">No courses available.</p>'}
       </div>
     `;
   }
 
   else if (view === 'my-attendance') {
-    const att = [
-      { date: '2024-08-01', status: 'Present' },
-      { date: '2024-08-02', status: 'Present' },
-      { date: '2024-08-05', status: 'Late' },
-      { date: '2024-08-06', status: 'Absent' },
-      { date: '2024-08-07', status: 'Present' }
-    ];
+    const res = await api('getAttendance');
+    const att = res.success ? res.records : [];
+    let present = att.filter(a => a.status === 'Present').length;
+    let late = att.filter(a => a.status === 'Late').length;
+    let absent = att.filter(a => a.status === 'Absent').length;
+
     content.innerHTML = `
       <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">My Attendance</h1>
       <div class="grid grid-cols-3 gap-4 mb-6">
-        <div class="p-4 rounded-2xl border" style="background:white; border-color:#eee"><p class="text-xs text-gray-400 uppercase font-bold">Present</p><p class="text-xl font-bold text-green-600 mt-1">3</p></div>
-        <div class="p-4 rounded-2xl border" style="background:white; border-color:#eee"><p class="text-xs text-gray-400 uppercase font-bold">Late</p><p class="text-xl font-bold text-yellow-600 mt-1">1</p></div>
-        <div class="p-4 rounded-2xl border" style="background:white; border-color:#eee"><p class="text-xs text-gray-400 uppercase font-bold">Absent</p><p class="text-xl font-bold text-red-600 mt-1">1</p></div>
+        <div class="p-4 rounded-2xl border" style="background:white; border-color:#eee"><p class="text-xs text-gray-400 uppercase font-bold">Present</p><p class="text-xl font-bold text-green-600 mt-1">${present}</p></div>
+        <div class="p-4 rounded-2xl border" style="background:white; border-color:#eee"><p class="text-xs text-gray-400 uppercase font-bold">Late</p><p class="text-xl font-bold text-yellow-600 mt-1">${late}</p></div>
+        <div class="p-4 rounded-2xl border" style="background:white; border-color:#eee"><p class="text-xs text-gray-400 uppercase font-bold">Absent</p><p class="text-xl font-bold text-red-600 mt-1">${absent}</p></div>
       </div>
       <div class="p-6 rounded-2xl border" style="background:white; border-color:#eee">
         <table class="adm-table"><thead><tr><th>Date</th><th>Status</th></tr></thead><tbody>
-          ${att.map(a => `<tr><td>${a.date}</td><td><span class="badge ${a.status === 'Present' ? 'badge-green' : a.status === 'Late' ? 'badge-yellow' : 'badge-red'}">${a.status}</span></td></tr>`).join('')}
+          ${att.length > 0 ? att.map(a => `<tr><td>${a.date}</td><td><span class="badge ${a.status === 'Present' ? 'badge-green' : a.status === 'Late' ? 'badge-yellow' : 'badge-red'}">${a.status}</span></td></tr>`).join('') : '<tr><td colspan="2" class="text-center text-gray-500 py-4">No attendance records</td></tr>'}
         </tbody></table>
       </div>
     `;
@@ -702,7 +668,7 @@ async function loadUserView(view) {
       html += `<button onclick="openAddReportModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)"><i data-lucide="plus" style="width:16px;height:16px" class="inline-block mr-1"></i> Create Report</button>`;
     }
     html += `</div>`;
-    if (res.success && cachedReports.length > 0) {
+    if (cachedReports.length > 0) {
       html += `<div class="space-y-4">`;
       cachedReports.forEach((r, i) => {
         html += `
@@ -879,7 +845,6 @@ async function loadAdminView(view) {
   if (view === 'dashboard') {
     const statsRes = await api('adminGetStats');
     const d = statsRes.success ? statsRes.data : {};
-    
     content.innerHTML = `
       <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Welcome, Admin!</h1>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -1081,7 +1046,7 @@ async function loadSchoolView(view) {
     content.innerHTML = html;
   }
   else if (view === 'reports') {
-    const res = await api('getReports'); // Schools can view reports list
+    const res = await api('getReports'); 
     cachedReports = res.success ? res.reports : [];
     let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Student Reports</h1>`;
     if (cachedReports.length > 0) {
@@ -1111,19 +1076,9 @@ async function saveAttendance() {
   const date = document.getElementById('attDate').value;
   const students = await api('getSchoolStudents');
   if (!students.success) return showToast('Error', 'Could not fetch students', false);
-  
-  const records = students.students.map(s => ({
-    student_id: s.id,
-    student_name: s.name,
-    status: document.getElementById(`att_${s.id}`).value
-  }));
-
+  const records = students.students.map(s => ({ student_id: s.id, student_name: s.name, status: document.getElementById(`att_${s.id}`).value }));
   const res = await api('markAttendance', { date, records });
-  if (res.success) {
-    showToast('Success', res.message, true);
-  } else {
-    showToast('Failed', res.error, false);
-  }
+  if (res.success) { showToast('Success', res.message, true); } else { showToast('Failed', res.error, false); }
 }
 
 // --- CHAT SYSTEM (UNIVERSAL) ---
@@ -1168,9 +1123,7 @@ async function loadMessages(otherId) {
   const winEl = document.getElementById('chatWindowContainer');
   if (res.success) {
     let html = `<div class="flex-1 overflow-y-auto p-4 space-y-3" id="messagesArea">`;
-    if (res.messages.length === 0) {
-      html += `<div class="text-center text-gray-400 text-sm mt-10">No messages yet. Say hi!</div>`;
-    }
+    if (res.messages.length === 0) html += `<div class="text-center text-gray-400 text-sm mt-10">No messages yet. Say hi!</div>`;
     res.messages.forEach(m => {
       const isSent = String(m.sender_id) === String(JSON.parse(localStorage.getItem('sm_user')).id);
       html += `<div class="flex ${isSent ? 'justify-end' : 'justify-start'}"><div class="chat-bubble ${isSent ? 'sent' : 'received'} p-3 text-sm">${m.message}</div></div>`;
@@ -1184,8 +1137,7 @@ async function loadMessages(otherId) {
       </div>`;
     winEl.innerHTML = html;
     lucide.createIcons();
-    const area = document.getElementById('messagesArea');
-    area.scrollTop = area.scrollHeight;
+    document.getElementById('messagesArea').scrollTop = document.getElementById('messagesArea').scrollHeight;
   }
 }
 
@@ -1193,29 +1145,21 @@ async function handleSendMessage(e, otherId) {
   e.preventDefault();
   const msg = document.getElementById('msgInput').value;
   const res = await api('sendMessage', { receiver_id: otherId, message: msg });
-  if (res.success) {
-    loadMessages(otherId);
-    loadChatList();
-  }
+  if (res.success) { loadMessages(otherId); loadChatList(); }
 }
 
 async function openNewChatModal() {
   document.getElementById('genericModalContent').innerHTML = `<div class="text-center text-gray-500">Loading users...</div>`;
   openGenericModal();
-  
   let contacts = [];
   const user = JSON.parse(localStorage.getItem('sm_user'));
-  
   const studentsRes = await api('getStudents');
   if (studentsRes.success) contacts = contacts.concat(studentsRes.students);
-  
   if (user.type === 'admin') {
     const teachersRes = await api('adminGetTeachers');
     if (teachersRes.success) contacts = contacts.concat(teachersRes.teachers);
   }
-  
   contacts = contacts.filter(c => c.id !== user.id);
-  
   let html = `<h2 class="text-lg font-bold mb-4" style="color:#1a1a2e">Start a New Chat</h2><div class="space-y-2 max-h-96 overflow-y-auto">`;
   if (contacts.length === 0) {
     html += `<p class="text-gray-500 text-sm">No other users available to message.</p>`;
@@ -1228,10 +1172,7 @@ async function openNewChatModal() {
   document.getElementById('genericModalContent').innerHTML = html;
 }
 
-function startChat(userId) {
-  closeGenericModal();
-  loadMessages(userId);
-}
+function startChat(userId) { closeGenericModal(); loadMessages(userId); }
 
 // --- MODAL FORMS ---
 function openAddStudentModal() {
@@ -1254,22 +1195,13 @@ async function handleAddStudent(e) {
   const data = Object.fromEntries(formData.entries());
   data.type = 'student'; 
   const res = await api('register', data);
-  if (res.success) {
-    showToast('Success', 'Student added successfully!', true);
-    closeGenericModal();
-    loadAdminView('students');
-  } else {
-    showToast('Failed', res.error, false);
-  }
+  if (res.success) { showToast('Success', 'Student added successfully!', true); closeGenericModal(); loadAdminView('students'); } else { showToast('Failed', res.error, false); }
 }
 
 async function openAddReportModal() {
   const studentsRes = await api('getStudents');
   let studentOptions = '<option value="">Select Student</option>';
-  if (studentsRes.success) {
-    studentsRes.students.forEach(s => studentOptions += `<option value="${s.id}">${s.name}</option>`);
-  }
-
+  if (studentsRes.success) studentsRes.students.forEach(s => studentOptions += `<option value="${s.id}">${s.name}</option>`);
   document.getElementById('genericModalContent').innerHTML = `
     <h2 class="text-lg font-bold mb-6" style="color:#1a1a2e">Create Student Report</h2>
     <form onsubmit="handleAddReport(event)" class="space-y-3">
@@ -1292,24 +1224,13 @@ async function handleAddReport(e) {
   const formData = new FormData(e.target);
   const data = Object.fromEntries(formData.entries());
   const res = await api('addReport', data);
-  if (res.success) {
-    showToast('Success', 'Report saved successfully!', true);
-    closeGenericModal();
-    loadUserView('reports');
-  } else {
-    showToast('Failed', res.error, false);
-  }
+  if (res.success) { showToast('Success', 'Report saved successfully!', true); closeGenericModal(); loadUserView('reports'); } else { showToast('Failed', res.error, false); }
 }
 
 async function generateAIComment() {
   showToast('AI', 'Generating comment...', true);
   const res = await api('aiGenerateComment', { student_name: 'Student', perf_lines: 'B average', skill_lines: 'Good effort' });
-  if (res.success) {
-    document.querySelector('[name="comments"]').value = res.comment;
-    showToast('AI', 'Comment generated!', true);
-  } else {
-    showToast('AI Error', res.error, false);
-  }
+  if (res.success) { document.querySelector('[name="comments"]').value = res.comment; showToast('AI', 'Comment generated!', true); } else { showToast('AI Error', res.error, false); }
 }
 
 async function openEnrollStudentModal() {
@@ -1337,4 +1258,122 @@ async function handleEnrollStudent(e) {
   const formData = new FormData(e.target);
   const data = Object.fromEntries(formData.entries());
   data.services = formData.getAll('services');
-  const res =
+  const res = await api('enrollSchoolStudent', data);
+  if (res.success) { showToast('Success', res.message, true); closeGenericModal(); loadSchoolView('students'); } else { showToast('Failed', res.error, false); }
+}
+
+async function openAddPaymentModal() {
+  document.getElementById('genericModalContent').innerHTML = `
+    <h2 class="text-lg font-bold mb-6" style="color:#1a1a2e">Record Payment</h2>
+    <form onsubmit="handleAddPayment(event)" class="space-y-3">
+      <input type="text" name="student_name" required placeholder="Student Name" class="inp">
+      <input type="number" name="amount" required placeholder="Amount (KES)" class="inp">
+      <input type="text" name="description" placeholder="Description" class="inp">
+      <select name="method" class="inp"><option value="Cash">Cash</option><option value="M-Pesa">M-Pesa</option><option value="Bank">Bank</option></select>
+      <button type="submit" class="w-full py-3.5 rounded-xl font-semibold text-white" style="background:var(--brand-blue)">Save Payment</button>
+    </form>
+  `;
+  openGenericModal();
+}
+
+async function handleAddPayment(e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+  const res = await api('adminAddPayment', data);
+  if (res.success) { showToast('Success', res.message, true); closeGenericModal(); loadAdminView('payments'); } else { showToast('Failed', res.error, false); }
+}
+
+// --- NEW MODAL FORMS FOR ACADEMIC MODULES ---
+function openAddAnnouncementModal() {
+  document.getElementById('genericModalContent').innerHTML = `
+    <h2 class="text-lg font-bold mb-6" style="color:#1a1a2e">New Announcement</h2>
+    <form onsubmit="handleAddAnnouncement(event)" class="space-y-3">
+      <input type="text" name="title" required placeholder="Title" class="inp">
+      <textarea name="body" rows="4" required placeholder="Announcement details..." class="inp" style="resize:vertical"></textarea>
+      <button type="submit" class="w-full py-3.5 rounded-xl font-semibold text-white" style="background:var(--brand-blue)">Post Announcement</button>
+    </form>
+  `;
+  openGenericModal();
+}
+
+async function handleAddAnnouncement(e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+  const res = await api('addAnnouncement', data);
+  if (res.success) {
+    showToast('Success', res.message, true);
+    closeGenericModal();
+    const user = JSON.parse(localStorage.getItem('sm_user'));
+    if (user.type === 'admin') loadAdminView('announcements');
+    else loadSchoolView('announcements');
+  } else {
+    showToast('Failed', res.error, false);
+  }
+}
+
+function openAddBookModal() {
+  document.getElementById('genericModalContent').innerHTML = `
+    <h2 class="text-lg font-bold mb-6" style="color:#1a1a2e">Add Library Resource</h2>
+    <form onsubmit="handleAddBook(event)" class="space-y-3">
+      <input type="text" name="title" required placeholder="Book Title" class="inp">
+      <input type="text" name="author" required placeholder="Author" class="inp">
+      <select name="type" class="inp"><option>PDF</option><option>Doc</option><option>Video</option></select>
+      <textarea name="description" rows="2" placeholder="Short description" class="inp" style="resize:vertical"></textarea>
+      <button type="submit" class="w-full py-3.5 rounded-xl font-semibold text-white" style="background:var(--brand-blue)">Add Resource</button>
+    </form>
+  `;
+  openGenericModal();
+}
+
+async function handleAddBook(e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+  const res = await api('addLibrary', data);
+  if (res.success) {
+    showToast('Success', res.message, true);
+    closeGenericModal();
+    const user = JSON.parse(localStorage.getItem('sm_user'));
+    if (user.type === 'admin') loadAdminView('library');
+    else loadSchoolView('library');
+  } else {
+    showToast('Failed', res.error, false);
+  }
+}
+
+function openSubmitHomeworkModal(hwId) {
+  document.getElementById('genericModalContent').innerHTML = `
+    <h2 class="text-lg font-bold mb-6" style="color:#1a1a2e">Submit Homework</h2>
+    <form onsubmit="handleSubmitHomework(event, '${hwId}')" class="space-y-3">
+      <textarea name="submission_text" rows="5" required placeholder="Type your answer or paste link here..." class="inp" style="resize:vertical"></textarea>
+      <button type="submit" class="w-full py-3.5 rounded-xl font-semibold text-white" style="background:var(--brand-green)">Submit Work</button>
+    </form>
+  `;
+  openGenericModal();
+}
+
+async function handleSubmitHomework(e, hwId) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+  data.homework_id = hwId;
+  const res = await api('submitHomework', data);
+  if (res.success) {
+    showToast('Success', res.message, true);
+    closeGenericModal();
+    loadUserView('homeworks');
+  } else {
+    showToast('Failed', res.error, false);
+  }
+}
+
+// --- INIT ---
+document.addEventListener('DOMContentLoaded', () => {
+  lucide.createIcons();
+  checkAuth();
+});
+</script>
+</body>
+</html>

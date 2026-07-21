@@ -350,9 +350,7 @@ let cachedReports = [];
 let apiCache = {};
 async function api(action, data = {}, useCache = false) {
   const cacheKey = action + JSON.stringify(data);
-  if (useCache && apiCache[cacheKey]) {
-    return apiCache[cacheKey];
-  }
+  if (useCache && apiCache[cacheKey]) return apiCache[cacheKey];
   const token = localStorage.getItem('sm_token') || '';
   try {
     const res = await fetch(API_URL, {
@@ -369,11 +367,7 @@ async function api(action, data = {}, useCache = false) {
   }
 }
 
-function clearCache(action) {
-  Object.keys(apiCache).forEach(key => {
-    if (key.startsWith(action)) delete apiCache[key];
-  });
-}
+function clearCache(action) { Object.keys(apiCache).forEach(key => { if (key.startsWith(action)) delete apiCache[key]; }); }
 
 // --- UI Helpers ---
 function showToast(title, msg, isSuccess = true) {
@@ -485,7 +479,7 @@ function handleLogout() {
   api('logout', {}); 
   localStorage.removeItem('sm_token');
   localStorage.removeItem('sm_user');
-  apiCache = {}; // Clear cache on logout
+  apiCache = {}; 
   document.getElementById('mainWebsite').classList.remove('hidden');
   document.getElementById('adminPortal').classList.add('hidden');
   document.getElementById('schoolPortal').classList.add('hidden');
@@ -535,7 +529,7 @@ function dashCard(icon, color, title, subtitle, onClick) {
 async function loadAnnouncementsView(containerId, isAdmin) {
   const content = document.getElementById(containerId);
   content.innerHTML = `<div class="animate-pulse text-gray-500">Loading announcements...</div>`;
-  const res = await api('getAnnouncements', {}, true); // Cached
+  const res = await api('getAnnouncements', {}, true); 
   const anns = res.success ? res.announcements : [];
   
   let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">Announcements</h1>`;
@@ -562,7 +556,7 @@ async function loadAnnouncementsView(containerId, isAdmin) {
 async function loadLibraryView(containerId, isAdmin) {
   const content = document.getElementById(containerId);
   content.innerHTML = `<div class="animate-pulse text-gray-500">Loading library...</div>`;
-  const res = await api('getLibrary', {}, true); // Cached
+  const res = await api('getLibrary', {}, true); 
   const books = res.success ? res.books : [];
   
   let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">Library Resources</h1>`;
@@ -594,9 +588,10 @@ async function loadUserView(view) {
   const content = document.getElementById('userContent');
   content.innerHTML = `<div class="animate-pulse text-gray-500">Loading ${view}...</div>`;
   const user = JSON.parse(localStorage.getItem('sm_user'));
+  const isStaff = user.type === 'teacher' || user.type === 'admin';
 
   if (view === 'dashboard') {
-    const [reportsRes, paymentsRes] = await Promise.all([api('getReports', {}, true), api('getPayments', {}, true)]); // Cached
+    const [reportsRes, paymentsRes] = await Promise.all([api('getReports', {}, true), api('getPayments', {}, true)]); 
     content.innerHTML = `
       <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Welcome, ${user.name}!</h1>
       <div class="grid grid-cols-2 gap-4 mb-8">
@@ -628,21 +623,12 @@ async function loadUserView(view) {
         ${dashCard('message-square', '#2563EB', 'Messages', 'Chat with admin', "loadUserView('chat')")}
         ${dashCard('trending-up', '#16A34A', 'My Progress', 'Track growth', "loadUserView('progress')")}
       </div>
-
-      <div class="p-6 rounded-2xl shadow-sm text-white flex flex-col md:flex-row justify-between items-center" style="background:var(--brand-gradient)">
-        <div class="mb-4 md:mb-0 text-center md:text-left">
-          <h3 class="font-bold text-lg mb-1">DreamQuest Holiday Camp!</h3>
-          <p class="text-sm opacity-90">Join the holiday camp for coding, robotics, and fun!</p>
-        </div>
-        <button onclick="showToast('Enroll', 'Redirecting to enrollment...', true)" class="px-6 py-3 bg-white text-sm font-bold rounded-lg" style="color:var(--brand-blue)">Enroll Now</button>
-      </div>
     `;
   } 
   else if (view === 'schedule') {
-    const [schedRes, examRes] = await Promise.all([api('getSchedule', {}, true), api('getExams', {}, true)]); // Cached
+    const [schedRes, examRes] = await Promise.all([api('getSchedule', {}, true), api('getExams', {}, true)]); 
     const schedule = schedRes.success ? schedRes.schedule : [];
     const exams = examRes.success ? examRes.exams : [];
-
     content.innerHTML = `
       <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Schedule & Exams</h1>
       <div class="grid md:grid-cols-2 gap-6">
@@ -673,12 +659,15 @@ async function loadUserView(view) {
   }
 
   else if (view === 'exams') {
-    const res = await api('getExams', {}, true); // Cached
+    const res = await api('getExams', {}, true); 
     const exams = res.success ? res.exams : [];
-    content.innerHTML = `
-      <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Exam Board</h1>
-      <div class="grid md:grid-cols-2 gap-4">
-        ${exams.length > 0 ? exams.map(e => `
+    let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">Exam Board</h1>`;
+    if (isStaff) html += `<button onclick="openAddExamModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)"><i data-lucide="plus" style="width:16px;height:16px" class="inline-block mr-1"></i> Add Exam</button>`;
+    html += `</div><div class="grid md:grid-cols-2 gap-4">`;
+    
+    if (exams.length > 0) {
+      exams.forEach(e => {
+        html += `
           <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
             <div class="flex justify-between mb-4">
               <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background:#ef44441a"><i data-lucide="clipboard-list" style="width:20px;height:20px;color:#ef4444"></i></div>
@@ -686,20 +675,26 @@ async function loadUserView(view) {
             </div>
             <h4 class="font-bold" style="color:#1a1a2e">${e.title}</h4>
             <p class="text-xs text-gray-500 mt-1">${e.questions} Questions | ${e.duration}</p>
-            ${e.status === 'Pending' ? `<button onclick="showToast('Exam', 'Starting exam...', true)" class="mt-4 w-full py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)">Start Assessment</button>` : `<button onclick="showToast('Exam', 'You scored 85%', true)" class="mt-4 w-full py-2 rounded-lg text-sm font-semibold border" style="border-color:#ddd; color:#555">View Results</button>`}
-          </div>
-        `).join('') : '<p class="text-gray-500">No exams available.</p>'}
-      </div>
-    `;
+            ${!isStaff && e.status === 'Pending' ? `<button onclick="showToast('Exam', 'Starting exam...', true)" class="mt-4 w-full py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)">Start Assessment</button>` : ''}
+          </div>`;
+      });
+    } else {
+      html += '<p class="text-gray-500">No exams available.</p>';
+    }
+    html += `</div>`;
+    content.innerHTML = html;
   }
 
   else if (view === 'homeworks') {
-    const res = await api('getHomeworks', {}, true); // Cached
+    const res = await api('getHomeworks', {}, true); 
     const hw = res.success ? res.homeworks : [];
-    content.innerHTML = `
-      <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Homework & Assignments</h1>
-      <div class="space-y-4">
-        ${hw.length > 0 ? hw.map(h => `
+    let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">Homework & Assignments</h1>`;
+    if (isStaff) html += `<button onclick="openAddHomeworkModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)"><i data-lucide="plus" style="width:16px;height:16px" class="inline-block mr-1"></i> Assign Homework</button>`;
+    html += `</div><div class="space-y-4">`;
+    
+    if (hw.length > 0) {
+      hw.forEach(h => {
+        html += `
           <div class="p-6 rounded-2xl shadow-sm border flex justify-between items-center" style="background:white; border-color:#eee">
             <div class="flex items-center gap-4">
               <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background:#8b5cf61a"><i data-lucide="book-open" style="width:20px;height:20px;color:#8b5cf6"></i></div>
@@ -708,15 +703,19 @@ async function loadUserView(view) {
                 <p class="text-xs text-gray-500">${h.subject} | Due: ${h.due_date}</p>
               </div>
             </div>
-            ${h.status === 'Pending' ? `<button onclick="openSubmitHomeworkModal('${h.id}')" class="px-4 py-2 rounded-lg text-xs font-semibold text-white" style="background:var(--brand-green)">Submit</button>` : `<span class="badge badge-green">Submitted</span>`}
-          </div>
-        `).join('') : '<p class="text-gray-500">No homeworks available.</p>'}
-      </div>
-    `;
+            ${!isStaff && h.status === 'Pending' ? `<button onclick="openSubmitHomeworkModal('${h.id}')" class="px-4 py-2 rounded-lg text-xs font-semibold text-white" style="background:var(--brand-green)">Submit</button>` : ''}
+            ${!isStaff && h.status === 'Submitted' ? `<span class="badge badge-green">Submitted</span>` : ''}
+          </div>`;
+      });
+    } else {
+      html += '<p class="text-gray-500">No homeworks available.</p>';
+    }
+    html += `</div>`;
+    content.innerHTML = html;
   }
 
   else if (view === 'courses') {
-    const res = await api('getCourses', {}, true); // Cached
+    const res = await api('getCourses', {}, true); 
     const courses = res.success ? res.courses : [];
     content.innerHTML = `
       <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Enrolled Courses</h1>
@@ -736,12 +735,11 @@ async function loadUserView(view) {
   }
 
   else if (view === 'my-attendance') {
-    const res = await api('getAttendance', {}, true); // Cached
+    const res = await api('getAttendance', {}, true); 
     const att = res.success ? res.records : [];
     let present = att.filter(a => a.status === 'Present').length;
     let late = att.filter(a => a.status === 'Late').length;
     let absent = att.filter(a => a.status === 'Absent').length;
-
     content.innerHTML = `
       <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">My Attendance</h1>
       <div class="grid grid-cols-3 gap-4 mb-6">
@@ -760,18 +758,15 @@ async function loadUserView(view) {
   else if (view === 'library') { loadLibraryView('userContent', false); }
   else if (view === 'announcements') { loadAnnouncementsView('userContent', false); }
 
-  // --- EXISTING VIEWS ---
   else if (view === 'reports') {
-    const res = await api('getReports', {}, true); // Cached
+    const res = await api('getReports', {}, true); 
     cachedReports = res.success ? res.reports : [];
     let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">Reports</h1>`;
-    if (user.type === 'teacher') {
-      html += `<button onclick="openAddReportModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)"><i data-lucide="plus" style="width:16px;height:16px" class="inline-block mr-1"></i> Create Report</button>`;
-    }
+    if (isStaff) html += `<button onclick="openAddReportModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)"><i data-lucide="plus" style="width:16px;height:16px" class="inline-block mr-1"></i> Create Report</button>`;
     html += `</div>`;
     if (cachedReports.length > 0) {
       html += `<div class="space-y-4">`;
-      cachedReports.forEach((r, i) => {
+      cachedReports.forEach((r) => {
         html += `
           <div class="p-6 rounded-2xl shadow-sm border flex justify-between items-center" style="background:white; border-color:#eee">
             <div>
@@ -790,7 +785,7 @@ async function loadUserView(view) {
     }
   } 
   else if (view === 'progress') {
-    const res = await api('getProgress', {}, true); // Cached
+    const res = await api('getProgress', {}, true); 
     let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">My Progress</h1>`;
     if (res.success && res.reports.length > 0) {
       html += `<div class="space-y-4">`;
@@ -808,7 +803,7 @@ async function loadUserView(view) {
     }
   }
   else if (view === 'payments') {
-    const res = await api('getPayments', {}, true); // Cached
+    const res = await api('getPayments', {}, true); 
     let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Payment History</h1>`;
     if (res.success && res.payments.length > 0) {
       html += `
@@ -891,35 +886,29 @@ function viewAnimatedReport(reportId) {
           <p class="text-sm text-gray-500">${report.term || 'Termly Report'}</p>
         </div>
       </div>
-
       <div class="grid grid-cols-3 gap-4 mb-8 anim-fade-up" style="animation-delay: 0.1s">
         <div class="p-4 rounded-xl bg-gray-50"><p class="text-xs text-gray-500 uppercase font-bold">Student Name</p><p class="font-bold text-gray-800 mt-1">${report.student_name || 'N/A'}</p></div>
         <div class="p-4 rounded-xl bg-gray-50"><p class="text-xs text-gray-500 uppercase font-bold">Program</p><p class="font-bold text-gray-800 mt-1">${report.program || 'General'}</p></div>
         <div class="p-4 rounded-xl bg-gray-50"><p class="text-xs text-gray-500 uppercase font-bold">Date Issued</p><p class="font-bold text-gray-800 mt-1">${new Date(report.created_at).toLocaleDateString()}</p></div>
       </div>
-
       <div class="mb-8 anim-fade-up" style="animation-delay: 0.2s">
         <h4 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-4">Academic Performance</h4>
         ${perfHtml}
       </div>
-
       <div class="mb-8 anim-fade-up" style="animation-delay: 0.3s">
         <h4 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-4">Core Skills & Competencies</h4>
         <div class="flex flex-wrap">${skillsHtml}</div>
       </div>
-
       <div class="mb-10 p-6 rounded-xl border anim-fade-up" style="animation-delay: 0.4s; background:#F7FAFE; border-color:#eee;">
         <h4 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">Teacher's Remarks</h4>
         <p class="text-sm text-gray-700 italic font-serif leading-relaxed">"${report.comments || 'No comments provided.'}"</p>
       </div>
-
       <div class="grid grid-cols-3 gap-8 text-center mt-12 anim-fade-up" style="animation-delay: 0.5s">
         <div class="border-t-2 pt-2 mx-4" style="border-color:#ddd;"><p class="text-xs text-gray-500 uppercase font-bold">Class Teacher</p></div>
         <div class="border-t-2 pt-2 mx-4" style="border-color:#ddd;"><p class="text-xs text-gray-500 uppercase font-bold">Director</p></div>
         <div class="border-t-2 pt-2 mx-4" style="border-color:#ddd;"><p class="text-xs text-gray-500 uppercase font-bold">Principal</p></div>
       </div>
     </div>
-
     <div class="mt-6 flex justify-end gap-3 no-print p-4 bg-white border-t" style="border-color:#eee;">
       <button onclick="closeGenericModal()" class="px-6 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg">Close</button>
       <button onclick="window.print()" class="px-6 py-2 text-white font-semibold rounded-lg" style="background:var(--brand-blue)">
@@ -927,14 +916,10 @@ function viewAnimatedReport(reportId) {
       </button>
     </div>
   `;
-
   openGenericModal();
   lucide.createIcons();
-
   setTimeout(() => {
-    document.querySelectorAll('#printableReport .anim-bar').forEach(el => {
-      el.style.width = el.dataset.width + '%';
-    });
+    document.querySelectorAll('#printableReport .anim-bar').forEach(el => { el.style.width = el.dataset.width + '%'; });
   }, 500);
 }
 
@@ -944,7 +929,7 @@ async function loadAdminView(view) {
   content.innerHTML = `<div class="animate-pulse text-gray-500">Loading ${view}...</div>`;
 
   if (view === 'dashboard') {
-    const statsRes = await api('adminGetStats', {}, true); // Cached
+    const statsRes = await api('adminGetStats', {}, true); 
     const d = statsRes.success ? statsRes.data : {};
     content.innerHTML = `
       <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Welcome, Admin!</h1>
@@ -954,7 +939,6 @@ async function loadAdminView(view) {
         <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">💰</div><p class="text-xs uppercase font-bold text-gray-400">Revenue</p><p class="text-xl font-bold mt-1" style="color:#1a1a2e">KES ${d.totalRevenue || 0}</p></div>
         <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">⏳</div><p class="text-xs uppercase font-bold text-gray-400">Pending Schools</p><p class="text-xl font-bold mt-1" style="color:#ca8a04">${d.pendingSchools || 0}</p></div>
       </div>
-
       <h2 class="text-lg font-bold mb-4" style="color:#1a1a2e">Academic & Users</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
         ${dashCard('users', '#2563EB', 'Students', 'View & add', "loadAdminView('students')")}
@@ -962,7 +946,6 @@ async function loadAdminView(view) {
         ${dashCard('file-text', '#8b5cf6', 'Grade Report', 'All reports', "loadAdminView('reports')")}
         ${dashCard('library', '#0ea5e9', 'Libraries', 'Resources', "loadAdminView('library')")}
       </div>
-
       <h2 class="text-lg font-bold mb-4" style="color:#1a1a2e">Administrative</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         ${dashCard('dollar-sign', '#ca8a04', 'Finance', 'Record payment', "loadAdminView('payments')")}
@@ -972,7 +955,7 @@ async function loadAdminView(view) {
     `;
   } 
   else if (view === 'schools') {
-    const res = await api('getSchools', {}, true); // Cached
+    const res = await api('getSchools', {}, true); 
     let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Partner Schools</h1>`;
     if (res.success && res.schools.length > 0) {
       html += `<table class="adm-table"><thead><tr><th>Name</th><th>Location</th><th>Principal</th><th>Status</th><th>Action</th></tr></thead><tbody>`;
@@ -995,7 +978,7 @@ async function loadAdminView(view) {
     content.innerHTML = html;
   }
   else if (view === 'students') {
-    const res = await api('adminGetStudents', {}, true); // Cached
+    const res = await api('adminGetStudents', {}, true); 
     let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">All Students</h1><button onclick="openAddStudentModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)"><i data-lucide="plus" style="width:16px;height:16px" class="inline-block mr-1"></i> Add Student</button></div>`;
     if (res.success && res.students.length > 0) {
       html += `<table class="adm-table"><thead><tr><th>Name</th><th>Phone</th><th>Source</th><th>Status</th></tr></thead><tbody>`;
@@ -1009,7 +992,7 @@ async function loadAdminView(view) {
     content.innerHTML = html;
   }
   else if (view === 'reports') {
-    const res = await api('adminGetReports', {}, true); // Cached
+    const res = await api('adminGetReports', {}, true); 
     cachedReports = res.success ? res.reports : [];
     let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">All Reports</h1>`;
     if (cachedReports.length > 0) {
@@ -1030,7 +1013,7 @@ async function loadAdminView(view) {
     content.innerHTML = html;
   }
   else if (view === 'payments') {
-    const res = await api('adminGetPayments', {}, true); // Cached
+    const res = await api('adminGetPayments', {}, true); 
     let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">Payments</h1><button onclick="openAddPaymentModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)">Record Payment</button></div>`;
     if (res.success && res.payments.length > 0) {
       html += `<table class="adm-table"><thead><tr><th>Date</th><th>Student</th><th>Amount</th><th>Method</th><th>Status</th></tr></thead><tbody>`;
@@ -1053,7 +1036,7 @@ async function updateSchoolStatus(id, status) {
   const res = await api('updateSchoolStatus', { school_id: id, status });
   if (res.success) {
     showToast('Updated!', res.message, true);
-    clearCache('getSchools'); // Clear cache
+    clearCache('getSchools'); 
     loadAdminView('schools');
   } else {
     showToast('Failed', res.error, false);
@@ -1066,10 +1049,9 @@ async function loadSchoolView(view) {
   content.innerHTML = `<div class="animate-pulse text-gray-500">Loading ${view}...</div>`;
 
   if (view === 'dashboard') {
-    const [profileRes, studentsRes, revenueRes] = await Promise.all([api('getSchoolProfile', {}, true), api('getSchoolStudents', {}, true), api('getSchoolRevenue', {}, true)]); // Cached
+    const [profileRes, studentsRes, revenueRes] = await Promise.all([api('getSchoolProfile', {}, true), api('getSchoolStudents', {}, true), api('getSchoolRevenue', {}, true)]); 
     const p = profileRes.success ? profileRes.profile : {};
     const rev = revenueRes.success ? revenueRes : {};
-
     content.innerHTML = `
       <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Welcome, ${p.name || 'School'}!</h1>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -1078,7 +1060,6 @@ async function loadSchoolView(view) {
         <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">📈</div><p class="text-xs uppercase font-bold text-gray-400">School Share</p><p class="text-xl font-bold mt-1" style="color:var(--brand-green)">KES ${rev.school_share || 0}</p></div>
         <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">🏷️</div><p class="text-xs uppercase font-bold text-gray-400">Status</p><p class="text-xl font-bold mt-1 capitalize ${p.status === 'approved' ? 'text-green-600' : 'text-yellow-600'}">${p.status || 'Pending'}</p></div>
       </div>
-
       <h2 class="text-lg font-bold mb-4" style="color:#1a1a2e">Academic</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
         ${dashCard('users', '#2563EB', 'Students', 'View & enroll', "loadSchoolView('students')")}
@@ -1086,7 +1067,6 @@ async function loadSchoolView(view) {
         ${dashCard('file-text', '#8b5cf6', 'Grade Report', 'Student reports', "loadSchoolView('reports')")}
         ${dashCard('library', '#0ea5e9', 'Libraries', 'Resources', "loadSchoolView('library')")}
       </div>
-
       <h2 class="text-lg font-bold mb-4" style="color:#1a1a2e">Administrative</h2>
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         ${dashCard('trending-up', '#ca8a04', 'Finance', 'Fees & shares', "loadSchoolView('revenue')")}
@@ -1096,7 +1076,7 @@ async function loadSchoolView(view) {
     `;
   } 
   else if (view === 'students') {
-    const res = await api('getSchoolStudents', {}, true); // Cached
+    const res = await api('getSchoolStudents', {}, true); 
     let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">Enrolled Students</h1><button onclick="openEnrollStudentModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)">Enroll Student</button></div>`;
     if (res.success && res.students.length > 0) {
       html += `<table class="adm-table"><thead><tr><th>Name</th><th>Grade</th><th>Services</th><th>Monthly Fee</th><th>Status</th></tr></thead><tbody>`;
@@ -1110,7 +1090,7 @@ async function loadSchoolView(view) {
     content.innerHTML = html;
   }
   else if (view === 'attendance') {
-    const res = await api('getSchoolStudents', {}, true); // Cached
+    const res = await api('getSchoolStudents', {}, true); 
     let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Mark Attendance</h1>`;
     if (res.success && res.students.length > 0) {
       html += `<input type="date" id="attDate" class="inp mb-4 max-w-xs" value="${new Date().toISOString().split('T')[0]}">`;
@@ -1133,7 +1113,7 @@ async function loadSchoolView(view) {
     content.innerHTML = html;
   }
   else if (view === 'revenue') {
-    const res = await api('getSchoolRevenue', {}, true); // Cached
+    const res = await api('getSchoolRevenue', {}, true); 
     let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Revenue Share</h1>`;
     if (res.success) {
       html += `
@@ -1148,7 +1128,7 @@ async function loadSchoolView(view) {
     content.innerHTML = html;
   }
   else if (view === 'reports') {
-    const res = await api('getReports', {}, true); // Cached
+    const res = await api('getReports', {}, true); 
     cachedReports = res.success ? res.reports : [];
     let html = `<h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Student Reports</h1>`;
     if (cachedReports.length > 0) {
@@ -1176,13 +1156,13 @@ async function loadSchoolView(view) {
 
 async function saveAttendance() {
   const date = document.getElementById('attDate').value;
-  const students = await api('getSchoolStudents', {}, true); // Use cache to get list quickly
+  const students = await api('getSchoolStudents', {}, true); 
   if (!students.success) return showToast('Error', 'Could not fetch students', false);
   const records = students.students.map(s => ({ student_id: s.id, student_name: s.name, status: document.getElementById(`att_${s.id}`).value }));
   const res = await api('markAttendance', { date, records });
   if (res.success) { 
     showToast('Success', res.message, true); 
-    clearCache('getAttendance'); // Clear cache
+    clearCache('getAttendance'); 
   } else { 
     showToast('Failed', res.error, false); 
   }
@@ -1209,7 +1189,7 @@ async function renderChatUI(containerId) {
 }
 
 async function loadChatList() {
-  const res = await api('getChatList', {}, true); // Cached
+  const res = await api('getChatList', {}, true); 
   const listEl = document.getElementById('chatListContainer');
   if (res.success && res.chats.length > 0) {
     listEl.innerHTML = '';
@@ -1226,7 +1206,7 @@ async function loadChatList() {
 }
 
 async function loadMessages(otherId) {
-  clearCache('getMessages'); // Always fetch fresh messages
+  clearCache('getMessages'); 
   const res = await api('getMessages', { other_id: otherId });
   const winEl = document.getElementById('chatWindowContainer');
   if (res.success) {
@@ -1254,7 +1234,7 @@ async function handleSendMessage(e, otherId) {
   const msg = document.getElementById('msgInput').value;
   const res = await api('sendMessage', { receiver_id: otherId, message: msg });
   if (res.success) { 
-    clearCache('getMessages'); clearCache('getChatList'); // Clear cache
+    clearCache('getMessages'); clearCache('getChatList'); 
     loadMessages(otherId); loadChatList(); 
   }
 }
@@ -1264,10 +1244,10 @@ async function openNewChatModal() {
   openGenericModal();
   let contacts = [];
   const user = JSON.parse(localStorage.getItem('sm_user'));
-  const studentsRes = await api('getStudents', {}, true); // Cached
+  const studentsRes = await api('getStudents', {}, true); 
   if (studentsRes.success) contacts = contacts.concat(studentsRes.students);
   if (user.type === 'admin') {
-    const teachersRes = await api('adminGetTeachers', {}, true); // Cached
+    const teachersRes = await api('adminGetTeachers', {}, true); 
     if (teachersRes.success) contacts = contacts.concat(teachersRes.teachers);
   }
   contacts = contacts.filter(c => c.id !== user.id);
@@ -1308,13 +1288,13 @@ async function handleAddStudent(e) {
   const res = await api('register', data);
   if (res.success) { 
     showToast('Success', 'Student added successfully!', true); closeGenericModal(); 
-    clearCache('adminGetStudents'); clearCache('adminGetStats'); // Clear cache
+    clearCache('adminGetStudents'); clearCache('adminGetStats'); 
     loadAdminView('students'); 
   } else { showToast('Failed', res.error, false); }
 }
 
 async function openAddReportModal() {
-  const studentsRes = await api('getStudents', {}, true); // Cached
+  const studentsRes = await api('getStudents', {}, true); 
   let studentOptions = '<option value="">Select Student</option>';
   if (studentsRes.success) studentsRes.students.forEach(s => studentOptions += `<option value="${s.id}">${s.name}</option>`);
   document.getElementById('genericModalContent').innerHTML = `
@@ -1341,7 +1321,7 @@ async function handleAddReport(e) {
   const res = await api('addReport', data);
   if (res.success) { 
     showToast('Success', 'Report saved successfully!', true); closeGenericModal(); 
-    clearCache('getReports'); clearCache('getProgress'); clearCache('adminGetReports'); // Clear cache
+    clearCache('getReports'); clearCache('getProgress'); clearCache('adminGetReports'); 
     loadUserView('reports'); 
   } else { showToast('Failed', res.error, false); }
 }
@@ -1380,7 +1360,7 @@ async function handleEnrollStudent(e) {
   const res = await api('enrollSchoolStudent', data);
   if (res.success) { 
     showToast('Success', res.message, true); closeGenericModal(); 
-    clearCache('getSchoolStudents'); clearCache('getSchoolRevenue'); clearCache('adminGetStats'); // Clear cache
+    clearCache('getSchoolStudents'); clearCache('getSchoolRevenue'); clearCache('adminGetStats'); 
     loadSchoolView('students'); 
   } else { showToast('Failed', res.error, false); }
 }
@@ -1406,12 +1386,12 @@ async function handleAddPayment(e) {
   const res = await api('adminAddPayment', data);
   if (res.success) { 
     showToast('Success', res.message, true); closeGenericModal(); 
-    clearCache('adminGetPayments'); clearCache('adminGetStats'); // Clear cache
+    clearCache('adminGetPayments'); clearCache('adminGetStats'); 
     loadAdminView('payments'); 
   } else { showToast('Failed', res.error, false); }
 }
 
-// --- NEW MODAL FORMS FOR ACADEMIC MODULES ---
+// --- MODAL FORMS FOR ACADEMIC MODULES ---
 function openAddAnnouncementModal() {
   document.getElementById('genericModalContent').innerHTML = `
     <h2 class="text-lg font-bold mb-6" style="color:#1a1a2e">New Announcement</h2>
@@ -1432,7 +1412,7 @@ async function handleAddAnnouncement(e) {
   if (res.success) {
     showToast('Success', res.message, true);
     closeGenericModal();
-    clearCache('getAnnouncements'); // Clear cache
+    clearCache('getAnnouncements'); 
     const user = JSON.parse(localStorage.getItem('sm_user'));
     if (user.type === 'admin') loadAdminView('announcements');
     else loadSchoolView('announcements');
@@ -1463,7 +1443,7 @@ async function handleAddBook(e) {
   if (res.success) {
     showToast('Success', res.message, true);
     closeGenericModal();
-    clearCache('getLibrary'); // Clear cache
+    clearCache('getLibrary'); 
     const user = JSON.parse(localStorage.getItem('sm_user'));
     if (user.type === 'admin') loadAdminView('library');
     else loadSchoolView('library');
@@ -1492,7 +1472,66 @@ async function handleSubmitHomework(e, hwId) {
   if (res.success) {
     showToast('Success', res.message, true);
     closeGenericModal();
-    clearCache('getHomeworks'); // Clear cache
+    clearCache('getHomeworks'); 
+    loadUserView('homeworks');
+  } else {
+    showToast('Failed', res.error, false);
+  }
+}
+
+// --- NEW: ADMIN/TEACHER CREATION MODALS ---
+function openAddExamModal() {
+  document.getElementById('genericModalContent').innerHTML = `
+    <h2 class="text-lg font-bold mb-6" style="color:#1a1a2e">Create New Exam</h2>
+    <form onsubmit="handleAddExam(event)" class="space-y-3">
+      <input type="text" name="title" required placeholder="Exam Title (e.g. Math Mid-Term)" class="inp">
+      <div class="grid grid-cols-2 gap-3">
+        <input type="number" name="questions" required placeholder="No. of Questions" class="inp" min="1" value="10">
+        <input type="text" name="duration" required placeholder="Duration (e.g. 30 mins)" class="inp">
+      </div>
+      <button type="submit" class="w-full py-3.5 rounded-xl font-semibold text-white" style="background:var(--brand-blue)">Create Exam</button>
+    </form>
+  `;
+  openGenericModal();
+}
+
+async function handleAddExam(e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+  const res = await api('addExam', data);
+  if (res.success) {
+    showToast('Success', res.message, true);
+    closeGenericModal();
+    clearCache('getExams'); 
+    loadUserView('exams');
+  } else {
+    showToast('Failed', res.error, false);
+  }
+}
+
+function openAddHomeworkModal() {
+  document.getElementById('genericModalContent').innerHTML = `
+    <h2 class="text-lg font-bold mb-6" style="color:#1a1a2e">Assign Homework</h2>
+    <form onsubmit="handleAddHomework(event)" class="space-y-3">
+      <input type="text" name="title" required placeholder="Assignment Title" class="inp">
+      <input type="text" name="subject" required placeholder="Subject (e.g. Mathematics)" class="inp">
+      <input type="date" name="due_date" required class="inp">
+      <button type="submit" class="w-full py-3.5 rounded-xl font-semibold text-white" style="background:var(--brand-blue)">Assign to Students</button>
+    </form>
+  `;
+  openGenericModal();
+}
+
+async function handleAddHomework(e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+  const res = await api('addHomework', data);
+  if (res.success) {
+    showToast('Success', res.message, true);
+    closeGenericModal();
+    clearCache('getHomeworks'); 
     loadUserView('homeworks');
   } else {
     showToast('Failed', res.error, false);

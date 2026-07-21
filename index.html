@@ -431,22 +431,87 @@ async function loadUserView(view) {
   const user = JSON.parse(localStorage.getItem('sm_user'));
 
   if (view === 'dashboard') {
+    const [reportsRes, paymentsRes] = await Promise.all([api('getReports'), api('getPayments')]);
+    let activePrograms = ['Aviation & Drone', 'Chess Academy', 'Coding & Robotics']; 
+    if (user.interest && !activePrograms.includes(user.interest)) activePrograms.push(user.interest);
+
+    let reportsHtml = '';
+    if (reportsRes.success && reportsRes.reports.length > 0) {
+      reportsRes.reports.slice(0, 3).forEach(r => {
+        reportsHtml += `<div class="flex justify-between items-center p-3 border rounded-lg" style="border-color:#eee"><div><p class="font-semibold text-sm">${r.program || 'General'}</p><p class="text-xs text-gray-500">${r.term || ''}</p></div><span class="badge badge-blue">${new Date(r.created_at).toLocaleDateString()}</span></div>`;
+      });
+    } else {
+      reportsHtml = `<p class="text-sm text-gray-500">No reports yet.</p>`;
+    }
+
+    let pendingPayments = '';
+    if (paymentsRes.success && paymentsRes.payments.length > 0) {
+      const pending = paymentsRes.payments.filter(p => p.status !== 'Paid').slice(0, 3);
+      if(pending.length > 0) {
+        pending.forEach(p => {
+          pendingPayments += `<div class="flex justify-between items-center p-3 border-b" style="border-color:#eee"><div><p class="font-semibold text-sm">${p.description}</p><p class="text-xs text-gray-500">Due soon</p></div><span class="font-bold text-sm text-red-500">KES ${p.amount}</span></div>`;
+        });
+      } else {
+        pendingPayments = `<p class="text-sm text-gray-500 p-3">All caught up!</p>`;
+      }
+    } else {
+      pendingPayments = `<p class="text-sm text-gray-500 p-3">No pending payments.</p>`;
+    }
+
     content.innerHTML = `
-      <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Welcome, ${user.name}</h1>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
-          <p class="text-xs uppercase font-bold tracking-wider text-gray-400">Account Type</p>
-          <p class="text-xl font-bold mt-2 capitalize" style="color:var(--brand-blue)">${user.type}</p>
+      <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Welcome, ${user.name}!</h1>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Column -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Quick Stats -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+              <p class="text-xs uppercase font-bold tracking-wider text-gray-400">Reports Generated</p>
+              <p class="text-2xl font-bold mt-1" style="color:var(--brand-blue)">${reportsRes.success ? reportsRes.reports.length : 0}</p>
+            </div>
+            <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+              <p class="text-xs uppercase font-bold tracking-wider text-gray-400">Total Paid</p>
+              <p class="text-2xl font-bold mt-1" style="color:var(--brand-green)">KES ${paymentsRes.success ? paymentsRes.totalPaid : 0}</p>
+            </div>
+          </div>
+          <!-- Active Programs -->
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+            <h3 class="font-bold text-sm mb-4" style="color:#1a1a2e">Active Programs</h3>
+            <div class="grid grid-cols-2 gap-4">
+              ${activePrograms.slice(0,4).map(prog => `
+                <div class="p-4 rounded-xl" style="background:#F7FAFE">
+                  <div class="w-8 h-8 rounded-lg flex items-center justify-center mb-3" style="background:var(--brand-blue)"><i data-lucide="book-open" style="width:16px;height:16px;color:white"></i></div>
+                  <p class="font-semibold text-sm" style="color:#1a1a2e">${prog}</p>
+                  <p class="text-xs text-gray-500">Smart Minds Hub</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          <!-- Recent Reports -->
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-bold text-sm" style="color:#1a1a2e">Recent Reports & Progress</h3>
+              <button onclick="loadUserView('reports')" class="text-xs font-bold" style="color:var(--brand-blue)">View All</button>
+            </div>
+            <div class="space-y-3">${reportsHtml}</div>
+          </div>
         </div>
-        <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
-          <p class="text-xs uppercase font-bold tracking-wider text-gray-400">Email</p>
-          <p class="text-sm font-medium mt-2" style="color:#1a1a2e">${user.email}</p>
+        <!-- Right Column -->
+        <div class="space-y-6">
+          <!-- Pending Payments -->
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+            <h3 class="font-bold text-sm mb-4" style="color:#1a1a2e">Pending Payments</h3>
+            <div class="space-y-0">${pendingPayments}</div>
+          </div>
+          <!-- CTA Banner -->
+          <div class="p-6 rounded-2xl shadow-sm text-white" style="background:var(--brand-gradient)">
+            <h3 class="font-bold text-lg mb-2">DreamQuest Camp!</h3>
+            <p class="text-sm opacity-90 mb-4">Join the holiday camp for coding, robotics, and fun!</p>
+            <button onclick="showToast('Enroll', 'Redirecting to enrollment...', true)" class="px-4 py-2 bg-white text-sm font-bold rounded-lg" style="color:var(--brand-blue)">Enroll Now</button>
+          </div>
         </div>
-        <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
-          <p class="text-xs uppercase font-bold tracking-wider text-gray-400">Phone</p>
-          <p class="text-sm font-medium mt-2" style="color:#1a1a2e">${user.phone}</p>
-        </div>
-      </div>`;
+      </div>
+    `;
   } 
   else if (view === 'reports') {
     const res = await api('getReports');
@@ -523,17 +588,44 @@ async function loadAdminView(view) {
   content.innerHTML = `<div class="animate-pulse text-gray-500">Loading ${view}...</div>`;
 
   if (view === 'dashboard') {
-    const res = await api('adminGetStats');
-    if (res.success) {
-      const d = res.data;
-      content.innerHTML = `
-        <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Dashboard</h1>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-3xl mb-2">👨‍🎓</div><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Students</p><p class="text-2xl font-bold mt-1" style="color:var(--brand-blue)">${d.totalStudents}</p></div>
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-3xl mb-2">🏫</div><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Schools</p><p class="text-2xl font-bold mt-1" style="color:#1a1a2e">${d.totalSchools}</p></div>
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-3xl mb-2">💰</div><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Revenue</p><p class="text-2xl font-bold mt-1" style="color:#1a1a2e">KES ${d.totalRevenue}</p></div>
-        </div>`;
-    }
+    const statsRes = await api('adminGetStats');
+    const d = statsRes.success ? statsRes.data : {};
+    
+    content.innerHTML = `
+      <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Welcome, Admin!</h1>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-6">
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">👨‍🎓</div><p class="text-xs uppercase font-bold text-gray-400">Students</p><p class="text-xl font-bold mt-1" style="color:var(--brand-blue)">${d.totalStudents || 0}</p></div>
+            <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">🏫</div><p class="text-xs uppercase font-bold text-gray-400">Schools</p><p class="text-xl font-bold mt-1" style="color:#1a1a2e">${d.totalSchools || 0}</p></div>
+            <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">💰</div><p class="text-xs uppercase font-bold text-gray-400">Revenue</p><p class="text-xl font-bold mt-1" style="color:#1a1a2e">KES ${d.totalRevenue || 0}</p></div>
+          </div>
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+            <h3 class="font-bold text-sm mb-4" style="color:#1a1a2e">Quick Actions</h3>
+            <div class="grid grid-cols-2 gap-4">
+              <button onclick="openAddStudentModal()" class="p-4 rounded-xl border hover:bg-gray-50 text-left" style="border-color:#eee"><i data-lucide="user-plus" style="width:18px;height:18px;color:var(--brand-blue)" class="mb-2"></i><p class="font-semibold text-sm" style="color:#1a1a2e">Add Student</p></button>
+              <button onclick="openAddPaymentModal()" class="p-4 rounded-xl border hover:bg-gray-50 text-left" style="border-color:#eee"><i data-lucide="dollar-sign" style="width:18px;height:18px;color:var(--brand-green)" class="mb-2"></i><p class="font-semibold text-sm" style="color:#1a1a2e">Record Payment</p></button>
+              <button onclick="loadAdminView('schools')" class="p-4 rounded-xl border hover:bg-gray-50 text-left" style="border-color:#eee"><i data-lucide="school" style="width:18px;height:18px;color:var(--brand-blue)" class="mb-2"></i><p class="font-semibold text-sm" style="color:#1a1a2e">Manage Schools</p></button>
+              <button onclick="loadAdminView('chat')" class="p-4 rounded-xl border hover:bg-gray-50 text-left" style="border-color:#eee"><i data-lucide="message-square" style="width:18px;height:18px;color:var(--brand-green)" class="mb-2"></i><p class="font-semibold text-sm" style="color:#1a1a2e">Messages</p></button>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-6">
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+            <h3 class="font-bold text-sm mb-4" style="color:#1a1a2e">System Status</h3>
+            <div class="space-y-3">
+              <div class="flex justify-between items-center p-3 border rounded-lg" style="border-color:#eee"><span class="text-sm text-gray-600">Inquiries</span><span class="badge badge-blue">${d.totalInquiries || 0} New</span></div>
+              <div class="flex justify-between items-center p-3 border rounded-lg" style="border-color:#eee"><span class="text-sm text-gray-600">Pending Schools</span><span class="badge badge-yellow">${d.pendingSchools || 0}</span></div>
+            </div>
+          </div>
+          <div class="p-6 rounded-2xl shadow-sm text-white" style="background:var(--brand-gradient)">
+            <h3 class="font-bold text-lg mb-2">Review Schools</h3>
+            <p class="text-sm opacity-90 mb-4">Approve or reject partner school applications.</p>
+            <button onclick="loadAdminView('schools')" class="px-4 py-2 bg-white text-sm font-bold rounded-lg" style="color:var(--brand-blue)">View Schools</button>
+          </div>
+        </div>
+      </div>
+    `;
   } 
   else if (view === 'schools') {
     const res = await api('getSchools');
@@ -560,7 +652,6 @@ async function loadAdminView(view) {
   }
   else if (view === 'students') {
     const res = await api('adminGetStudents');
-    // Added Add Student button here
     let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">All Students</h1><button onclick="openAddStudentModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)"><i data-lucide="plus" style="width:16px;height:16px" class="inline-block mr-1"></i> Add Student</button></div>`;
     if (res.success && res.students.length > 0) {
       html += `<table class="adm-table"><thead><tr><th>Name</th><th>Phone</th><th>Source</th><th>Status</th></tr></thead><tbody>`;
@@ -609,17 +700,53 @@ async function loadSchoolView(view) {
   content.innerHTML = `<div class="animate-pulse text-gray-500">Loading ${view}...</div>`;
 
   if (view === 'dashboard') {
-    const res = await api('getSchoolProfile');
-    if (res.success) {
-      const p = res.profile;
-      content.innerHTML = `
-        <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">${p.name}</h1>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Location</p><p class="text-sm font-medium mt-2" style="color:#1a1a2e">${p.location}</p></div>
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Principal</p><p class="text-sm font-medium mt-2" style="color:#1a1a2e">${p.principal_name} (${p.principal_phone})</p></div>
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><p class="text-xs uppercase font-bold tracking-wider text-gray-400">Status</p><p class="text-sm font-bold mt-2 capitalize ${p.status === 'approved' ? 'text-green-600' : 'text-yellow-600'}">${p.status}</p></div>
-        </div>`;
+    const [profileRes, studentsRes, revenueRes] = await Promise.all([api('getSchoolProfile'), api('getSchoolStudents'), api('getSchoolRevenue')]);
+    const p = profileRes.success ? profileRes.profile : {};
+    const students = studentsRes.success ? studentsRes.students : [];
+    const rev = revenueRes.success ? revenueRes : {};
+
+    let recentStudentsHtml = '';
+    if (students.length > 0) {
+      students.slice(0, 3).forEach(s => {
+        recentStudentsHtml += `<div class="flex justify-between items-center p-3 border-b" style="border-color:#eee"><div><p class="font-semibold text-sm">${s.name}</p><p class="text-xs text-gray-500">${s.grade}</p></div><span class="text-xs font-bold text-gray-500">${s.enrolled_date}</span></div>`;
+      });
+    } else {
+      recentStudentsHtml = `<p class="text-sm text-gray-500 p-3">No students enrolled yet.</p>`;
     }
+
+    content.innerHTML = `
+      <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Welcome, ${p.name || 'School'}!</h1>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-6">
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">👨‍🎓</div><p class="text-xs uppercase font-bold text-gray-400">Enrolled</p><p class="text-xl font-bold mt-1" style="color:var(--brand-blue)">${rev.active_students || 0}</p></div>
+            <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">💰</div><p class="text-xs uppercase font-bold text-gray-400">Total Revenue</p><p class="text-xl font-bold mt-1" style="color:#1a1a2e">KES ${rev.total_revenue || 0}</p></div>
+            <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">📈</div><p class="text-xs uppercase font-bold text-gray-400">School Share</p><p class="text-xl font-bold mt-1" style="color:var(--brand-green)">KES ${rev.school_share || 0}</p></div>
+          </div>
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-bold text-sm" style="color:#1a1a2e">Recent Enrollments</h3>
+              <button onclick="loadSchoolView('students')" class="text-xs font-bold" style="color:var(--brand-blue)">View All</button>
+            </div>
+            <div class="space-y-0">${recentStudentsHtml}</div>
+          </div>
+        </div>
+        <div class="space-y-6">
+          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+            <h3 class="font-bold text-sm mb-4" style="color:#1a1a2e">Status</h3>
+            <div class="p-3 rounded-lg" style="background:#F7FAFE">
+              <p class="text-xs uppercase font-bold text-gray-400">Account Status</p>
+              <p class="text-sm font-bold mt-1 capitalize ${p.status === 'approved' ? 'text-green-600' : 'text-yellow-600'}">${p.status || 'Pending'}</p>
+            </div>
+          </div>
+          <div class="p-6 rounded-2xl shadow-sm text-white" style="background:var(--brand-gradient)">
+            <h3 class="font-bold text-lg mb-2">Mark Attendance</h3>
+            <p class="text-sm opacity-90 mb-4">Keep track of your students' presence.</p>
+            <button onclick="loadSchoolView('attendance')" class="px-4 py-2 bg-white text-sm font-bold rounded-lg" style="color:var(--brand-blue)">Take Attendance</button>
+          </div>
+        </div>
+      </div>
+    `;
   } 
   else if (view === 'students') {
     const res = await api('getSchoolStudents');
@@ -771,7 +898,6 @@ async function handleSendMessage(e, otherId) {
   }
 }
 
-// Function to start a new chat
 async function openNewChatModal() {
   document.getElementById('genericModalContent').innerHTML = `<div class="text-center text-gray-500">Loading users...</div>`;
   openGenericModal();
@@ -779,17 +905,14 @@ async function openNewChatModal() {
   let contacts = [];
   const user = JSON.parse(localStorage.getItem('sm_user'));
   
-  // Fetch students
   const studentsRes = await api('getStudents');
   if (studentsRes.success) contacts = contacts.concat(studentsRes.students);
   
-  // If admin, also fetch teachers
   if (user.type === 'admin') {
     const teachersRes = await api('adminGetTeachers');
     if (teachersRes.success) contacts = contacts.concat(teachersRes.teachers);
   }
   
-  // Filter out self
   contacts = contacts.filter(c => c.id !== user.id);
   
   let html = `<h2 class="text-lg font-bold mb-4" style="color:#1a1a2e">Start a New Chat</h2><div class="space-y-2 max-h-96 overflow-y-auto">`;
@@ -810,7 +933,6 @@ function startChat(userId) {
 }
 
 // --- MODAL FORMS ---
-// Admin Add Student Form
 function openAddStudentModal() {
   document.getElementById('genericModalContent').innerHTML = `
     <h2 class="text-lg font-bold mb-6" style="color:#1a1a2e">Add New Student</h2>
@@ -829,7 +951,7 @@ async function handleAddStudent(e) {
   e.preventDefault();
   const formData = new FormData(e.target);
   const data = Object.fromEntries(formData.entries());
-  data.type = 'student'; // Force type to student
+  data.type = 'student'; 
   const res = await api('register', data);
   if (res.success) {
     showToast('Success', 'Student added successfully!', true);

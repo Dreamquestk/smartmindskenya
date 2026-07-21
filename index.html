@@ -36,6 +36,17 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
 .badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:600}
 .badge-green{background:rgba(34,197,94,.1);color:#22c55e}.badge-yellow{background:rgba(234,179,8,.1);color:#ca8a04}.badge-red{background:rgba(239,68,68,.1);color:#ef4444}.badge-blue{background:rgba(59,130,246,.1);color:#3b82f6}
 .chat-bubble{max-width:75%;word-wrap:break-word}.chat-bubble.sent{background:var(--brand-blue);color:white;border-radius:16px 16px 4px 16px}.chat-bubble.received{background:#f0f0f0;color:#1a1a2e;border-radius:16px 16px 16px 4px}
+
+/* Animated Report Card Styles */
+.anim-fade-up { opacity: 0; transform: translateY(20px); animation: animFadeUp 0.6s ease forwards; }
+@keyframes animFadeUp { to { opacity: 1; transform: translateY(0); } }
+.anim-bar { width: 0%; transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+@media print {
+  body * { visibility: hidden; }
+  #printableReport, #printableReport * { visibility: visible; }
+  #printableReport { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; }
+  .no-print { display: none !important; }
+}
 </style>
 </head>
 <body class="h-full overflow-auto scroll-smooth" style="background-color:#F7FAFE;color:#1a1a2e">
@@ -244,10 +255,10 @@ html,body{height:100%;margin:0}*{font-family:'Outfit',sans-serif;box-sizing:bord
 </div>
 </div>
 
-<!-- GENERIC MODAL FOR FORMS -->
+<!-- GENERIC MODAL FOR FORMS & REPORTS -->
 <div id="genericModal" class="modal-bg fixed inset-0 z-[90] flex items-center justify-center p-4" style="background:rgba(0,0,0,.5)" onclick="if(event.target===this)closeGenericModal()">
-  <div class="modal-body w-full max-w-lg rounded-3xl p-8 relative" style="background:#F7FAFE;max-height:90vh;overflow-y:auto">
-    <button onclick="closeGenericModal()" class="absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 transition"><i data-lucide="x" style="width:18px;height:18px;color:#1a1a2e"></i></button>
+  <div class="modal-body w-full max-w-lg rounded-3xl p-8 relative" id="genericModalBody" style="background:#F7FAFE;max-height:90vh;overflow-y:auto">
+    <button onclick="closeGenericModal()" class="absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 transition z-10"><i data-lucide="x" style="width:18px;height:18px;color:#1a1a2e"></i></button>
     <div id="genericModalContent"></div>
   </div>
 </div>
@@ -286,7 +297,11 @@ function closeAuth() { document.getElementById('authModal').classList.remove('op
 function openSchoolReg() { document.getElementById('schoolModal').classList.add('open'); }
 function closeSchoolReg() { document.getElementById('schoolModal').classList.remove('open'); }
 function openGenericModal() { document.getElementById('genericModal').classList.add('open'); }
-function closeGenericModal() { document.getElementById('genericModal').classList.remove('open'); }
+function closeGenericModal() { 
+  document.getElementById('genericModal').classList.remove('open'); 
+  document.getElementById('genericModalBody').classList.remove('max-w-3xl', 'p-0', 'rounded-none');
+  document.getElementById('genericModalBody').classList.add('max-w-lg', 'p-8', 'rounded-3xl');
+}
 function toggleSidebar(id) {
   const sb = document.getElementById(id);
   const ov = document.getElementById(id + 'Overlay');
@@ -424,7 +439,20 @@ function checkAuth() {
   }
 }
 
+// --- DASHBOARD SQUARE CARD GENERATOR ---
+function dashCard(icon, color, title, subtitle, onClick) {
+  return `
+    <button onclick="${onClick}" class="card-hover p-6 rounded-2xl border flex flex-col items-center text-center" style="background:white; border-color:#eee">
+      <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-3" style="background:${color}1a">
+        <i data-lucide="${icon}" style="width:24px;height:24px;color:${color}"></i>
+      </div>
+      <p class="font-bold text-sm" style="color:#1a1a2e">${title}</p>
+      <p class="text-xs text-gray-500 mt-1">${subtitle}</p>
+    </button>`;
+}
+
 // --- USER PORTAL LOGIC ---
+let cachedUserReports = []; // Cache reports for modal viewing
 async function loadUserView(view) {
   const content = document.getElementById('userContent');
   content.innerHTML = `<div class="animate-pulse text-gray-500">Loading ${view}...</div>`;
@@ -432,106 +460,70 @@ async function loadUserView(view) {
 
   if (view === 'dashboard') {
     const [reportsRes, paymentsRes] = await Promise.all([api('getReports'), api('getPayments')]);
-    let activePrograms = ['Aviation & Drone', 'Chess Academy', 'Coding & Robotics']; 
-    if (user.interest && !activePrograms.includes(user.interest)) activePrograms.push(user.interest);
-
-    let reportsHtml = '';
-    if (reportsRes.success && reportsRes.reports.length > 0) {
-      reportsRes.reports.slice(0, 3).forEach(r => {
-        reportsHtml += `<div class="flex justify-between items-center p-3 border rounded-lg" style="border-color:#eee"><div><p class="font-semibold text-sm">${r.program || 'General'}</p><p class="text-xs text-gray-500">${r.term || ''}</p></div><span class="badge badge-blue">${new Date(r.created_at).toLocaleDateString()}</span></div>`;
-      });
-    } else {
-      reportsHtml = `<p class="text-sm text-gray-500">No reports yet.</p>`;
-    }
-
-    let pendingPayments = '';
-    if (paymentsRes.success && paymentsRes.payments.length > 0) {
-      const pending = paymentsRes.payments.filter(p => p.status !== 'Paid').slice(0, 3);
-      if(pending.length > 0) {
-        pending.forEach(p => {
-          pendingPayments += `<div class="flex justify-between items-center p-3 border-b" style="border-color:#eee"><div><p class="font-semibold text-sm">${p.description}</p><p class="text-xs text-gray-500">Due soon</p></div><span class="font-bold text-sm text-red-500">KES ${p.amount}</span></div>`;
-        });
-      } else {
-        pendingPayments = `<p class="text-sm text-gray-500 p-3">All caught up!</p>`;
-      }
-    } else {
-      pendingPayments = `<p class="text-sm text-gray-500 p-3">No pending payments.</p>`;
-    }
-
+    
     content.innerHTML = `
       <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Welcome, ${user.name}!</h1>
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Main Column -->
-        <div class="lg:col-span-2 space-y-6">
-          <!-- Quick Stats -->
-          <div class="grid grid-cols-2 gap-4">
-            <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
-              <p class="text-xs uppercase font-bold tracking-wider text-gray-400">Reports Generated</p>
-              <p class="text-2xl font-bold mt-1" style="color:var(--brand-blue)">${reportsRes.success ? reportsRes.reports.length : 0}</p>
-            </div>
-            <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
-              <p class="text-xs uppercase font-bold tracking-wider text-gray-400">Total Paid</p>
-              <p class="text-2xl font-bold mt-1" style="color:var(--brand-green)">KES ${paymentsRes.success ? paymentsRes.totalPaid : 0}</p>
-            </div>
-          </div>
-          <!-- Active Programs -->
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
-            <h3 class="font-bold text-sm mb-4" style="color:#1a1a2e">Active Programs</h3>
-            <div class="grid grid-cols-2 gap-4">
-              ${activePrograms.slice(0,4).map(prog => `
-                <div class="p-4 rounded-xl" style="background:#F7FAFE">
-                  <div class="w-8 h-8 rounded-lg flex items-center justify-center mb-3" style="background:var(--brand-blue)"><i data-lucide="book-open" style="width:16px;height:16px;color:white"></i></div>
-                  <p class="font-semibold text-sm" style="color:#1a1a2e">${prog}</p>
-                  <p class="text-xs text-gray-500">Smart Minds Hub</p>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-          <!-- Recent Reports -->
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="font-bold text-sm" style="color:#1a1a2e">Recent Reports & Progress</h3>
-              <button onclick="loadUserView('reports')" class="text-xs font-bold" style="color:var(--brand-blue)">View All</button>
-            </div>
-            <div class="space-y-3">${reportsHtml}</div>
-          </div>
+      <div class="grid grid-cols-2 gap-4 mb-8">
+        <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+          <p class="text-xs uppercase font-bold tracking-wider text-gray-400">Reports Generated</p>
+          <p class="text-2xl font-bold mt-1" style="color:var(--brand-blue)">${reportsRes.success ? reportsRes.reports.length : 0}</p>
         </div>
-        <!-- Right Column -->
-        <div class="space-y-6">
-          <!-- Pending Payments -->
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
-            <h3 class="font-bold text-sm mb-4" style="color:#1a1a2e">Pending Payments</h3>
-            <div class="space-y-0">${pendingPayments}</div>
-          </div>
-          <!-- CTA Banner -->
-          <div class="p-6 rounded-2xl shadow-sm text-white" style="background:var(--brand-gradient)">
-            <h3 class="font-bold text-lg mb-2">DreamQuest Camp!</h3>
-            <p class="text-sm opacity-90 mb-4">Join the holiday camp for coding, robotics, and fun!</p>
-            <button onclick="showToast('Enroll', 'Redirecting to enrollment...', true)" class="px-4 py-2 bg-white text-sm font-bold rounded-lg" style="color:var(--brand-blue)">Enroll Now</button>
-          </div>
+        <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
+          <p class="text-xs uppercase font-bold tracking-wider text-gray-400">Total Paid</p>
+          <p class="text-2xl font-bold mt-1" style="color:var(--brand-green)">KES ${paymentsRes.success ? paymentsRes.totalPaid : 0}</p>
         </div>
+      </div>
+
+      <h2 class="text-lg font-bold mb-4" style="color:#1a1a2e">Academic</h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+        ${dashCard('calendar', '#0ea5e9', 'Schedule', 'View timetable', "showToast('Info', 'Schedule coming soon!', true)")}
+        ${dashCard('clipboard-list', '#ef4444', 'Exam Board', 'Upcoming exams', "showToast('Info', 'Exam Board coming soon!', true)")}
+        ${dashCard('book-open', '#8b5cf6', 'Homeworks', 'Assignments', "showToast('Info', 'Homeworks coming soon!', true)")}
+        ${dashCard('file-text', '#2563EB', 'Grade Report', 'View reports', "loadUserView('reports')")}
+        ${dashCard('graduation-cap', '#16A34A', 'Enrolled Courses', 'Active programs', "showToast('Info', 'Courses coming soon!', true)")}
+        ${dashCard('map', '#0ea5e9', 'Course Plan', 'Learning path', "showToast('Info', 'Course Plan coming soon!', true)")}
+        ${dashCard('check-square', '#ca8a04', 'Attendance', 'Check presence', "showToast('Info', 'Attendance coming soon!', true)")}
+        ${dashCard('library', '#8b5cf6', 'Libraries', 'Resources', "showToast('Info', 'Libraries coming soon!', true)")}
+      </div>
+
+      <h2 class="text-lg font-bold mb-4" style="color:#1a1a2e">Administrative</h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+        ${dashCard('credit-card', '#16A34A', 'Finance', 'Payment history', "loadUserView('payments')")}
+        ${dashCard('megaphone', '#ef4444', 'Announcements', 'Latest news', "showToast('Info', 'Announcements coming soon!', true)")}
+        ${dashCard('message-square', '#2563EB', 'Messages', 'Chat with admin', "loadUserView('chat')")}
+        ${dashCard('trending-up', '#16A34A', 'My Progress', 'Track growth', "loadUserView('progress')")}
+      </div>
+
+      <div class="p-6 rounded-2xl shadow-sm text-white flex flex-col md:flex-row justify-between items-center" style="background:var(--brand-gradient)">
+        <div class="mb-4 md:mb-0 text-center md:text-left">
+          <h3 class="font-bold text-lg mb-1">DreamQuest Holiday Camp!</h3>
+          <p class="text-sm opacity-90">Join the holiday camp for coding, robotics, and fun!</p>
+        </div>
+        <button onclick="showToast('Enroll', 'Redirecting to enrollment...', true)" class="px-6 py-3 bg-white text-sm font-bold rounded-lg" style="color:var(--brand-blue)">Enroll Now</button>
       </div>
     `;
   } 
   else if (view === 'reports') {
     const res = await api('getReports');
+    cachedUserReports = res.success ? res.reports : [];
     let html = `<div class="flex justify-between items-center mb-6"><h1 class="text-2xl font-bold" style="color:#1a1a2e">Reports</h1>`;
     if (user.type === 'teacher') {
       html += `<button onclick="openAddReportModal()" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-blue)"><i data-lucide="plus" style="width:16px;height:16px" class="inline-block mr-1"></i> Create Report</button>`;
     }
     html += `</div>`;
-    if (res.success && res.reports.length > 0) {
+    if (res.success && cachedUserReports.length > 0) {
       html += `<div class="space-y-4">`;
-      res.reports.forEach(r => {
+      cachedUserReports.forEach((r, i) => {
         html += `
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
-            <div class="flex justify-between items-start">
-              <div><p class="font-bold" style="color:#1a1a2e">${r.student_name || 'General Report'}</p><p class="text-xs text-gray-500 mt-1">Program: ${r.program || 'N/A'} | Term: ${r.term || 'N/A'}</p></div>
-              <span class="badge badge-blue">${new Date(r.created_at).toLocaleDateString()}</span>
+          <div class="p-6 rounded-2xl shadow-sm border flex justify-between items-center" style="background:white; border-color:#eee">
+            <div>
+              <p class="font-bold" style="color:#1a1a2e">${r.student_name || 'General Report'}</p>
+              <p class="text-xs text-gray-500 mt-1">Program: ${r.program || 'N/A'} | Term: ${r.term || 'N/A'}</p>
+              <span class="badge badge-blue mt-2 inline-block">${new Date(r.created_at).toLocaleDateString()}</span>
             </div>
-            <div class="mt-4 text-sm" style="color:#555"><strong>Performance:</strong> ${r.performance_data || 'N/A'}</div>
-            <div class="mt-2 text-sm" style="color:#555"><strong>Core Skills:</strong> ${r.core_skills || 'N/A'}</div>
-            <p class="text-sm mt-4 p-3 rounded-lg bg-gray-50" style="color:#555">${r.comments || 'No comments provided.'}</p>
+            <button onclick="viewAnimatedReport('${r.id}')" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--brand-green)">
+              <i data-lucide="eye" style="width:16px;height:16px" class="inline-block mr-1"></i> View Report Card
+            </button>
           </div>`;
       });
       content.innerHTML = html + `</div>`;
@@ -582,6 +574,121 @@ async function loadUserView(view) {
   lucide.createIcons();
 }
 
+// --- ANIMATED REPORT CARD GENERATOR ---
+function viewAnimatedReport(reportId) {
+  const report = cachedUserReports.find(r => r.id === reportId);
+  if (!report) return showToast('Error', 'Report not found', false);
+
+  // Expand modal for print layout
+  const modalBody = document.getElementById('genericModalBody');
+  modalBody.classList.remove('max-w-lg', 'p-8', 'rounded-3xl');
+  modalBody.classList.add('max-w-3xl', 'p-0', 'rounded-none');
+
+  let perfHtml = '';
+  try {
+    const perf = JSON.parse(report.performance_data || '{}');
+    perfHtml = Object.keys(perf).map((k, i) => {
+      const val = parseFloat(perf[k]);
+      const isNum = !isNaN(val);
+      const delay = 0.3 + i * 0.1;
+      return `
+        <div class="anim-fade-up mb-4" style="animation-delay: ${delay}s">
+          <div class="flex justify-between mb-1">
+            <span class="text-sm font-semibold text-gray-700">${k}</span>
+            <span class="text-sm font-bold text-gray-900">${perf[k]}${isNum ? '%' : ''}</span>
+          </div>
+          ${isNum ? `
+            <div class="w-full bg-gray-200 rounded-full h-3">
+              <div class="anim-bar h-3 rounded-full" data-width="${Math.min(100, val)}" style="background: var(--brand-gradient);"></div>
+            </div>
+          ` : ''}
+        </div>`;
+    }).join('');
+  } catch (e) {
+    perfHtml = `<p class="text-sm text-gray-600 bg-gray-50 p-4 rounded-lg">${report.performance_data || 'No performance data recorded.'}</p>`;
+  }
+
+  let skillsHtml = '';
+  try {
+    const skills = JSON.parse(report.core_skills || '{}');
+    skillsHtml = Object.keys(skills).map(k => `<span class="badge badge-green text-sm px-3 py-1 mr-2 mb-2">${k}: ${skills[k]}</span>`).join('');
+  } catch (e) {
+    const skillsArr = String(report.core_skills || '').split(',').filter(s => s.trim() !== '');
+    skillsHtml = skillsArr.length > 0 ? skillsArr.map(s => `<span class="badge badge-green text-sm px-3 py-1 mr-2 mb-2">${s.trim()}</span>`).join('') : '<span class="text-sm text-gray-500">No skills recorded</span>';
+  }
+
+  document.getElementById('genericModalContent').innerHTML = `
+    <div id="printableReport" style="background:white; padding:40px;">
+      <!-- Header -->
+      <div class="flex justify-between items-center border-b pb-6 mb-8 anim-fade-up" style="border-color:#eee;">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:var(--brand-gradient)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/></svg>
+          </div>
+          <div>
+            <h2 class="text-xl font-extrabold tracking-tight" style="color:#1a1a2e"><span style="color:var(--brand-blue)">SMART</span> <span style="color:var(--brand-green)">MINDS</span></h2>
+            <p class="text-xs text-gray-500 uppercase tracking-wider">Home Tuition & Skills Hub</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <h3 class="text-lg font-bold text-gray-800">Academic Report Card</h3>
+          <p class="text-sm text-gray-500">${report.term || 'Termly Report'}</p>
+        </div>
+      </div>
+
+      <!-- Student Info -->
+      <div class="grid grid-cols-3 gap-4 mb-8 anim-fade-up" style="animation-delay: 0.1s">
+        <div class="p-4 rounded-xl bg-gray-50"><p class="text-xs text-gray-500 uppercase font-bold">Student Name</p><p class="font-bold text-gray-800 mt-1">${report.student_name || 'N/A'}</p></div>
+        <div class="p-4 rounded-xl bg-gray-50"><p class="text-xs text-gray-500 uppercase font-bold">Program</p><p class="font-bold text-gray-800 mt-1">${report.program || 'General'}</p></div>
+        <div class="p-4 rounded-xl bg-gray-50"><p class="text-xs text-gray-500 uppercase font-bold">Date Issued</p><p class="font-bold text-gray-800 mt-1">${new Date(report.created_at).toLocaleDateString()}</p></div>
+      </div>
+
+      <!-- Performance -->
+      <div class="mb-8 anim-fade-up" style="animation-delay: 0.2s">
+        <h4 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-4">Academic Performance</h4>
+        ${perfHtml}
+      </div>
+
+      <!-- Core Skills -->
+      <div class="mb-8 anim-fade-up" style="animation-delay: 0.3s">
+        <h4 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-4">Core Skills & Competencies</h4>
+        <div class="flex flex-wrap">${skillsHtml}</div>
+      </div>
+
+      <!-- Teacher Comments -->
+      <div class="mb-10 p-6 rounded-xl border anim-fade-up" style="animation-delay: 0.4s; background:#F7FAFE; border-color:#eee;">
+        <h4 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">Teacher's Remarks</h4>
+        <p class="text-sm text-gray-700 italic font-serif leading-relaxed">"${report.comments || 'No comments provided.'}"</p>
+      </div>
+
+      <!-- Signatures -->
+      <div class="grid grid-cols-3 gap-8 text-center mt-12 anim-fade-up" style="animation-delay: 0.5s">
+        <div class="border-t-2 pt-2 mx-4" style="border-color:#ddd;"><p class="text-xs text-gray-500 uppercase font-bold">Class Teacher</p></div>
+        <div class="border-t-2 pt-2 mx-4" style="border-color:#ddd;"><p class="text-xs text-gray-500 uppercase font-bold">Director</p></div>
+        <div class="border-t-2 pt-2 mx-4" style="border-color:#ddd;"><p class="text-xs text-gray-500 uppercase font-bold">Principal</p></div>
+      </div>
+    </div>
+
+    <!-- Print Button (No print) -->
+    <div class="mt-6 flex justify-end gap-3 no-print p-4 bg-white border-t" style="border-color:#eee;">
+      <button onclick="closeGenericModal()" class="px-6 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg">Close</button>
+      <button onclick="window.print()" class="px-6 py-2 text-white font-semibold rounded-lg" style="background:var(--brand-blue)">
+        <i data-lucide="printer" style="width:16px;height:16px" class="inline-block mr-1"></i> Print / Save PDF
+      </button>
+    </div>
+  `;
+
+  openGenericModal();
+  lucide.createIcons();
+
+  // Trigger bar animations
+  setTimeout(() => {
+    document.querySelectorAll('#reportPerfContainer .anim-bar, #printableReport .anim-bar').forEach(el => {
+      el.style.width = el.dataset.width + '%';
+    });
+  }, 500);
+}
+
 // --- ADMIN PORTAL LOGIC ---
 async function loadAdminView(view) {
   const content = document.getElementById('adminContent');
@@ -593,37 +700,26 @@ async function loadAdminView(view) {
     
     content.innerHTML = `
       <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Welcome, Admin!</h1>
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 space-y-6">
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">👨‍🎓</div><p class="text-xs uppercase font-bold text-gray-400">Students</p><p class="text-xl font-bold mt-1" style="color:var(--brand-blue)">${d.totalStudents || 0}</p></div>
-            <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">🏫</div><p class="text-xs uppercase font-bold text-gray-400">Schools</p><p class="text-xl font-bold mt-1" style="color:#1a1a2e">${d.totalSchools || 0}</p></div>
-            <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">💰</div><p class="text-xs uppercase font-bold text-gray-400">Revenue</p><p class="text-xl font-bold mt-1" style="color:#1a1a2e">KES ${d.totalRevenue || 0}</p></div>
-          </div>
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
-            <h3 class="font-bold text-sm mb-4" style="color:#1a1a2e">Quick Actions</h3>
-            <div class="grid grid-cols-2 gap-4">
-              <button onclick="openAddStudentModal()" class="p-4 rounded-xl border hover:bg-gray-50 text-left" style="border-color:#eee"><i data-lucide="user-plus" style="width:18px;height:18px;color:var(--brand-blue)" class="mb-2"></i><p class="font-semibold text-sm" style="color:#1a1a2e">Add Student</p></button>
-              <button onclick="openAddPaymentModal()" class="p-4 rounded-xl border hover:bg-gray-50 text-left" style="border-color:#eee"><i data-lucide="dollar-sign" style="width:18px;height:18px;color:var(--brand-green)" class="mb-2"></i><p class="font-semibold text-sm" style="color:#1a1a2e">Record Payment</p></button>
-              <button onclick="loadAdminView('schools')" class="p-4 rounded-xl border hover:bg-gray-50 text-left" style="border-color:#eee"><i data-lucide="school" style="width:18px;height:18px;color:var(--brand-blue)" class="mb-2"></i><p class="font-semibold text-sm" style="color:#1a1a2e">Manage Schools</p></button>
-              <button onclick="loadAdminView('chat')" class="p-4 rounded-xl border hover:bg-gray-50 text-left" style="border-color:#eee"><i data-lucide="message-square" style="width:18px;height:18px;color:var(--brand-green)" class="mb-2"></i><p class="font-semibold text-sm" style="color:#1a1a2e">Messages</p></button>
-            </div>
-          </div>
-        </div>
-        <div class="space-y-6">
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
-            <h3 class="font-bold text-sm mb-4" style="color:#1a1a2e">System Status</h3>
-            <div class="space-y-3">
-              <div class="flex justify-between items-center p-3 border rounded-lg" style="border-color:#eee"><span class="text-sm text-gray-600">Inquiries</span><span class="badge badge-blue">${d.totalInquiries || 0} New</span></div>
-              <div class="flex justify-between items-center p-3 border rounded-lg" style="border-color:#eee"><span class="text-sm text-gray-600">Pending Schools</span><span class="badge badge-yellow">${d.pendingSchools || 0}</span></div>
-            </div>
-          </div>
-          <div class="p-6 rounded-2xl shadow-sm text-white" style="background:var(--brand-gradient)">
-            <h3 class="font-bold text-lg mb-2">Review Schools</h3>
-            <p class="text-sm opacity-90 mb-4">Approve or reject partner school applications.</p>
-            <button onclick="loadAdminView('schools')" class="px-4 py-2 bg-white text-sm font-bold rounded-lg" style="color:var(--brand-blue)">View Schools</button>
-          </div>
-        </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">👨‍🎓</div><p class="text-xs uppercase font-bold text-gray-400">Students</p><p class="text-xl font-bold mt-1" style="color:var(--brand-blue)">${d.totalStudents || 0}</p></div>
+        <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">🏫</div><p class="text-xs uppercase font-bold text-gray-400">Schools</p><p class="text-xl font-bold mt-1" style="color:#1a1a2e">${d.totalSchools || 0}</p></div>
+        <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">💰</div><p class="text-xs uppercase font-bold text-gray-400">Revenue</p><p class="text-xl font-bold mt-1" style="color:#1a1a2e">KES ${d.totalRevenue || 0}</p></div>
+        <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">⏳</div><p class="text-xs uppercase font-bold text-gray-400">Pending Schools</p><p class="text-xl font-bold mt-1" style="color:#ca8a04">${d.pendingSchools || 0}</p></div>
+      </div>
+
+      <h2 class="text-lg font-bold mb-4" style="color:#1a1a2e">Academic & Users</h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+        ${dashCard('users', '#2563EB', 'Students', 'View & add', "loadAdminView('students')")}
+        ${dashCard('school', '#16A34A', 'Schools', 'Manage partners', "loadAdminView('schools')")}
+        ${dashCard('file-text', '#8b5cf6', 'Grade Report', 'All reports', "showToast('Info', 'Coming soon!', true)")}
+        ${dashCard('library', '#0ea5e9', 'Libraries', 'Resources', "showToast('Info', 'Coming soon!', true)")}
+      </div>
+
+      <h2 class="text-lg font-bold mb-4" style="color:#1a1a2e">Administrative</h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        ${dashCard('dollar-sign', '#ca8a04', 'Finance', 'Record payment', "loadAdminView('payments')")}
+        ${dashCard('megaphone', '#ef4444', 'Announcements', 'Send news', "showToast('Info', 'Coming soon!', true)")}
+        ${dashCard('message-square', '#2563EB', 'Messages', 'Support chat', "loadAdminView('chat')")}
       </div>
     `;
   } 
@@ -702,49 +798,30 @@ async function loadSchoolView(view) {
   if (view === 'dashboard') {
     const [profileRes, studentsRes, revenueRes] = await Promise.all([api('getSchoolProfile'), api('getSchoolStudents'), api('getSchoolRevenue')]);
     const p = profileRes.success ? profileRes.profile : {};
-    const students = studentsRes.success ? studentsRes.students : [];
     const rev = revenueRes.success ? revenueRes : {};
-
-    let recentStudentsHtml = '';
-    if (students.length > 0) {
-      students.slice(0, 3).forEach(s => {
-        recentStudentsHtml += `<div class="flex justify-between items-center p-3 border-b" style="border-color:#eee"><div><p class="font-semibold text-sm">${s.name}</p><p class="text-xs text-gray-500">${s.grade}</p></div><span class="text-xs font-bold text-gray-500">${s.enrolled_date}</span></div>`;
-      });
-    } else {
-      recentStudentsHtml = `<p class="text-sm text-gray-500 p-3">No students enrolled yet.</p>`;
-    }
 
     content.innerHTML = `
       <h1 class="text-2xl font-bold mb-6" style="color:#1a1a2e">Welcome, ${p.name || 'School'}!</h1>
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 space-y-6">
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">👨‍🎓</div><p class="text-xs uppercase font-bold text-gray-400">Enrolled</p><p class="text-xl font-bold mt-1" style="color:var(--brand-blue)">${rev.active_students || 0}</p></div>
-            <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">💰</div><p class="text-xs uppercase font-bold text-gray-400">Total Revenue</p><p class="text-xl font-bold mt-1" style="color:#1a1a2e">KES ${rev.total_revenue || 0}</p></div>
-            <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">📈</div><p class="text-xs uppercase font-bold text-gray-400">School Share</p><p class="text-xl font-bold mt-1" style="color:var(--brand-green)">KES ${rev.school_share || 0}</p></div>
-          </div>
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="font-bold text-sm" style="color:#1a1a2e">Recent Enrollments</h3>
-              <button onclick="loadSchoolView('students')" class="text-xs font-bold" style="color:var(--brand-blue)">View All</button>
-            </div>
-            <div class="space-y-0">${recentStudentsHtml}</div>
-          </div>
-        </div>
-        <div class="space-y-6">
-          <div class="p-6 rounded-2xl shadow-sm border" style="background:white; border-color:#eee">
-            <h3 class="font-bold text-sm mb-4" style="color:#1a1a2e">Status</h3>
-            <div class="p-3 rounded-lg" style="background:#F7FAFE">
-              <p class="text-xs uppercase font-bold text-gray-400">Account Status</p>
-              <p class="text-sm font-bold mt-1 capitalize ${p.status === 'approved' ? 'text-green-600' : 'text-yellow-600'}">${p.status || 'Pending'}</p>
-            </div>
-          </div>
-          <div class="p-6 rounded-2xl shadow-sm text-white" style="background:var(--brand-gradient)">
-            <h3 class="font-bold text-lg mb-2">Mark Attendance</h3>
-            <p class="text-sm opacity-90 mb-4">Keep track of your students' presence.</p>
-            <button onclick="loadSchoolView('attendance')" class="px-4 py-2 bg-white text-sm font-bold rounded-lg" style="color:var(--brand-blue)">Take Attendance</button>
-          </div>
-        </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">👨‍🎓</div><p class="text-xs uppercase font-bold text-gray-400">Enrolled</p><p class="text-xl font-bold mt-1" style="color:var(--brand-blue)">${rev.active_students || 0}</p></div>
+        <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">💰</div><p class="text-xs uppercase font-bold text-gray-400">Revenue</p><p class="text-xl font-bold mt-1" style="color:#1a1a2e">KES ${rev.total_revenue || 0}</p></div>
+        <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">📈</div><p class="text-xs uppercase font-bold text-gray-400">School Share</p><p class="text-xl font-bold mt-1" style="color:var(--brand-green)">KES ${rev.school_share || 0}</p></div>
+        <div class="p-4 rounded-2xl shadow-sm border" style="background:white; border-color:#eee"><div class="text-2xl mb-2">🏷️</div><p class="text-xs uppercase font-bold text-gray-400">Status</p><p class="text-xl font-bold mt-1 capitalize ${p.status === 'approved' ? 'text-green-600' : 'text-yellow-600'}">${p.status || 'Pending'}</p></div>
+      </div>
+
+      <h2 class="text-lg font-bold mb-4" style="color:#1a1a2e">Academic</h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+        ${dashCard('users', '#2563EB', 'Students', 'View & enroll', "loadSchoolView('students')")}
+        ${dashCard('check-square', '#16A34A', 'Attendance', 'Mark daily', "loadSchoolView('attendance')")}
+        ${dashCard('file-text', '#8b5cf6', 'Grade Report', 'Student reports', "showToast('Info', 'Coming soon!', true)")}
+        ${dashCard('library', '#0ea5e9', 'Libraries', 'Resources', "showToast('Info', 'Coming soon!', true)")}
+      </div>
+
+      <h2 class="text-lg font-bold mb-4" style="color:#1a1a2e">Administrative</h2>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        ${dashCard('trending-up', '#ca8a04', 'Finance', 'Fees & shares', "loadSchoolView('revenue')")}
+        ${dashCard('megaphone', '#ef4444', 'Announcements', 'School news', "showToast('Info', 'Coming soon!', true)")}
+        ${dashCard('message-square', '#2563EB', 'Messages', 'Chat with admin', "loadSchoolView('chat')")}
       </div>
     `;
   } 
@@ -975,8 +1052,8 @@ async function openAddReportModal() {
       <select name="student_id" required class="inp">${studentOptions}</select>
       <input type="text" name="program" placeholder="Program (e.g. Math Tutoring)" class="inp">
       <input type="text" name="term" placeholder="Term" class="inp">
-      <textarea name="performance_data" rows="2" placeholder="Performance Data (Scores, Grades)" class="inp" style="resize:vertical"></textarea>
-      <textarea name="core_skills" rows="2" placeholder="Core Skills Observed" class="inp" style="resize:vertical"></textarea>
+      <textarea name="performance_data" rows="3" placeholder='Performance Data (JSON format: {"Math": 85, "English": 90})' class="inp" style="resize:vertical"></textarea>
+      <textarea name="core_skills" rows="2" placeholder='Core Skills (JSON format: {"Teamwork": "A", "Focus": "B"} OR comma separated: Teamwork, Focus)' class="inp" style="resize:vertical"></textarea>
       <textarea name="comments" rows="3" placeholder="Trainer Comments" class="inp" style="resize:vertical"></textarea>
       <button type="button" onclick="generateAIComment()" class="w-full py-2 rounded-xl text-sm font-semibold text-white" style="background:var(--brand-green)"><i data-lucide="sparkles" style="width:14px;height:14px" class="inline-block mr-1"></i> Generate AI Comment</button>
       <button type="submit" class="w-full py-3.5 rounded-xl font-semibold text-white" style="background:var(--brand-blue)">Save Report</button>
